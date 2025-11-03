@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('id_wisata');
             $table->unsignedBigInteger("id_kategori");
             $table->string('nama_wisata');
+            $table->text('alamat_lengkap');
             $table->decimal('longitude', 10, 6)->nullable();
             $table->decimal('latitude', 10, 6)->nullable();
             $table->text('deskripsi')->nullable();

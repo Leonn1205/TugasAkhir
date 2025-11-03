@@ -19,6 +19,8 @@ return new class extends Migration
             $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
             $table->time('jam_buka')->nullable();
             $table->time('jam_tutup')->nullable();
+            $table->time('jam_sibuk_mulai')->nullable();
+            $table->time('jam_sibuk_selesai')->nullable();
             $table->timestamps();
 
             $table->foreign('id_kuliner')
