@@ -10,323 +10,150 @@
             font-family: 'Inknut Antiqua', serif;
             background: url("{{ asset('images/bg-view.png') }}") no-repeat center center fixed;
             background-size: cover;
-            display: block;
-            justify-content: center;
-            align-items: center;
         }
 
-        .container-form {
-            max-width: 900px;
-            margin: 30px auto;
-        }
-
-        .section {
+        .form-container {
             background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
             padding: 30px;
-            margin-bottom: 40px;
+            border-radius: 15px;
+            max-width: 950px;
+            margin: 40px auto;
         }
 
-        .section-title {
-            text-align: center;
-            font-weight: bold;
-            font-size: 24px;
-            margin-bottom: 25px;
-            color: #1e3932;
+        .form-section {
+            border-left: 4px solid #198754;
+            padding-left: 10px;
         }
 
-        .btn-submit {
-            display: block;
-            margin: 20px auto;
-            background: #1e3932;
-            color: white;
-            border-radius: 10px;
-            padding: 10px 30px;
-            border: none;
+        .form-check-inline {
+            margin-right: 1rem;
+        }
+
+        .form-text.note {
+            font-size: 13px;
+            color: #666;
+            font-style: italic;
         }
     </style>
 </head>
 
 <body>
-    <div class="container-form">
-        <h2 class="text-center mb-4">Kotabaru Tourism Data Center<br><b>Tambah Tempat Kuliner</b></h2>
+    <div class="container">
+        <h5 class="mt-4 text-center fw-bold">Kotabaru Tourism Data Center</h5>
+        <h2 class="text-center fw-bold text-success mb-4">Tambah Data Tempat Kuliner</h2>
 
-        <form action="{{ route('kuliner.store') }}" method="POST" enctype="multipart/form-data">
-            @csrf
+        <div class="form-container shadow">
+            <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data">
+                @csrf
 
-            <!-- 1. Identitas -->
-            <div class="section">
-                <h3 class="section-title">1. Identitas Establishment</h3>
-                <div class="mb-3">
-                    <label class="form-label">Nama Tempat Kuliner</label>
-                    <input type="text" name="nama_usaha" class="form-control">
-                </div>
-                <div class="row">
-                    <div class="col-md-2 mb-3">
-                        <label class="form-label">Tahun Berdiri</label>
-                        <input type="number" name="tahun_berdiri" class="form-control">
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Nama Pemilik</label>
-                        <input type="text" name="nama_pemilik" class="form-control">
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Status Legalitas</label>
-                    <input type="text" name="status_legalitas" class="form-control">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Lokasi Tempat Kuliner</label>
-                    <textarea name="lokasi_lengkap" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Bentuk Kepemilikan</label>
-                    <select name="bentuk_kepemilikan" class="form-select">
-                        <option value="Individu">Individu</option>
-                        <option value="Keluarga">Keluarga</option>
-                        <option value="Komunitas">Komunitas</option>
-                        <option value="Waralaba">Waralaba</option>
-                    </select>
-                </div>
-            </div>
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success">1. Identitas Usaha</h5>
 
-            <!-- 2. Jenis Kuliner -->
-            <div class="section">
-                <h3 class="section-title">2. Jenis Kuliner</h3>
-                <div class="row mb-3">
-                    <!-- Kategori Utama -->
-                    <div class="col-md-4">
-                        <label class="form-label">Kategori Utama</label>
-                        <select name="kategori_utama" class="form-select">
-                            <option value="Tradisional">Tradisional</option>
-                            <option value="Modern">Modern</option>
-                            <option value="Fusion">Fusion</option>
-                            <option value="Street Food">Street Food</option>
-                        </select>
-                    </div>
-
-                    <!-- Sumber Bahan Baku -->
-                    <div class="col-md-4">
-                        <label class="form-label">Sumber Bahan Baku</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="bahan_baku[]" value="Lokal">
-                            <label class="form-check-label">Lokal</label>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Sentra / Usaha</label>
+                            <input type="text" name="nama_sentra" class="form-control"
+                                placeholder="Contoh: Warung Sari Laut Kotabaru">
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="bahan_baku[]" value="Import">
-                            <label class="form-check-label">Import</label>
+                        <div class="col-md-3 mb-3">
+                            <label>Tahun Berdiri</label>
+                            <input type="number" name="tahun_berdiri" class="form-control text-center" maxlength="4"
+                                style="max-width:120px;" placeholder="2020">
                         </div>
                     </div>
 
-                    <!-- Jenis Menu -->
-                    <div class="col-md-4">
-                        <label class="form-label">Jenis Menu</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="jenis_menu[]" value="Seasonal">
-                            <label class="form-check-label">Seasonal</label>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Nama Pemilik</label>
+                            <input type="text" name="nama_pemilik" class="form-control"
+                                placeholder="Contoh: Budi Santoso">
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="jenis_menu[]" value="Tetap">
-                            <label class="form-check-label">Tetap</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Menu Unggulan -->
-                <div class="mb-3">
-                    <label class="form-label">Jenis Menu Unggulan</label>
-                    <input type="text" name="menu_unggulan" class="form-control">
-                </div>
-            </div>
-
-            <!-- 3. Jenis Tempat -->
-            <div class="section">
-                <h3 class="section-title">3. Jenis Tempat</h3>
-                <div class="row mb-2">
-                    <div class="col-md-6">
-                        <label class="form-label">Bentuk Fisik</label>
-                        <select name="bentuk_fisik" class="form-select">
-                            <option value="Warung Kaki Lima">Warung Kaki Lima</option>
-                            <option value="Kedai Rumahan">Kedai Rumahan</option>
-                            <option value="Restoran">Restoran</option>
-                            <option value="Gerobak Keliling">Gerobak Keliling</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Status Bangunan</label>
-                        <select name="status_bangunan" class="form-select">
-                            <option value="Milik Sendiri">Milik Sendiri</option>
-                            <option value="Sewa">Sewa</option>
-                            <option value="Tempat Publik">Tempat Publik</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Fasilitas</label>
-                    <textarea name="fasilitas" class="form-control"></textarea>
-                </div>
-            </div>
-
-            <!-- 4. Praktik K3 -->
-            <div class="section">
-                <h3 class="section-title">4. Praktik K3</h3>
-                <div class="row mb-3">
-                    <div class="col-md-4">
-                        <label class="form-label">APD (Alat Pelindung Diri)</label>
-                        <select name="apd" class="form-select">
-                            <option value="1">Ya</option>
-                            <option value="0">Tidak</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Pengelolaan Limbah</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
-                                value="Organik">
-                            <label class="form-check-label">Organik</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" name="pengelolaan_limbah[]"
-                                value="Non-Organik">
-                            <label class="form-check-label">Non-Organik</label>
+                        <div class="col-md-4 mb-3">
+                            <label>Kepemilikan</label>
+                            <select name="kepemilikan" class="form-control" style="max-width:210px;">
+                                <option value="" disabled selected>-- Pilih Kepemilikan --</option>
+                                <option value="Pribadi">Pribadi</option>
+                                <option value="Keluarga">Keluarga</option>
+                                <option value="Komunitas">Komunitas</option>
+                                <option value="Waralaba">Waralaba</option>
+                            </select>
                         </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Prosedur Kebersihan</label>
-                    <textarea name="prosedur_kebersihan" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Sumber Bahan Dasar</label>
-                    <textarea name="sumber_bahan_dasar" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Ventilasi</label>
-                    <textarea name="ventilasi" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Pelatihan K3</label>
-                    <textarea name="pelatihan_k3" class="form-control"></textarea>
-                </div>
-            </div>
 
-            <!-- SECTION 5: Regulasi -->
-            <div class="section">
-                <h3 class="section-title">5. Regulasi</h3>
+                    <div class="mb-3">
+                        <label>Alamat Lengkap</label>
+                        <textarea name="alamat_lengkap" class="form-control" rows="2"
+                            placeholder="Contoh: Jl. Veteran No.12, Kotabaru, Kalimantan Selatan"></textarea>
+                    </div>
 
-                <!-- Sertifikasi -->
-                <div class="mb-3">
-                    <label class="form-label">Sertifikasi</label>
-                    <div class="d-flex gap-3 align-items-center flex-wrap">
-                        <label class="mb-0">
-                            <input type="checkbox" name="sertifikasi[]" value="PIRT"> PIRT
-                        </label>
-                        <label class="mb-0">
-                            <input type="checkbox" name="sertifikasi[]" value="BPOM"> BPOM
-                        </label>
-                        <label class="mb-0">
-                            <input type="checkbox" name="sertifikasi[]" value="Halal"> Halal
-                        </label>
-                        <div class="d-flex align-items-center">
-                            <label class="mb-0 me-2">
-                                <input type="checkbox" name="sertifikasi[]" value="Dll"> Dll
-                            </label>
-                            <input type="text" name="sertifikasi_dll" class="form-control form-control-sm"
-                                style="width: 150px;" placeholder="Isi sertifikasi lain">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>No. Telepon</label>
+                            <input type="text" name="telepon" class="form-control" placeholder="0812-3456-7890">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" placeholder="contoh@email.com">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>No. NIB</label>
+                            <input type="text" name="no_nib" class="form-control"
+                                placeholder="Nomor Induk Berusaha">
                         </div>
                     </div>
-                </div>
 
-                <div class="mb-3">
-                    <label class="form-label">Kepatuhan Zonasi</label>
-                    <textarea name="kepatuhan_zonasi" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kepatuhan Operasional</label>
-                    <textarea name="kepatuhan_operasional" class="form-control"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Kepatuhan Pajak</label>
-                    <textarea name="kepatuhan_pajak" class="form-control"></textarea>
-                </div>
+                    <div class="mb-3">
+                        <label>Sertifikat (boleh lebih dari satu)</label><br>
+                        @foreach (['PIRT', 'BPOM', 'Halal', 'NIB', 'Lainnya'] as $item)
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="sertifikat_lain[]" value="{{ $item }}"
+                                    id="sertifikat_{{ $item }}" class="form-check-input sertifikat-check">
+                                <label class="form-check-label"
+                                    for="sertifikat_{{ $item }}">{{ $item }}</label>
+                            </div>
+                        @endforeach
+                        <input type="text" id="sertifikat_lain_text" name="sertifikat_lain_text"
+                            class="form-control mt-2" placeholder="Tulis sertifikat lainnya..."
+                            style="display:none; max-width:300px;">
+                    </div>
 
-                <!-- Program Pemerintah -->
-                <div class="mb-3">
-                    <label class="form-label">Program Pemerintah</label>
-                    <div class="d-flex gap-3 align-items-center flex-wrap">
-                        <label class="mb-0">
-                            <input type="checkbox" name="program_pemerintah[]" value="Kuliner Sehat"> Kuliner Sehat
-                        </label>
-                        <label class="mb-0">
-                            <input type="checkbox" name="program_pemerintah[]" value="UMKM Binaan"> UMKM Binaan
-                        </label>
-                        <div class="d-flex align-items-center">
-                            <label class="mb-0 me-2">
-                                <input type="checkbox" name="program_pemerintah[]" value="Dll"> Dll
-                            </label>
-                            <input type="text" name="program_dll" class="form-control form-control-sm"
-                                style="width: 150px;" placeholder="Isi program lain">
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label>Jumlah Pegawai</label>
+                            <input type="number" name="jumlah_pegawai" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Jumlah Kursi</label>
+                            <input type="number" name="jumlah_kursi" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Jumlah Gerai</label>
+                            <input type="number" name="jumlah_gerai" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label>Jumlah Pelanggan per Hari</label>
+                            <input type="number" name="jumlah_pelanggan_per_hari" class="form-control">
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- 6. Perkiraan Pelanggan -->
-            <div class="section">
-                <h3 class="section-title">6. Perkiraan Pelanggan</h3>
-
-                <!-- Rata-rata pelanggan -->
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Rata-rata Pelanggan per Hari/Minggu</label>
-                        <input type="number" name="rata_pelanggan" class="form-control" style="max-width:250px;">
-                    </div>
-                </div>
-
-                <!-- Profil pelanggan -->
-                <div class="mb-3">
-                    <label class="form-label">Profil Pelanggan</label><br>
-                    <div class="d-flex flex-wrap">
-                        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" name="profil_pelanggan[]" value="Lokal"
-                                id="lokal">
-                            <label class="form-check-label" for="lokal">Lokal</label>
-                        </div>
-                        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" name="profil_pelanggan[]"
-                                value="Wisatawan" id="wisatawan">
-                            <label class="form-check-label" for="wisatawan">Wisatawan</label>
-                        </div>
-                        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" name="profil_pelanggan[]"
-                                value="Pelajar / Mahasiswa" id="pelajar">
-                            <label class="form-check-label" for="pelajar">Pelajar / Mahasiswa</label>
-                        </div>
-                        <div class="form-check me-3">
-                            <input class="form-check-input" type="checkbox" name="profil_pelanggan[]"
-                                value="Pekerja" id="pekerja">
-                            <label class="form-check-label" for="pekerja">Pekerja</label>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Jam operasional -->
-                <div class="mb-4">
-                    <label class="fw-bold mb-2">Jam Operasional</label>
+                    <!-- JAM OPERASIONAL -->
+                    <hr>
+                    <h6 class="fw-bold text-success mt-4 mb-3">Jam Operasional & Jam Sibuk</h6>
                     <div class="alert alert-info">
-                        <strong>Petunjuk:</strong>
                         <ul class="mb-0">
-                            <li>Jam default: 00:00 – 23:59</li>
-                            <li>Centang "Libur" jika tempat tidak buka hari itu</li>
+                            <li>Isi jam buka, jam tutup, dan jam sibuk jika ada.</li>
+                            <li>Centang “Libur” bila tempat tidak beroperasi hari itu.</li>
                         </ul>
                     </div>
+
                     <table class="table table-bordered text-center align-middle table-sm" style="font-size: 0.9rem;">
                         <thead class="table-light">
                             <tr>
-                                <th style="width: 25%;">Hari</th>
-                                <th style="width: 25%;">Jam Buka</th>
-                                <th style="width: 25%;">Jam Tutup</th>
-                                <th style="width: 15%;">Libur</th>
+                                <th>Hari</th>
+                                <th>Jam Buka</th>
+                                <th>Jam Tutup</th>
+                                <th>Jam Sibuk Mulai</th>
+                                <th>Jam Sibuk Selesai</th>
+                                <th>Libur</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -335,94 +162,372 @@
                             @endphp
                             @foreach ($days as $day)
                                 <tr>
-                                    <td class="py-1 px-2">
-                                        <input type="text" name="hari[]" class="form-control form-control-sm text-center" value="{{ $day }}" readonly>
-                                    </td>
-                                    <td class="py-1 px-2">
-                                        <input type="time" name="jam_buka[]" class="form-control form-control-sm" value="00:00">
-                                    </td>
-                                    <td class="py-1 px-2">
-                                        <input type="time" name="jam_tutup[]" class="form-control form-control-sm" value="23:59">
-                                    </td>
-                                    <td class="py-1 px-2">
-                                        <div class="form-check d-flex justify-content-center align-items-center">
-                                            <input class="form-check-input libur-check" type="checkbox" name="libur[]" value="{{ $loop->index }}">
-                                        </div>
-                                    </td>
+                                    <td><input type="text" name="hari[]"
+                                            class="form-control text-center form-control-sm"
+                                            value="{{ $day }}" readonly></td>
+                                    <td><input type="time" name="jam_buka[]" class="form-control form-control-sm"
+                                            value="08:00"></td>
+                                    <td><input type="time" name="jam_tutup[]" class="form-control form-control-sm"
+                                            value="21:00"></td>
+                                    <td><input type="time" name="jam_sibuk_mulai[]"
+                                            class="form-control form-control-sm"></td>
+                                    <td><input type="time" name="jam_sibuk_selesai[]"
+                                            class="form-control form-control-sm"></td>
+                                    <td><input type="checkbox" name="libur[]" class="form-check-input"></td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
-                </div>
 
-                <!-- Metode transaksi -->
-                <div class="mb-3">
-                    <label class="form-label">Metode Transaksi</label><br>
-                    <div class="d-flex flex-wrap">
-                        <div class="me-3">
-                            <input type="checkbox" name="metode_transaksi[]" value="Tunai"> Tunai
+                    <div class="mb-3">
+                        <label>Profil Pelanggan</label><br>
+                        @foreach (['Lokal', 'Wisatawan', 'Pelajar/Mahasiswa', 'Pekerja'] as $p)
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="profil_pelanggan[]" value="{{ $p }}"
+                                    class="form-check-input">
+                                <label class="form-check-label">{{ $p }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Metode Pembayaran</label><br>
+                        @foreach (['Tunai', 'QRIS', 'Transfer'] as $m)
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="metode_pembayaran[]" value="{{ $m }}"
+                                    class="form-check-input">
+                                <label class="form-check-label">{{ $m }}</label>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Pajak / Retribusi</label><br>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pajak_retribusi" value="1">
+                            <label class="form-check-label">Ya</label>
                         </div>
-                        <div class="me-3">
-                            <input type="checkbox" name="metode_transaksi[]" value="Qris"> Qris
-                        </div>
-                        <div class="me-3">
-                            <input type="checkbox" name="metode_transaksi[]" value="Online Delivery"> Online Delivery
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="pajak_retribusi" value="0">
+                            <label class="form-check-label">Tidak</label>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    const rows = document.querySelectorAll("table tbody tr");
+                <!-- 2. JENIS KULINER -->
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success">2. Jenis Kuliner</h5>
 
-                    rows.forEach((row) => {
-                        const liburCheckbox = row.querySelector(".libur-check");
-                        const bukaInput = row.querySelector("input[name='jam_buka[]']");
-                        const tutupInput = row.querySelector("input[name='jam_tutup[]']");
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Kategori</label><br>
+                            @foreach (['Tradisional/Domestik', 'Modern/Luar Negeri', 'Street Food', 'Lainnya'] as $kategori)
+                                <div class="form-check form-check-inline">
+                                    <input type="checkbox" name="kategori[]" value="{{ $kategori }}"
+                                        class="form-check-input kategori-check">
+                                    <label class="form-check-label">{{ $kategori }}</label>
+                                </div>
+                            @endforeach
+                            <input type="text" id="kategori_lain" name="kategori_lain" class="form-control mt-2"
+                                placeholder="Tulis kategori lain..." style="display:none; max-width:400px;">
+                        </div>
 
-                        liburCheckbox.addEventListener("change", function () {
-                            const isLibur = this.checked;
-                            bukaInput.disabled = isLibur;
-                            tutupInput.disabled = isLibur;
-                            if (isLibur) {
-                                bukaInput.value = '00:00';
-                                tutupInput.value = '00:00';
-                            } else {
-                                bukaInput.value = '00:00';
-                                tutupInput.value = '23:59';
-                            }
-                        });
-                    });
-                });
-            </script>
-
-            <!-- 7. Longlat -->
-            <div class="section">
-                <h3 class="section-title">7. Mencatat Longlat</h3>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Longitude</label>
-                        <input type="text" name="longitude" class="form-control">
+                        <div class="col-md-6 mb-3">
+                            <label>Menu Unggulan</label>
+                            <input type="text" name="menu_unggulan" class="form-control"
+                                placeholder="Contoh: Soto Banjar Spesial">
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Latitude</label>
-                        <input type="text" name="latitude" class="form-control">
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Bahan Baku Utama</label>
+                            <input type="text" name="bahan_baku_utama" class="form-control"
+                                placeholder="Contoh: Daging ayam, rempah lokal">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Sumber Bahan Baku</label>
+                            <select name="sumber_bahan_baku" class="form-control">
+                                <option value="" disabled selected>-- Pilih Sumber Bahan Baku --</option>
+                                <option value="Lokal">Lokal</option>
+                                <option value="Domestik/Luar Kota">Domestik / Luar Kota</option>
+                                <option value="Import/Luar Negeri">Import / Luar Negeri</option>
+                                <option value="Campuran">Campuran</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Menu Bersifat</label><br>
+                        @foreach (['Tetap', 'Musiman', 'Berganti Tiap Minggu'] as $m)
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="menu_bersifat[]" value="{{ $m }}"
+                                    class="form-check-input">
+                                <label class="form-check-label">{{ $m }}</label>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
-            </div>
 
-            <!-- 8. Foto -->
-            <div class="section">
-                <h3 class="section-title">8. Foto Kuliner</h3>
-                <div class="mb-3">
-                    <input type="file" name="foto[]" class="form-control" multiple>
+                <!-- 3. TEMPAT & FASILITAS -->
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success">3. Tempat & Fasilitas</h5>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Bentuk Fisik</label>
+                            <select name="bentuk_fisik" class="form-control">
+                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="Restoran">Restoran</option>
+                                <option value="Warung">Warung</option>
+                                <option value="Kafe">Kafe</option>
+                                <option value="Foodcourt">Foodcourt</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Status Bangunan</label>
+                            <select name="status_bangunan" class="form-control">
+                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="Milik Sendiri">Milik Sendiri</option>
+                                <option value="Sewa">Sewa</option>
+                                <option value="Pinjam Pakai">Pinjam Pakai</option>
+                                <option value="Lainnya">Lainnya...</option>
+                            </select>
+                            <input type="text" id="status_lain" name="status_lain" class="form-control mt-1"
+                                placeholder="Tulis status lain..." style="display:none; max-width:400px;">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label>Fasilitas Pendukung</label><br>
+                        @foreach (['Toilet', 'Wastafel', 'Parkir', 'Mushola', 'WiFi', 'Tempat Sampah'] as $f)
+                            <div class="form-check form-check-inline">
+                                <input type="checkbox" name="fasilitas_pendukung[]" value="{{ $f }}"
+                                    class="form-check-input">
+                                <label class="form-check-label">{{ $f }}</label>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
-            </div>
 
-            <button type="submit" class="btn-submit">Submit</button>
-        </form>
+                <!-- 4. PRAKTIK K3 & SANITASI -->
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success mb-3">4. Praktik K3 & Sanitasi</h5>
+
+                    <!-- Pelatihan & Penjamah -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Pelatihan K3 untuk Penjamah Makanan</label>
+                            <select name="pelatihan_k3" class="form-control" style="max-width:250px;">
+                                <option value="0">Tidak</option>
+                                <option value="1">Ya</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Jumlah Penjamah Makanan</label>
+                            <input type="number" name="jumlah_penjamah_makanan" class="form-control"
+                                placeholder="Contoh: 3">
+                        </div>
+                    </div>
+
+                    <!-- APD -->
+                    <div class="mb-4">
+                        <label class="d-block mb-2">Alat Pelindung Diri Penjamah Makanan</label>
+                        <div class="d-flex flex-wrap" style="gap: 1rem;">
+                            @foreach (['Masker', 'Hairnet', 'Celemek', 'Sarung Tangan'] as $apd)
+                                <div class="form-check form-check-inline">
+                                    <input type="checkbox" name="apd_penjamah_makanan[]" value="{{ $apd }}"
+                                        class="form-check-input">
+                                    <label class="form-check-label">{{ $apd }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                    <!-- Sanitasi Alat & Bahan -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Sanitasi Alat Dapur</label>
+                            <select name="prosedur_sanitasi_alat" class="form-control" style="max-width:250px;">
+                                <option value="0">Tidak Melakukan</option>
+                                <option value="1">Melakukan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Frekuensi Sanitasi Alat</label>
+                            <select name="frekuensi_sanitasi_alat" class="form-control" style="max-width:250px;">
+                                <option value="">-- Pilih Frekuensi --</option>
+                                <option value="Harian">Harian</option>
+                                <option value="Mingguan">Mingguan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Sanitasi Bahan Makanan</label>
+                            <select name="prosedur_sanitasi_bahan" class="form-control" style="max-width:250px;">
+                                <option value="0">Tidak Melakukan</option>
+                                <option value="1">Melakukan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Frekuensi Sanitasi Bahan</label>
+                            <select name="frekuensi_sanitasi_bahan" class="form-control" style="max-width:250px;">
+                                <option value="">-- Pilih Frekuensi --</option>
+                                <option value="Harian">Harian</option>
+                                <option value="Mingguan">Mingguan</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Penyimpanan -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Penyimpanan Bahan Mentah</label>
+                            <select name="penyimpanan_mentah" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin</option>
+                                <option value="Terpisah">Terpisah</option>
+                                <option value="Tidak Terpisah">Tidak Terpisah</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Penyimpanan Bahan Matang</label>
+                            <select name="penyimpanan_matang" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin</option>
+                                <option value="Terpisah">Terpisah</option>
+                                <option value="Tidak Terpisah">Tidak Terpisah</option>
+                            </select>
+                        </div>
+                        <div class="mb-3 col-md-4">
+                            <label>Prinsip FIFO / FEFO</label>
+                            <select name="fifo_fefo" class="form-control" style="max-width:250px;">
+                                <option value="0">Tidak Diterapkan</option>
+                                <option value="1">Diterapkan</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+
+                    <!-- Limbah & Ventilasi -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Limbah Dapur</label>
+                            <select name="limbah_dapur" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="Dipisah">Dipisah</option>
+                                <option value="Tidak Dipisah">Tidak Dipisah</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Ventilasi Dapur</label>
+                            <select name="ventilasi_dapur" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="Alami">Alami</option>
+                                <option value="Buatan">Buatan</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Dapur</label>
+                            <select name="kondisi_dapur" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="Ada, terpisah">Ada, terpisah</option>
+                                <option value="Ada, tidak terpisah">Ada, tidak terpisah</option>
+                                <option value="Tidak ada">Tidak ada</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Sumber Air -->
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label>Sumber Air Cuci</label>
+                            <select name="sumber_air_cuci" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="PDAM">PDAM</option>
+                                <option value="Sumur">Sumur</option>
+                                <option value="Air Isi Ulang">Air Isi Ulang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Sumber Air Masak</label>
+                            <select name="sumber_air_masak" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="PDAM">PDAM</option>
+                                <option value="Sumur">Sumur</option>
+                                <option value="Air Isi Ulang">Air Isi Ulang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label>Sumber Air Minum</label>
+                            <select name="sumber_air_minum" class="form-control">
+                                <option value="">-- Pilih --</option>
+                                <option value="PDAM">PDAM</option>
+                                <option value="Sumur">Sumur</option>
+                                <option value="Air Isi Ulang">Air Isi Ulang</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. KOORDINAT -->
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success">5. Koordinat Lokasi</h5>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label>Longitude</label>
+                            <input type="text" name="longitude" class="form-control" placeholder="116.8225">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>Latitude</label>
+                            <input type="text" name="latitude" class="form-control" placeholder="-3.3211">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section mb-4">
+                    <h5 class="fw-bold text-success">6. Foto Kuliner</h3>
+                    <div class="mb-3">
+                        <input type="file" name="foto[]" class="form-control" multiple>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-success px-4">Simpan</button>
+                    <a href="{{ route('kuliner.index') }}" class="btn btn-secondary px-4">Batal</a>
+                </div>
+
+            </form>
+        </div>
     </div>
+
+    <script>
+        // Tampilkan input text jika user pilih “Lainnya”
+        document.addEventListener("DOMContentLoaded", () => {
+            const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
+            const sertifikatLainText = document.getElementById("sertifikat_lain_text");
+            sertifikatChecks.forEach(c => {
+                c.addEventListener("change", () => {
+                    sertifikatLainText.style.display = document.getElementById("sertifikat_Lainnya")
+                        .checked ? "block" : "none";
+                });
+            });
+
+            const kategoriChecks = document.querySelectorAll(".kategori-check");
+            const kategoriLainText = document.getElementById("kategori_lain");
+            kategoriChecks.forEach(c => {
+                c.addEventListener("change", () => {
+                    kategoriLainText.style.display = c.value === "Lainnya" && c.checked ? "block" :
+                        "none";
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>
