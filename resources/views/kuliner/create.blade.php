@@ -46,6 +46,7 @@
             <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data">
                 @csrf
 
+                {{-- 1. Identitas Usaha --}}
                 <div class="form-section mb-4">
                     <h5 class="fw-bold text-success">1. Identitas Usaha</h5>
 
@@ -71,7 +72,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Kepemilikan</label>
                             <select name="kepemilikan" class="form-control" style="max-width:210px;">
-                                <option value="" disabled selected>-- Pilih Kepemilikan --</option>
+                                <option value="" disabled selected>-- Pilih Status Kepemilikan --</option>
                                 <option value="Pribadi">Pribadi</option>
                                 <option value="Keluarga">Keluarga</option>
                                 <option value="Komunitas">Komunitas</option>
@@ -120,21 +121,23 @@
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label>Jumlah Pegawai</label>
-                            <input type="number" name="jumlah_pegawai" class="form-control">
+                            <input type="number" name="jumlah_pegawai" class="form-control" placeholder="Contoh: 25">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>Jumlah Kursi</label>
-                            <input type="number" name="jumlah_kursi" class="form-control">
+                            <input type="number" name="jumlah_kursi" class="form-control" placeholder="Contoh: 25">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>Jumlah Gerai</label>
-                            <input type="number" name="jumlah_gerai" class="form-control">
+                            <input type="number" name="jumlah_gerai" class="form-control" placeholder="Contoh: 25">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label>Jumlah Pelanggan per Hari</label>
-                            <input type="number" name="jumlah_pelanggan_per_hari" class="form-control">
+                            <input type="number" name="jumlah_pelanggan_per_hari" class="form-control"
+                                placeholder="Contoh: 25">
                         </div>
                     </div>
+
                     <!-- JAM OPERASIONAL -->
                     <hr>
                     <h6 class="fw-bold text-success mt-4 mb-3">Jam Operasional & Jam Sibuk</h6>
@@ -277,7 +280,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Bentuk Fisik</label>
                             <select name="bentuk_fisik" class="form-control">
-                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="" disabled selected>-- Pilih Bentuk Fisik--</option>
                                 <option value="Restoran">Restoran</option>
                                 <option value="Warung">Warung</option>
                                 <option value="Kafe">Kafe</option>
@@ -287,7 +290,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Status Bangunan</label>
                             <select name="status_bangunan" class="form-control">
-                                <option value="" disabled selected>-- Pilih --</option>
+                                <option value="" disabled selected>-- Pilih Status Bangunan --</option>
                                 <option value="Milik Sendiri">Milik Sendiri</option>
                                 <option value="Sewa">Sewa</option>
                                 <option value="Pinjam Pakai">Pinjam Pakai</option>
@@ -353,7 +356,7 @@
                                 <option value="1">Melakukan</option>
                             </select>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3 frekuensi-sanitasi-alat">
                             <label>Frekuensi Sanitasi Alat</label>
                             <select name="frekuensi_sanitasi_alat" class="form-control" style="max-width:250px;">
                                 <option value="">-- Pilih Frekuensi --</option>
@@ -371,7 +374,7 @@
                                 <option value="1">Melakukan</option>
                             </select>
                         </div>
-                        <div class="col-md-4 mb-3">
+                        <div class="col-md-4 mb-3 frekuensi-sanitasi-bahan">
                             <label>Frekuensi Sanitasi Bahan</label>
                             <select name="frekuensi_sanitasi_bahan" class="form-control" style="max-width:250px;">
                                 <option value="">-- Pilih Frekuensi --</option>
@@ -386,7 +389,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Mentah</label>
                             <select name="penyimpanan_mentah" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Penyimpanan Bahan Mentah --</option>
                                 <option value="Dengan Pendingin">Dengan Pendingin</option>
                                 <option value="Tanpa Pendingin">Tanpa Pendingin</option>
                                 <option value="Terpisah">Terpisah</option>
@@ -396,7 +399,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Matang</label>
                             <select name="penyimpanan_matang" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Penyimpanan Bahan Matang --</option>
                                 <option value="Dengan Pendingin">Dengan Pendingin</option>
                                 <option value="Tanpa Pendingin">Tanpa Pendingin</option>
                                 <option value="Terpisah">Terpisah</option>
@@ -419,7 +422,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Limbah Dapur</label>
                             <select name="limbah_dapur" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Limbah Dapur--</option>
                                 <option value="Dipisah">Dipisah</option>
                                 <option value="Tidak Dipisah">Tidak Dipisah</option>
                             </select>
@@ -427,7 +430,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Ventilasi Dapur</label>
                             <select name="ventilasi_dapur" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Ventilasi Dapur --</option>
                                 <option value="Alami">Alami</option>
                                 <option value="Buatan">Buatan</option>
                             </select>
@@ -435,7 +438,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Dapur</label>
                             <select name="kondisi_dapur" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Dapur --</option>
                                 <option value="Ada, terpisah">Ada, terpisah</option>
                                 <option value="Ada, tidak terpisah">Ada, tidak terpisah</option>
                                 <option value="Tidak ada">Tidak ada</option>
@@ -448,7 +451,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Sumber Air Cuci</label>
                             <select name="sumber_air_cuci" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Sumber Air Cuci --</option>
                                 <option value="PDAM">PDAM</option>
                                 <option value="Sumur">Sumur</option>
                                 <option value="Air Isi Ulang">Air Isi Ulang</option>
@@ -457,7 +460,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Sumber Air Masak</label>
                             <select name="sumber_air_masak" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Sumber Air Masak --</option>
                                 <option value="PDAM">PDAM</option>
                                 <option value="Sumur">Sumur</option>
                                 <option value="Air Isi Ulang">Air Isi Ulang</option>
@@ -466,7 +469,7 @@
                         <div class="col-md-4 mb-3">
                             <label>Sumber Air Minum</label>
                             <select name="sumber_air_minum" class="form-control">
-                                <option value="">-- Pilih --</option>
+                                <option value="">-- Pilih Sumber Air Minum --</option>
                                 <option value="PDAM">PDAM</option>
                                 <option value="Sumur">Sumur</option>
                                 <option value="Air Isi Ulang">Air Isi Ulang</option>
@@ -492,9 +495,9 @@
 
                 <div class="form-section mb-4">
                     <h5 class="fw-bold text-success">6. Foto Kuliner</h3>
-                    <div class="mb-3">
-                        <input type="file" name="foto[]" class="form-control" multiple>
-                    </div>
+                        <div class="mb-3">
+                            <input type="file" name="foto[]" class="form-control" multiple>
+                        </div>
                 </div>
 
                 <div class="text-center">
@@ -507,25 +510,90 @@
     </div>
 
     <script>
-        // Tampilkan input text jika user pilih “Lainnya”
         document.addEventListener("DOMContentLoaded", () => {
+            // --- SERTIFIKAT "LAINNYA" ---
             const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
             const sertifikatLainText = document.getElementById("sertifikat_lain_text");
+
             sertifikatChecks.forEach(c => {
                 c.addEventListener("change", () => {
-                    sertifikatLainText.style.display = document.getElementById("sertifikat_Lainnya")
-                        .checked ? "block" : "none";
+                    const isOtherChecked = Array.from(sertifikatChecks)
+                        .some(chk => chk.value === "Lainnya" && chk.checked);
+                    sertifikatLainText.style.display = isOtherChecked ? "block" : "none";
+                    if (!isOtherChecked) sertifikatLainText.value = "";
                 });
             });
 
+            // --- KATEGORI "LAINNYA" ---
             const kategoriChecks = document.querySelectorAll(".kategori-check");
             const kategoriLainText = document.getElementById("kategori_lain");
+
             kategoriChecks.forEach(c => {
                 c.addEventListener("change", () => {
-                    kategoriLainText.style.display = c.value === "Lainnya" && c.checked ? "block" :
-                        "none";
+                    const isOtherChecked = Array.from(kategoriChecks)
+                        .some(chk => chk.value === "Lainnya" && chk.checked);
+                    kategoriLainText.style.display = isOtherChecked ? "block" : "none";
+                    if (!isOtherChecked) kategoriLainText.value = "";
                 });
             });
+
+            // --- STATUS BANGUNAN "LAINNYA" ---
+            const statusSelect = document.querySelector('select[name="status_bangunan"]');
+            const statusLainInput = document.getElementById("status_lain");
+
+            statusSelect.addEventListener("change", () => {
+                if (statusSelect.value === "Lainnya") {
+                    statusLainInput.style.display = "block";
+                } else {
+                    statusLainInput.style.display = "none";
+                    statusLainInput.value = "";
+                }
+            });
+
+            // --- TABEL JAM OPERASIONAL: LIBUR CHECKBOX ---
+            const rows = document.querySelectorAll("table tbody tr");
+            rows.forEach(row => {
+                const checkbox = row.querySelector('input[type="checkbox"][name="libur[]"]');
+                const timeInputs = row.querySelectorAll('input[type="time"]');
+
+                checkbox.addEventListener("change", () => {
+                    timeInputs.forEach(input => {
+                        input.disabled = checkbox.checked;
+                        if (checkbox.checked) input.value = "";
+                    });
+                });
+            });
+
+            function toggleFrekuensi(selectId, frekuensiDivId) {
+                const select = document.querySelector(selectId);
+                const frekuensiDiv = document.querySelector(frekuensiDivId);
+
+                function updateVisibility() {
+                    if (select.value === "1") { // 1 = Melakukan
+                        frekuensiDiv.style.display = "block";
+                    } else {
+                        frekuensiDiv.style.display = "none";
+                        // Hapus nilai agar tidak terkirim waktu disembunyikan
+                        const freqSelect = frekuensiDiv.querySelector("select");
+                        if (freqSelect) freqSelect.value = "";
+                    }
+                }
+
+                select.addEventListener("change", updateVisibility);
+                updateVisibility(); // jalankan saat load
+            }
+
+            // Terapkan untuk sanitasi alat
+            toggleFrekuensi(
+                "select[name='prosedur_sanitasi_alat']",
+                ".frekuensi-sanitasi-alat"
+            );
+
+            // Terapkan untuk sanitasi bahan
+            toggleFrekuensi(
+                "select[name='prosedur_sanitasi_bahan']",
+                ".frekuensi-sanitasi-bahan"
+            );
         });
     </script>
 </body>

@@ -60,6 +60,12 @@
                     <small class="form-text text-muted">Kategori ditentukan oleh admin</small>
                 </div>
 
+                <div class="mb-3">
+                    <label>Alamat Lengkap</label>
+                    <textarea name="alamat_lengkap" class="form-control" rows="2"
+                        placeholder="Contoh: Jl. Veteran No.12, Kotabaru, Kalimantan Selatan"></textarea>
+                </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label>Longitude</label>
