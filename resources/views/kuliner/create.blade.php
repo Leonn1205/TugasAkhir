@@ -195,7 +195,7 @@
 
                     <div class="mb-3">
                         <label>Metode Pembayaran</label><br>
-                        @foreach (['Tunai', 'QRIS', 'Transfer'] as $m)
+                        @foreach (['Tunai', 'QRIS / Transfer'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="metode_pembayaran[]" value="{{ $m }}"
                                     class="form-check-input">
@@ -247,6 +247,7 @@
                             <label>Bahan Baku Utama</label>
                             <input type="text" name="bahan_baku_utama" class="form-control"
                                 placeholder="Contoh: Daging ayam, rempah lokal">
+                            <small class="form-text note">Bisa sesuaikan dengan menu unggulan</small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>Sumber Bahan Baku</label>
@@ -262,7 +263,7 @@
 
                     <div class="mb-3">
                         <label>Menu Bersifat</label><br>
-                        @foreach (['Tetap', 'Musiman', 'Berganti Tiap Minggu'] as $m)
+                        @foreach (['Tetap', 'Musiman'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="menu_bersifat[]" value="{{ $m }}"
                                     class="form-check-input">
@@ -285,6 +286,11 @@
                                 <option value="Warung">Warung</option>
                                 <option value="Kafe">Kafe</option>
                                 <option value="Foodcourt">Foodcourt</option>
+                                <option value="Jasa Boga (Katering)">Jasa Boga (Katering)</option>
+                                <option value="Penyedia Makanan oleh Pedagang Keliling">Penyedia Makanan oleh Pedagang
+                                    Keliling</option>
+                                <option value="Penyedia Makanan oleh Pedagang Tidak Keliling">Penyedia Makanan oleh
+                                    Pedagang Tidak Keliling</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -316,15 +322,20 @@
                 <!-- 4. PRAKTIK K3 & SANITASI -->
                 <div class="form-section mb-4">
                     <h5 class="fw-bold text-success mb-3">4. Praktik K3 & Sanitasi</h5>
-
                     <!-- Pelatihan & Penjamah -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Pelatihan K3 untuk Penjamah Makanan</label>
-                            <select name="pelatihan_k3" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak</option>
-                                <option value="1">Ya</option>
-                            </select>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pajak_retribusi"
+                                    value="1">
+                                <label class="form-check-label">Ya</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="pajak_retribusi"
+                                    value="0">
+                                <label class="form-check-label">Tidak</label>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Jumlah Penjamah Makanan</label>
@@ -358,11 +369,8 @@
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-alat">
                             <label>Frekuensi Sanitasi Alat</label>
-                            <select name="frekuensi_sanitasi_alat" class="form-control" style="max-width:250px;">
-                                <option value="">-- Pilih Frekuensi --</option>
-                                <option value="Harian">Harian</option>
-                                <option value="Mingguan">Mingguan</option>
-                            </select>
+                            <input type="text" name="frekuensi_sanitasi_alat" class="form-control"
+                                style="max-width:250px;" placeholder="2 kali sehari">
                         </div>
                     </div>
 
@@ -376,11 +384,8 @@
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-bahan">
                             <label>Frekuensi Sanitasi Bahan</label>
-                            <select name="frekuensi_sanitasi_bahan" class="form-control" style="max-width:250px;">
-                                <option value="">-- Pilih Frekuensi --</option>
-                                <option value="Harian">Harian</option>
-                                <option value="Mingguan">Mingguan</option>
-                            </select>
+                            <input type="text" name="frekuensi_sanitasi_bahan" class="form-control"
+                                style="max-width:250px;" placeholder="2 kali sehari">
                         </div>
                     </div>
 
@@ -390,32 +395,38 @@
                             <label>Penyimpanan Bahan Mentah</label>
                             <select name="penyimpanan_mentah" class="form-control">
                                 <option value="">-- Pilih Penyimpanan Bahan Mentah --</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin</option>
-                                <option value="Terpisah">Terpisah</option>
-                                <option value="Tidak Terpisah">Tidak Terpisah</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin, Tidak Terpisah</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Matang</label>
                             <select name="penyimpanan_matang" class="form-control">
                                 <option value="">-- Pilih Penyimpanan Bahan Matang --</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin</option>
-                                <option value="Terpisah">Terpisah</option>
-                                <option value="Tidak Terpisah">Tidak Terpisah</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin">Dengan Pendingin, Tidak Terpisah</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
+                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
                             </select>
                         </div>
                         <div class="mb-3 col-md-4">
                             <label>Prinsip FIFO / FEFO</label>
-                            <select name="fifo_fefo" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak Diterapkan</option>
-                                <option value="1">Diterapkan</option>
-                            </select>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
+                                        value="1">
+                                    <label class="form-check-label">Ya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
+                                        value="0">
+                                    <label class="form-check-label">Tidak</label>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
-
 
                     <!-- Limbah & Ventilasi -->
                     <div class="row">
@@ -431,8 +442,9 @@
                             <label>Ventilasi Dapur</label>
                             <select name="ventilasi_dapur" class="form-control">
                                 <option value="">-- Pilih Ventilasi Dapur --</option>
-                                <option value="Alami">Alami</option>
-                                <option value="Buatan">Buatan</option>
+                                <option value="Alami">Alami (misalnya jendela atau ventilasi udara
+                                    langsung)</option>
+                                <option value="Buatan">Buatan (misalnya exhaust fan atau blower)</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">

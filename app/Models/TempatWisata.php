@@ -9,7 +9,14 @@ class TempatWisata extends Model
     protected $table = 'tempat_wisata';
     protected $primaryKey = 'id_wisata';
     protected $fillable = [
-        'nama_wisata', 'id_kategori', 'longitude', 'latitude', 'deskripsi', 'sejarah', 'narasi'
+        'nama_wisata',
+        'alamat_lengkap',
+        'id_kategori',
+        'longitude',
+        'latitude',
+        'deskripsi',
+        'sejarah',
+        'narasi'
     ];
 
     public function jamOperasional()
