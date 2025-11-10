@@ -30,6 +30,8 @@ class TempatKulinerController extends Controller
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
             'email' => 'nullable|email',
             'tahun_berdiri' => 'nullable|numeric|min:1900|max:' . date('Y'),
+            'prosedur_sanitasi_alat' => 'required|string',
+            'prosedur_sanitasi_bahan' => 'required|string',
         ]);
 
         $data = $request->all();
@@ -94,6 +96,7 @@ class TempatKulinerController extends Controller
         $data['pajak_retribusi'] = $request->has('pajak_retribusi') ? 1 : 0;
         $data['fifo_fefo'] = $request->has('fifo_fefo') ? 1 : 0;
 
+
         // === KONVERSI DROPDOWN ===
         $data['dapur'] = match ($request->input('dapur')) {
             'Terpisah' => 'Terpisah',
@@ -102,16 +105,8 @@ class TempatKulinerController extends Controller
             default => null,
         };
 
-        $data['prosedur_sanitasi_alat'] = match ($request->input('prosedur_sanitasi_alat')) {
-            'Melakukan' => 'Melakukan',
-            'Tidak Melakukan' => 'Tidak Melakukan',
-            default => null,
-        };
-        $data['prosedur_sanitasi_bahan'] = match ($request->input('prosedur_sanitasi_bahan')) {
-            'Melakukan' => 'Melakukan',
-            'Tidak Melakukan' => 'Tidak Melakukan',
-            default => null,
-        };
+       $data['prosedur_sanitasi_alat'] = (int) $request->input('prosedur_sanitasi_alat');
+        $data['prosedur_sanitasi_bahan'] = (int) $request->input('prosedur_sanitasi_bahan');
 
         $data['penyimpanan_mentah'] = match ($request->input('penyimpanan_mentah')) {
             'Dengan Pendingin, Terpisah' => 'Dengan Pendingin, Terpisah',
@@ -142,10 +137,9 @@ class TempatKulinerController extends Controller
         };
 
         $data['dapur'] = match ($request->input('dapur')) {
-            'Terpisah' => 'Terpisah',
-            'Tidak Terpisah' => 'Tidak Terpisah',
-            'Tidak Ada' => 'Tidak Ada',
-            default => null,
+            'Ada, terpisah' => 'Ada, terpisah',
+            'Ada, tidak terpisah' => 'Ada, tidak terpisah',
+            'Tidak ada' => 'Tidak ada',
         };
 
         $data['sumber_air_cuci'] = match ($request->input('sumber_air_cuci')) {
@@ -251,49 +245,113 @@ class TempatKulinerController extends Controller
     // GET /dashboard/kuliner/{id}/edit
     public function edit($id)
     {
-        $kuliner = TempatKuliner::with(['foto','jamOperasional'])->findOrFail($id);
+        $kuliner = TempatKuliner::with(['foto', 'jamOperasional'])->findOrFail($id);
 
-        $sertifikasiRaw = $kuliner->sertifikasi ?? [];
-        $sertifikasi = is_string($sertifikasiRaw) ? json_decode($sertifikasiRaw, true) : $sertifikasiRaw;
+        // --- Decode semua kolom JSON ---
+        $kuliner->sertifikat_lain = $kuliner->sertifikat_lain ? json_decode($kuliner->sertifikat_lain, true) : [];
+        $kuliner->profil_pelanggan = $kuliner->profil_pelanggan ? json_decode($kuliner->profil_pelanggan, true) : [];
+        $kuliner->metode_pembayaran = $kuliner->metode_pembayaran ? json_decode($kuliner->metode_pembayaran, true) : [];
+        $kuliner->menu_bersifat = $kuliner->menu_bersifat ? json_decode($kuliner->menu_bersifat, true) : [];
+        $kuliner->fasilitas_pendukung = $kuliner->fasilitas_pendukung ? json_decode($kuliner->fasilitas_pendukung, true) : [];
+        $kuliner->apd_penjamah_makanan = $kuliner->apd_penjamah_makanan ? json_decode($kuliner->apd_penjamah_makanan, true) : [];
 
-        $dllText = '';
-        foreach ($sertifikasi as $item) {
-            if (str_starts_with($item, 'Dll:')) {
-                $dllText = trim(substr($item, 4)); // Dll: teks
+        // Ambil teks “Lainnya” dari kategori atau sertifikat kalau ada
+        $kategoriLain = '';
+        if (is_array($kuliner->kategori)) {
+            foreach ($kuliner->kategori as $item) {
+                if (str_starts_with($item, 'Lainnya:')) {
+                    $kategoriLain = trim(substr($item, 9));
+                }
             }
         }
 
-        $programRaw = $kuliner->program_pemerintah ?? [];
-        $program = is_string($programRaw) ? json_decode($programRaw, true) : $programRaw;
-        $programDll = '';
-        foreach ($program as $item) {
-            if (str_starts_with($item, 'Dll:')) {
-                $programDll = trim(substr($item, 4)); // Dll: teks
+        $sertifikatLainText = '';
+        if (is_array($kuliner->sertifikat_lain)) {
+            foreach ($kuliner->sertifikat_lain as $item) {
+                if (str_starts_with($item, 'Lainnya:')) {
+                    $sertifikatLainText = trim(substr($item, 9));
+                }
             }
         }
-        return view('kuliner.edit', compact('kuliner', 'dllText', 'programDll', 'sertifikasi', 'program'));
+
+        // --- Susun ulang data jam operasional per hari ---
+        $jamOperasional = [];
+        foreach ($kuliner->jamOperasional as $jam) {
+            $jamOperasional[$jam->hari] = [
+                'buka' => $jam->jam_buka,
+                'tutup' => $jam->jam_tutup,
+                'sibuk_mulai' => $jam->jam_sibuk_mulai,
+                'sibuk_selesai' => $jam->jam_sibuk_selesai,
+                'libur' => $jam->jam_buka === null && $jam->jam_tutup === null,
+            ];
+        }
+
+        return view('kuliner.edit', compact('kuliner', 'jamOperasional', 'kategoriLain', 'sertifikatLainText'));
     }
 
     public function update(Request $request, $id)
     {
         $kuliner = TempatKuliner::findOrFail($id);
 
-        // Ambil semua data form
+        $request->validate([
+            'nama_sentra' => 'required|string|max:255',
+            'alamat_lengkap' => 'required|string',
+            'email' => 'nullable|email',
+            'tahun_berdiri' => 'nullable|numeric|min:1900|max:' . date('Y'),
+        ]);
+
         $data = $request->all();
 
-        // Handle array/checkbox → simpan string/json
-        $data['bahan_baku'] = $request->bahan_baku ? json_encode($request->bahan_baku ?? []) : null;
-        $data['profil_pelanggan'] = $request->profil_pelanggan ? json_encode($request->profil_pelanggan ?? []) : null;
-        $data['metode_transaksi'] = $request->metode_transaksi ? json_encode($request->metode_transaksi ?? []) : null;
-        $data['pengelolaan_limbah'] = $request->pengelolaan_limbah ? json_encode($request->pengelolaan_limbah ?? []) : null;
-        $data['jenis_menu'] = $request->jenis_menu ? json_encode($request->jenis_menu ?? []) : null;
-        $data['sertifikasi'] = $this->handleSertifikasiInput($request);
-        $data['program_pemerintah'] = $this->handleProgramInput($request);
+        // === KONVERSI ARRAY / CHECKBOX ===
+        // Sertifikat
+        $sertifikat = $request->input('sertifikat_lain', []);
+        if (in_array('Lainnya', $sertifikat)) {
+            $lain = trim($request->input('sertifikat_lain_text'));
+            $key = array_search('Lainnya', $sertifikat);
+            $sertifikat[$key] = $lain ? 'Lainnya: ' . $lain : 'Lainnya';
+        }
+        $data['sertifikat_lain'] = json_encode($sertifikat);
 
-        // Update data utama
+        $data['profil_pelanggan'] = $request->profil_pelanggan
+            ? json_encode($request->profil_pelanggan)
+            : null;
+
+        $data['metode_pembayaran'] = $request->metode_pembayaran
+            ? json_encode($request->metode_pembayaran)
+            : null;
+
+        // Kategori
+        $kategori = $request->input('kategori', []);
+        if (in_array('Lainnya', $kategori)) {
+            $lain = trim($request->input('kategori_lain'));
+            $key = array_search('Lainnya', $kategori);
+            $kategori[$key] = $lain ? 'Lainnya: ' . $lain : 'Lainnya';
+        }
+        $data['kategori'] = json_encode($kategori);
+
+        $data['menu_bersifat'] = $request->menu_bersifat
+            ? json_encode($request->menu_bersifat)
+            : null;
+
+        $data['apd_penjamah_makanan'] = $request->apd_penjamah_makanan
+            ? json_encode($request->apd_penjamah_makanan)
+            : null;
+
+        $data['fasilitas_pendukung'] = $request->fasilitas_pendukung
+            ? json_encode($request->fasilitas_pendukung)
+            : null;
+
+        // === BOOLEAN / RADIO ===
+        $data['pelatihan_k3'] = $request->has('pelatihan_k3') ? 1 : 0;
+        $data['pajak_retribusi'] = $request->has('pajak_retribusi') ? 1 : 0;
+        $data['fifo_fefo'] = $request->has('fifo_fefo') ? 1 : 0;
+        $data['prosedur_sanitasi_alat'] = $request->has('prosedur_sanitasi_alat') ? 1 : 0;
+        $data['prosedur_sanitasi_bahan'] = $request->has('prosedur_sanitasi_bahan') ? 1 : 0;
+
+        // === UPDATE DATA UTAMA ===
         $kuliner->update($data);
 
-        // Simpan foto baru kalau ada
+        // === FOTO BARU ===
         if ($request->hasFile('foto')) {
             foreach ($request->file('foto') as $file) {
                 $path = $file->store('kuliner', 'public');
@@ -304,23 +362,25 @@ class TempatKulinerController extends Controller
             }
         }
 
-        // Reset jam operasional lama
+        // === JAM OPERASIONAL ===
         $kuliner->jamOperasional()->delete();
 
-        // Simpan jam operasional baru
-        if ($request->jam_buka) {
-            foreach ($request->jam_buka as $hari => $buka) {
+        if ($request->filled('hari')) {
+            foreach ($request->hari as $i => $hari) {
+                $isLibur = isset($request->libur[$i]);
                 JamOperasionalKuliner::create([
                     'id_kuliner' => $kuliner->id_kuliner,
                     'hari' => $hari,
-                    'jam_buka' => isset($request->libur[$hari]) ? null : $buka,
-                    'jam_tutup' => isset($request->libur[$hari]) ? null : ($request->jam_tutup[$hari] ?? null),
+                    'jam_buka' => $isLibur ? null : ($request->jam_buka[$i] ?? null),
+                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$i] ?? null),
+                    'jam_sibuk_mulai' => $isLibur ? null : ($request->jam_sibuk_mulai[$i] ?? null),
+                    'jam_sibuk_selesai' => $isLibur ? null : ($request->jam_sibuk_selesai[$i] ?? null),
                 ]);
             }
         }
 
         return redirect()->route('kuliner.index')
-            ->with('success','Data kuliner berhasil diperbarui!');
+            ->with('success', 'Data tempat kuliner berhasil diperbarui!');
     }
 
     // DELETE /dashboard/kuliner/{id}

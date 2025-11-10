@@ -163,20 +163,21 @@
                             @php
                                 $days = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
                             @endphp
-                            @foreach ($days as $day)
+                            @foreach ($days as $i => $day)
                                 <tr>
-                                    <td><input type="text" name="hari[]"
+                                    <td><input type="text" name="hari[{{ $i }}]"
                                             class="form-control text-center form-control-sm"
                                             value="{{ $day }}" readonly></td>
-                                    <td><input type="time" name="jam_buka[]" class="form-control form-control-sm"
-                                            value="08:00"></td>
-                                    <td><input type="time" name="jam_tutup[]" class="form-control form-control-sm"
-                                            value="21:00"></td>
-                                    <td><input type="time" name="jam_sibuk_mulai[]"
+                                    <td><input type="time" name="jam_buka[{{ $i }}]"
+                                            class="form-control form-control-sm" value="08:00"></td>
+                                    <td><input type="time" name="jam_tutup[{{ $i }}]"
+                                            class="form-control form-control-sm" value="21:00"></td>
+                                    <td><input type="time" name="jam_sibuk_mulai[{{ $i }}]"
                                             class="form-control form-control-sm"></td>
-                                    <td><input type="time" name="jam_sibuk_selesai[]"
+                                    <td><input type="time" name="jam_sibuk_selesai[{{ $i }}]"
                                             class="form-control form-control-sm"></td>
-                                    <td><input type="checkbox" name="libur[]" class="form-check-input"></td>
+                                    <td><input type="checkbox" name="libur[{{ $i }}]"
+                                            class="form-check-input"></td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -327,12 +328,12 @@
                         <div class="col-md-4 mb-3">
                             <label>Pelatihan K3 untuk Penjamah Makanan</label>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="pajak_retribusi"
+                                <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
                                     value="1">
                                 <label class="form-check-label">Ya</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="pajak_retribusi"
+                                <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
                                     value="0">
                                 <label class="form-check-label">Tidak</label>
                             </div>
@@ -371,6 +372,7 @@
                             <label>Frekuensi Sanitasi Alat</label>
                             <input type="text" name="frekuensi_sanitasi_alat" class="form-control"
                                 style="max-width:250px;" placeholder="2 kali sehari">
+                            <small class="form-text note">Hanya diisi jika melakukan sanitasi</small>
                         </div>
                     </div>
 
@@ -386,6 +388,7 @@
                             <label>Frekuensi Sanitasi Bahan</label>
                             <input type="text" name="frekuensi_sanitasi_bahan" class="form-control"
                                 style="max-width:250px;" placeholder="2 kali sehari">
+                            <small class="form-text note">Hanya diisi jika melakukan sanitasi</small>
                         </div>
                     </div>
 
@@ -395,20 +398,24 @@
                             <label>Penyimpanan Bahan Mentah</label>
                             <select name="penyimpanan_mentah" class="form-control">
                                 <option value="">-- Pilih Penyimpanan Bahan Mentah --</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin, Terpisah</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin, Tidak Terpisah</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin, Terpisah">Dengan Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin, Tidak Terpisah">Dengan Pendingin, Tidak Terpisah
+                                </option>
+                                <option value="Tanpa Pendingin, Terpisah">Tanpa Pendingin, Terpisah</option>
+                                <option value="Tanpa Pendingin, Tidak Terpisah">Tanpa Pendingin, Tidak Terpisah
+                                </option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Matang</label>
                             <select name="penyimpanan_matang" class="form-control">
                                 <option value="">-- Pilih Penyimpanan Bahan Matang --</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin, Terpisah</option>
-                                <option value="Dengan Pendingin">Dengan Pendingin, Tidak Terpisah</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
-                                <option value="Tanpa Pendingin">Tanpa Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin, Terpisah">Dengan Pendingin, Terpisah</option>
+                                <option value="Dengan Pendingin, Tidak Terpisah">Dengan Pendingin, Tidak Terpisah
+                                </option>
+                                <option value="Tanpa Pendingin, Terpisah">Tanpa Pendingin, Terpisah</option>
+                                <option value="Tanpa Pendingin, Tidak Terpisah">Tanpa Pendingin, Tidak Terpisah
+                                </option>
                             </select>
                         </div>
                         <div class="mb-3 col-md-4">
@@ -449,7 +456,7 @@
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Dapur</label>
-                            <select name="kondisi_dapur" class="form-control">
+                            <select name="dapur" class="form-control">
                                 <option value="">-- Pilih Dapur --</option>
                                 <option value="Ada, terpisah">Ada, terpisah</option>
                                 <option value="Ada, tidak terpisah">Ada, tidak terpisah</option>
@@ -564,48 +571,27 @@
 
             // --- TABEL JAM OPERASIONAL: LIBUR CHECKBOX ---
             const rows = document.querySelectorAll("table tbody tr");
-            rows.forEach(row => {
-                const checkbox = row.querySelector('input[type="checkbox"][name="libur[]"]');
-                const timeInputs = row.querySelectorAll('input[type="time"]');
 
+            rows.forEach(row => {
+                const checkbox = row.querySelector('input[type="checkbox"][name^="libur["]');
+                const timeInputs = row.querySelectorAll('input[type="time"]');
+                if (!checkbox) return;
+                // Simpan nilai default awal (misal value dari HTML)
+                const defaultValues = Array.from(timeInputs).map(input => input.value);
                 checkbox.addEventListener("change", () => {
-                    timeInputs.forEach(input => {
-                        input.disabled = checkbox.checked;
-                        if (checkbox.checked) input.value = "";
-                    });
+                    if (checkbox.checked) {
+                        timeInputs.forEach(input => {
+                            input.value = "";
+                            input.disabled = true;
+                        });
+                    } else {
+                        timeInputs.forEach((input, idx) => {
+                            input.disabled = false;
+                            input.value = defaultValues[idx] || "";
+                        });
+                    }
                 });
             });
-
-            function toggleFrekuensi(selectId, frekuensiDivId) {
-                const select = document.querySelector(selectId);
-                const frekuensiDiv = document.querySelector(frekuensiDivId);
-
-                function updateVisibility() {
-                    if (select.value === "1") { // 1 = Melakukan
-                        frekuensiDiv.style.display = "block";
-                    } else {
-                        frekuensiDiv.style.display = "none";
-                        // Hapus nilai agar tidak terkirim waktu disembunyikan
-                        const freqSelect = frekuensiDiv.querySelector("select");
-                        if (freqSelect) freqSelect.value = "";
-                    }
-                }
-
-                select.addEventListener("change", updateVisibility);
-                updateVisibility(); // jalankan saat load
-            }
-
-            // Terapkan untuk sanitasi alat
-            toggleFrekuensi(
-                "select[name='prosedur_sanitasi_alat']",
-                ".frekuensi-sanitasi-alat"
-            );
-
-            // Terapkan untuk sanitasi bahan
-            toggleFrekuensi(
-                "select[name='prosedur_sanitasi_bahan']",
-                ".frekuensi-sanitasi-bahan"
-            );
         });
     </script>
 </body>
