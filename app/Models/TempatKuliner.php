@@ -65,7 +65,6 @@ class TempatKuliner extends Model
         'latitude',
     ];
 
-    // Casts: JSON columns to array, booleans, and floats for coords
     protected $casts = [
         'sertifikat_lain' => 'array',
         'profil_pelanggan' => 'array',

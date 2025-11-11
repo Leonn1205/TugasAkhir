@@ -247,14 +247,6 @@ class TempatKulinerController extends Controller
     {
         $kuliner = TempatKuliner::with(['foto', 'jamOperasional'])->findOrFail($id);
 
-        // --- Decode semua kolom JSON ---
-        $kuliner->sertifikat_lain = $kuliner->sertifikat_lain ? json_decode($kuliner->sertifikat_lain, true) : [];
-        $kuliner->profil_pelanggan = $kuliner->profil_pelanggan ? json_decode($kuliner->profil_pelanggan, true) : [];
-        $kuliner->metode_pembayaran = $kuliner->metode_pembayaran ? json_decode($kuliner->metode_pembayaran, true) : [];
-        $kuliner->menu_bersifat = $kuliner->menu_bersifat ? json_decode($kuliner->menu_bersifat, true) : [];
-        $kuliner->fasilitas_pendukung = $kuliner->fasilitas_pendukung ? json_decode($kuliner->fasilitas_pendukung, true) : [];
-        $kuliner->apd_penjamah_makanan = $kuliner->apd_penjamah_makanan ? json_decode($kuliner->apd_penjamah_makanan, true) : [];
-
         // Ambil teks “Lainnya” dari kategori atau sertifikat kalau ada
         $kategoriLain = '';
         if (is_array($kuliner->kategori)) {

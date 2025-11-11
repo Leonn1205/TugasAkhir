@@ -43,8 +43,11 @@
         <h2 class="text-center fw-bold text-success mb-4">Tambah Data Tempat Kuliner</h2>
 
         <div class="form-container shadow">
-            <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data">
+            <form action="{{ route('kuliner.update', $kuliner->id_kuliner) }}" method="POST"
+                enctype="multipart/form-data">
                 @csrf
+                @method('PUT')
+
 
                 {{-- 1. Identitas Usaha --}}
                 <div class="form-section mb-4">
@@ -326,38 +329,66 @@
                         <div class="col-md-4 mb-3">
                             <label>Bentuk Fisik</label>
                             <select name="bentuk_fisik" class="form-control">
-                                <option value="" disabled selected>-- Pilih Bentuk Fisik--</option>
-                                <option value="Restoran">Restoran</option>
-                                <option value="Warung">Warung</option>
-                                <option value="Kafe">Kafe</option>
-                                <option value="Foodcourt">Foodcourt</option>
-                                <option value="Jasa Boga (Katering)">Jasa Boga (Katering)</option>
-                                <option value="Penyedia Makanan oleh Pedagang Keliling">Penyedia Makanan oleh Pedagang
-                                    Keliling</option>
-                                <option value="Penyedia Makanan oleh Pedagang Tidak Keliling">Penyedia Makanan oleh
-                                    Pedagang Tidak Keliling</option>
+                                <option value="" disabled {{ $kuliner->bentuk_fisik ? '' : 'selected' }}>--
+                                    Pilih Bentuk Fisik--</option>
+                                <option value="Restoran" {{ $kuliner->bentuk_fisik == 'Restoran' ? 'selected' : '' }}>
+                                    Restoran</option>
+                                <option value="Warung" {{ $kuliner->bentuk_fisik == 'Warung' ? 'selected' : '' }}>
+                                    Warung</option>
+                                <option value="Kafe" {{ $kuliner->bentuk_fisik == 'Kafe' ? 'selected' : '' }}>Kafe
+                                </option>
+                                <option value="Foodcourt"
+                                    {{ $kuliner->bentuk_fisik == 'Foodcourt' ? 'selected' : '' }}>Foodcourt</option>
+                                <option value="Jasa Boga (Katering)"
+                                    {{ $kuliner->bentuk_fisik == 'Jasa Boga (Katering)' ? 'selected' : '' }}>Jasa Boga
+                                    (Katering)</option>
+                                <option value="Penyedia Makanan oleh Pedagang Keliling"
+                                    {{ $kuliner->bentuk_fisik == 'Penyedia Makanan oleh Pedagang Keliling' ? 'selected' : '' }}>
+                                    Penyedia Makanan oleh Pedagang Keliling</option>
+                                <option value="Penyedia Makanan oleh Pedagang Tidak Keliling"
+                                    {{ $kuliner->bentuk_fisik == 'Penyedia Makanan oleh Pedagang Tidak Keliling' ? 'selected' : '' }}>
+                                    Penyedia Makanan oleh Pedagang Tidak Keliling</option>
                             </select>
                         </div>
+
                         <div class="col-md-4 mb-3">
                             <label>Status Bangunan</label>
-                            <select name="status_bangunan" class="form-control">
-                                <option value="" disabled selected>-- Pilih Status Bangunan --</option>
-                                <option value="Milik Sendiri">Milik Sendiri</option>
-                                <option value="Sewa">Sewa</option>
-                                <option value="Pinjam Pakai">Pinjam Pakai</option>
-                                <option value="Lainnya">Lainnya...</option>
+                            <select name="status_bangunan" id="status_bangunan" class="form-control"
+                                onchange="toggleStatusLain()">
+                                <option value="" disabled {{ $kuliner->status_bangunan ? '' : 'selected' }}>--
+                                    Pilih Status Bangunan --</option>
+                                <option value="Milik Sendiri"
+                                    {{ $kuliner->status_bangunan == 'Milik Sendiri' ? 'selected' : '' }}>Milik Sendiri
+                                </option>
+                                <option value="Sewa" {{ $kuliner->status_bangunan == 'Sewa' ? 'selected' : '' }}>
+                                    Sewa</option>
+                                <option value="Pinjam Pakai"
+                                    {{ $kuliner->status_bangunan == 'Pinjam Pakai' ? 'selected' : '' }}>Pinjam Pakai
+                                </option>
+                                <option value="Lainnya"
+                                    {{ str_starts_with($kuliner->status_bangunan, 'Lainnya:') ? 'selected' : '' }}>
+                                    Lainnya...</option>
                             </select>
+
                             <input type="text" id="status_lain" name="status_lain" class="form-control mt-1"
-                                placeholder="Tulis status lain..." style="display:none; max-width:400px;">
+                                placeholder="Tulis status lain..."
+                                value="{{ str_starts_with($kuliner->status_bangunan, 'Lainnya:') ? substr($kuliner->status_bangunan, 9) : '' }}"
+                                style="{{ str_starts_with($kuliner->status_bangunan, 'Lainnya:') ? '' : 'display:none;' }}; max-width:400px;">
                         </div>
                     </div>
 
                     <div class="mb-3">
                         <label>Fasilitas Pendukung</label><br>
+                        @php
+                            $fasilitas = is_string($kuliner->fasilitas_pendukung)
+                                ? json_decode($kuliner->fasilitas_pendukung, true)
+                                : $kuliner->fasilitas_pendukung;
+                            $fasilitas = is_array($fasilitas) ? $fasilitas : [];
+                        @endphp
                         @foreach (['Toilet', 'Wastafel', 'Parkir', 'Mushola', 'WiFi', 'Tempat Sampah'] as $f)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="fasilitas_pendukung[]" value="{{ $f }}"
-                                    class="form-check-input">
+                                    class="form-check-input" {{ in_array($f, $fasilitas ?? []) ? 'checked' : '' }}>
                                 <label class="form-check-label">{{ $f }}</label>
                             </div>
                         @endforeach
@@ -367,56 +398,62 @@
                 <!-- 4. PRAKTIK K3 & SANITASI -->
                 <div class="form-section mb-4">
                     <h5 class="fw-bold text-success mb-3">4. Praktik K3 & Sanitasi</h5>
-                    <!-- Pelatihan & Penjamah -->
+
+                    {{-- Pelatihan & Penjamah --}}
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Pelatihan K3 untuk Penjamah Makanan</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
-                                    value="1">
+                                    value="1" {{ $kuliner->pelatihan_k3_penjamah == 1 ? 'checked' : '' }}>
                                 <label class="form-check-label">Ya</label>
                             </div>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
-                                    value="0">
+                                    value="0" {{ $kuliner->pelatihan_k3_penjamah == 0 ? 'checked' : '' }}>
                                 <label class="form-check-label">Tidak</label>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
                             <label>Jumlah Penjamah Makanan</label>
                             <input type="number" name="jumlah_penjamah_makanan" class="form-control"
-                                placeholder="Contoh: 3">
+                                value="{{ $kuliner->jumlah_penjamah_makanan }}" placeholder="Contoh: 3">
                         </div>
                     </div>
 
-                    <!-- APD -->
+                    {{-- APD --}}
                     <div class="mb-4">
                         <label class="d-block mb-2">Alat Pelindung Diri Penjamah Makanan</label>
+                        @php
+                            $apdPenjamah = json_decode($kuliner->apd_penjamah_makanan, true) ?? [];
+                        @endphp
                         <div class="d-flex flex-wrap" style="gap: 1rem;">
                             @foreach (['Masker', 'Hairnet', 'Celemek', 'Sarung Tangan'] as $apd)
                                 <div class="form-check form-check-inline">
                                     <input type="checkbox" name="apd_penjamah_makanan[]" value="{{ $apd }}"
-                                        class="form-check-input">
+                                        class="form-check-input" {{ in_array($apd, $apdPenjamah) ? 'checked' : '' }}>
                                     <label class="form-check-label">{{ $apd }}</label>
                                 </div>
                             @endforeach
                         </div>
                     </div>
 
-                    <!-- Sanitasi Alat & Bahan -->
+                    {{-- Sanitasi Alat & Bahan --}}
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Sanitasi Alat Dapur</label>
                             <select name="prosedur_sanitasi_alat" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak Melakukan</option>
-                                <option value="1">Melakukan</option>
+                                <option value="0" {{ $kuliner->prosedur_sanitasi_alat == 0 ? 'selected' : '' }}>
+                                    Tidak Melakukan</option>
+                                <option value="1" {{ $kuliner->prosedur_sanitasi_alat == 1 ? 'selected' : '' }}>
+                                    Melakukan</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-alat">
                             <label>Frekuensi Sanitasi Alat</label>
                             <input type="text" name="frekuensi_sanitasi_alat" class="form-control"
-                                style="max-width:250px;" placeholder="2 kali sehari">
-                            <small class="form-text note">Hanya diisi jika melakukan sanitasi</small>
+                                style="max-width:250px;" placeholder="2 kali sehari"
+                                value="{{ $kuliner->frekuensi_sanitasi_alat }}">
                         </div>
                     </div>
 
@@ -424,120 +461,117 @@
                         <div class="col-md-4 mb-3">
                             <label>Sanitasi Bahan Makanan</label>
                             <select name="prosedur_sanitasi_bahan" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak Melakukan</option>
-                                <option value="1">Melakukan</option>
+                                <option value="0" {{ $kuliner->prosedur_sanitasi_bahan == 0 ? 'selected' : '' }}>
+                                    Tidak Melakukan</option>
+                                <option value="1" {{ $kuliner->prosedur_sanitasi_bahan == 1 ? 'selected' : '' }}>
+                                    Melakukan</option>
                             </select>
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-bahan">
                             <label>Frekuensi Sanitasi Bahan</label>
                             <input type="text" name="frekuensi_sanitasi_bahan" class="form-control"
-                                style="max-width:250px;" placeholder="2 kali sehari">
-                            <small class="form-text note">Hanya diisi jika melakukan sanitasi</small>
+                                style="max-width:250px;" placeholder="2 kali sehari"
+                                value="{{ $kuliner->frekuensi_sanitasi_bahan }}">
                         </div>
                     </div>
 
-                    <!-- Penyimpanan -->
+                    {{-- Penyimpanan --}}
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Mentah</label>
                             <select name="penyimpanan_mentah" class="form-control">
-                                <option value="">-- Pilih Penyimpanan Bahan Mentah --</option>
-                                <option value="Dengan Pendingin, Terpisah">Dengan Pendingin, Terpisah</option>
-                                <option value="Dengan Pendingin, Tidak Terpisah">Dengan Pendingin, Tidak Terpisah
-                                </option>
-                                <option value="Tanpa Pendingin, Terpisah">Tanpa Pendingin, Terpisah</option>
-                                <option value="Tanpa Pendingin, Tidak Terpisah">Tanpa Pendingin, Tidak Terpisah
-                                </option>
+                                @foreach (['Dengan Pendingin, Terpisah', 'Dengan Pendingin, Tidak Terpisah', 'Tanpa Pendingin, Terpisah', 'Tanpa Pendingin, Tidak Terpisah'] as $opt)
+                                    <option value="{{ $opt }}"
+                                        {{ $kuliner->penyimpanan_mentah == $opt ? 'selected' : '' }}>
+                                        {{ $opt }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+
                         <div class="col-md-4 mb-3">
                             <label>Penyimpanan Bahan Matang</label>
                             <select name="penyimpanan_matang" class="form-control">
-                                <option value="">-- Pilih Penyimpanan Bahan Matang --</option>
-                                <option value="Dengan Pendingin, Terpisah">Dengan Pendingin, Terpisah</option>
-                                <option value="Dengan Pendingin, Tidak Terpisah">Dengan Pendingin, Tidak Terpisah
-                                </option>
-                                <option value="Tanpa Pendingin, Terpisah">Tanpa Pendingin, Terpisah</option>
-                                <option value="Tanpa Pendingin, Tidak Terpisah">Tanpa Pendingin, Tidak Terpisah
-                                </option>
+                                @foreach (['Dengan Pendingin, Terpisah', 'Dengan Pendingin, Tidak Terpisah', 'Tanpa Pendingin, Terpisah', 'Tanpa Pendingin, Tidak Terpisah'] as $opt)
+                                    <option value="{{ $opt }}"
+                                        {{ $kuliner->penyimpanan_matang == $opt ? 'selected' : '' }}>
+                                        {{ $opt }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
-                        <div class="mb-3 col-md-4">
+
+                        <div class="col-md-4 mb-3">
                             <label>Prinsip FIFO / FEFO</label>
                             <div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
-                                        value="1">
+                                        value="1" {{ $kuliner->prinsip_fifo_fefo == 1 ? 'checked' : '' }}>
                                     <label class="form-check-label">Ya</label>
                                 </div>
                                 <div class="form-check form-check-inline">
                                     <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
-                                        value="0">
+                                        value="0" {{ $kuliner->prinsip_fifo_fefo == 0 ? 'checked' : '' }}>
                                     <label class="form-check-label">Tidak</label>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Limbah & Ventilasi -->
+                    {{-- Limbah & Ventilasi --}}
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Limbah Dapur</label>
                             <select name="limbah_dapur" class="form-control">
-                                <option value="">-- Pilih Limbah Dapur--</option>
-                                <option value="Dipisah">Dipisah</option>
-                                <option value="Tidak Dipisah">Tidak Dipisah</option>
+                                @foreach (['Dipisah', 'Tidak Dipisah'] as $opt)
+                                    <option value="{{ $opt }}"
+                                        {{ $kuliner->limbah_dapur == $opt ? 'selected' : '' }}>
+                                        {{ $opt }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+
                         <div class="col-md-4 mb-3">
                             <label>Ventilasi Dapur</label>
                             <select name="ventilasi_dapur" class="form-control">
-                                <option value="">-- Pilih Ventilasi Dapur --</option>
-                                <option value="Alami">Alami (misalnya jendela atau ventilasi udara
-                                    langsung)</option>
-                                <option value="Buatan">Buatan (misalnya exhaust fan atau blower)</option>
+                                @foreach (['Alami', 'Buatan'] as $opt)
+                                    <option value="{{ $opt }}"
+                                        {{ $kuliner->ventilasi_dapur == $opt ? 'selected' : '' }}>
+                                        {{ $opt }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
+
                         <div class="col-md-4 mb-3">
                             <label>Dapur</label>
                             <select name="dapur" class="form-control">
-                                <option value="">-- Pilih Dapur --</option>
-                                <option value="Ada, terpisah">Ada, terpisah</option>
-                                <option value="Ada, tidak terpisah">Ada, tidak terpisah</option>
-                                <option value="Tidak ada">Tidak ada</option>
+                                @foreach (['Ada, terpisah', 'Ada, tidak terpisah', 'Tidak ada'] as $opt)
+                                    <option value="{{ $opt }}"
+                                        {{ $kuliner->dapur == $opt ? 'selected' : '' }}>
+                                        {{ $opt }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                     </div>
 
-                    <!-- Sumber Air -->
+                    {{-- Sumber Air --}}
                     <div class="row">
-                        <div class="col-md-4 mb-3">
-                            <label>Sumber Air Cuci</label>
-                            <select name="sumber_air_cuci" class="form-control">
-                                <option value="">-- Pilih Sumber Air Cuci --</option>
-                                <option value="PDAM">PDAM</option>
-                                <option value="Sumur">Sumur</option>
-                                <option value="Air Isi Ulang">Air Isi Ulang</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label>Sumber Air Masak</label>
-                            <select name="sumber_air_masak" class="form-control">
-                                <option value="">-- Pilih Sumber Air Masak --</option>
-                                <option value="PDAM">PDAM</option>
-                                <option value="Sumur">Sumur</option>
-                                <option value="Air Isi Ulang">Air Isi Ulang</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4 mb-3">
-                            <label>Sumber Air Minum</label>
-                            <select name="sumber_air_minum" class="form-control">
-                                <option value="">-- Pilih Sumber Air Minum --</option>
-                                <option value="PDAM">PDAM</option>
-                                <option value="Sumur">Sumur</option>
-                                <option value="Air Isi Ulang">Air Isi Ulang</option>
-                            </select>
-                        </div>
+                        @foreach (['sumber_air_cuci' => 'Sumber Air Cuci', 'sumber_air_masak' => 'Sumber Air Masak', 'sumber_air_minum' => 'Sumber Air Minum'] as $name => $label)
+                            <div class="col-md-4 mb-3">
+                                <label>{{ $label }}</label>
+                                <select name="{{ $name }}" class="form-control">
+                                    @foreach (['PDAM', 'Sumur', 'Air Isi Ulang'] as $opt)
+                                        <option value="{{ $opt }}"
+                                            {{ $kuliner->$name == $opt ? 'selected' : '' }}>
+                                            {{ $opt }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
 
@@ -547,11 +581,13 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Longitude</label>
-                            <input type="text" name="longitude" class="form-control" placeholder="116.8225">
+                            <input type="text" name="longitude" class="form-control"
+                                value="{{ $kuliner->longitude }}" placeholder="116.8225">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>Latitude</label>
-                            <input type="text" name="latitude" class="form-control" placeholder="-3.3211">
+                            <input type="text" name="latitude" class="form-control"
+                                value="{{ $kuliner->latitude }}" placeholder="-3.3211">
                         </div>
                     </div>
                 </div>
@@ -559,7 +595,17 @@
                 <div class="form-section mb-4">
                     <h5 class="fw-bold text-success">6. Foto Kuliner</h3>
                         <div class="mb-3">
+                            <label>Foto Lama</label><br>
+                            @foreach ($kuliner->foto as $f)
+                                <img src="{{ asset('storage/' . $f->path_foto) }}"
+                                    alt="Foto {{ $kuliner->nama_sentra }}" width="100" class="me-2 mb-2">
+                            @endforeach
+                        </div>
+
+                        <div class="mb-3">
+                            <label>Upload Foto Baru</label>
                             <input type="file" name="foto[]" class="form-control" multiple>
+                            <small class="form-text text-muted">Bisa upload beberapa foto. Maks 2MB per file.</small>
                         </div>
                 </div>
 
