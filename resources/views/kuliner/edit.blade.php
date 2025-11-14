@@ -111,26 +111,43 @@
 
                     {{-- Sertifikat --}}
                     @php
-                        $sertifikat = is_array($kuliner->sertifikat_lain)
+                        // Pastikan sertifikat disimpan sebagai array
+                        $sertifikatData = is_array($kuliner->sertifikat_lain)
                             ? $kuliner->sertifikat_lain
                             : json_decode($kuliner->sertifikat_lain ?? '[]', true);
+
+                        $sertifikatLainText = '';
+
+                        // Cek kalau ada data "Lainnya: ..."
+                        foreach ($sertifikatData as $item) {
+                            if (str_starts_with($item, 'Lainnya:')) {
+                                $sertifikatLainText = trim(substr($item, 8)); // ambil teks setelah "Lainnya:"
+                            }
+                        }
                     @endphp
+
                     <div class="mb-3">
                         <label>Sertifikat (boleh lebih dari satu)</label><br>
                         @foreach (['PIRT', 'BPOM', 'Halal', 'NIB', 'Lainnya'] as $item)
+                            @php
+                                $checked =
+                                    in_array($item, $sertifikatData) || ($item === 'Lainnya' && $sertifikatLainText)
+                                        ? 'checked'
+                                        : '';
+                            @endphp
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="sertifikat_lain[]" value="{{ $item }}"
                                     id="sertifikat_{{ $item }}" class="form-check-input sertifikat-check"
-                                    {{ in_array($item, old('sertifikat_lain', $sertifikat)) ? 'checked' : '' }}>
+                                    {{ $checked }}>
                                 <label class="form-check-label"
                                     for="sertifikat_{{ $item }}">{{ $item }}</label>
                             </div>
                         @endforeach
+
                         <input type="text" id="sertifikat_lain_text" name="sertifikat_lain_text"
-                            class="form-control mt-2"
-                            value="{{ old('sertifikat_lain_text', $kuliner->sertifikat_lain_text ?? '') }}"
+                            class="form-control mt-2" value="{{ $sertifikatLainText }}"
                             placeholder="Tulis sertifikat lainnya..."
-                            style="display: {{ in_array('Lainnya', $sertifikat) ? 'block' : 'none' }}; max-width:300px;">
+                            style="display: {{ $sertifikatLainText ? 'block' : 'none' }}; max-width:300px;">
                     </div>
 
                     <div class="row">
@@ -257,15 +274,25 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label>Kategori</label><br>
-                            @php $kategoriLain = ''; @endphp
+                            @php
+                                $kategoriData = json_decode($kuliner->kategori ?? '[]', true) ?? [];
+                                $kategoriLain = '';
+
+                                // Cek apakah ada data kategori yang diawali dengan 'Lainnya:'
+                                foreach ($kategoriData as $item) {
+                                    if (str_starts_with($item, 'Lainnya:')) {
+                                        $kategoriLain = trim(substr($item, 8));
+                                        break;
+                                    }
+                                }
+                            @endphp
+
                             @foreach (['Tradisional/Domestik', 'Modern/Luar Negeri', 'Street Food', 'Lainnya'] as $kategori)
                                 @php
-                                    $checked = in_array($kategori, json_decode($kuliner->kategori ?? '[]', true) ?? [])
-                                        ? 'checked'
-                                        : '';
-                                    if (str_starts_with($kategori, 'Lainnya:')) {
-                                        $kategoriLain = substr($kategori, 9);
-                                    }
+                                    $checked =
+                                        in_array($kategori, $kategoriData) || ($kategori === 'Lainnya' && $kategoriLain)
+                                            ? 'checked'
+                                            : '';
                                 @endphp
                                 <div class="form-check form-check-inline">
                                     <input type="checkbox" name="kategori[]" value="{{ $kategori }}"
@@ -273,8 +300,9 @@
                                     <label class="form-check-label">{{ $kategori }}</label>
                                 </div>
                             @endforeach
+
                             <input type="text" id="kategori_lain" name="kategori_lain"
-                                value="{{ old('kategori_lain', $kategoriLain ?? '') }}" class="form-control mt-2"
+                                value="{{ $kategoriLain }}" class="form-control mt-2"
                                 placeholder="Tulis kategori lain..."
                                 style="{{ $kategoriLain ? '' : 'display:none;' }}; max-width:400px;">
                         </div>
@@ -353,8 +381,7 @@
 
                         <div class="col-md-4 mb-3">
                             <label>Status Bangunan</label>
-                            <select name="status_bangunan" id="status_bangunan" class="form-control"
-                                onchange="toggleStatusLain()">
+                            <select name="status_bangunan" id="status_bangunan" class="form-control">
                                 <option value="" disabled {{ $kuliner->status_bangunan ? '' : 'selected' }}>--
                                     Pilih Status Bangunan --</option>
                                 <option value="Milik Sendiri"
@@ -402,7 +429,7 @@
                     {{-- Pelatihan & Penjamah --}}
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Pelatihan K3 untuk Penjamah Makanan</label>
+                            <label>Pelatihan K3</label>
                             <div class="form-check form-check-inline">
                                 <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
                                     value="1" {{ $kuliner->pelatihan_k3_penjamah == 1 ? 'checked' : '' }}>
@@ -669,10 +696,8 @@
                 const timeInputs = row.querySelectorAll('input[type="time"]');
                 if (!checkbox || !timeInputs.length) return;
 
-                // Simpan nilai default dari tiap input time
                 const defaultValues = Array.from(timeInputs).map(input => input.value);
 
-                // Kalau sudah libur dari awal (misal dari edit)
                 if (checkbox.checked) {
                     timeInputs.forEach(input => {
                         input.value = "";
@@ -680,7 +705,6 @@
                     });
                 }
 
-                // Tambahkan event change
                 checkbox.addEventListener("change", () => {
                     if (checkbox.checked) {
                         timeInputs.forEach(input => {
@@ -695,6 +719,24 @@
                     }
                 });
             });
+
+            // === 5. AUTO TAMPIL SAAT ADA NILAI DARI DATABASE ===
+            if (sertifikatLainText && sertifikatLainText.value.trim() !== "") {
+                sertifikatLainText.style.display = "block";
+                const lainCheckbox = Array.from(sertifikatChecks).find(chk => chk.value === "Lainnya");
+                if (lainCheckbox) lainCheckbox.checked = true;
+            }
+
+            if (kategoriLainText && kategoriLainText.value.trim() !== "") {
+                kategoriLainText.style.display = "block";
+                const lainCheckbox = Array.from(kategoriChecks).find(chk => chk.value === "Lainnya");
+                if (lainCheckbox) lainCheckbox.checked = true;
+            }
+
+            if (statusLainInput && statusLainInput.value.trim() !== "") {
+                statusLainInput.style.display = "block";
+                if (statusSelect) statusSelect.value = "Lainnya";
+            }
         });
     </script>
 

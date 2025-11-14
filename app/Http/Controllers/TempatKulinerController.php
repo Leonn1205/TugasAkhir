@@ -7,6 +7,7 @@ use App\Models\FotoKuliner;
 use App\Models\JamOperasionalKuliner;
 use Illuminate\Http\Request;
 
+
 class TempatKulinerController extends Controller
 {
     // GET /dashboard/kuliner
@@ -66,11 +67,6 @@ class TempatKulinerController extends Controller
         }
         $data['kategori'] = json_encode($kategori);
 
-        // Pengelolaan limbah
-        $data['pengelolaan_limbah'] = $request->pengelolaan_limbah
-            ? json_encode($request->pengelolaan_limbah)
-            : null;
-
         // Bahan baku
         $data['bahan_baku'] = $request->bahan_baku
             ? json_encode($request->bahan_baku)
@@ -105,7 +101,7 @@ class TempatKulinerController extends Controller
             default => null,
         };
 
-       $data['prosedur_sanitasi_alat'] = (int) $request->input('prosedur_sanitasi_alat');
+        $data['prosedur_sanitasi_alat'] = (int) $request->input('prosedur_sanitasi_alat');
         $data['prosedur_sanitasi_bahan'] = (int) $request->input('prosedur_sanitasi_bahan');
 
         $data['penyimpanan_mentah'] = match ($request->input('penyimpanan_mentah')) {
@@ -163,6 +159,12 @@ class TempatKulinerController extends Controller
             default => null,
         };
 
+        if ($request->input('status_bangunan') === 'Lainnya') {
+            $data['status_bangunan'] = $request->input('status_lain');
+        } else {
+            $data['status_bangunan'] = $request->input('status_bangunan');
+        }
+
         // === SIMPAN DATA UTAMA ===
         $kuliner = TempatKuliner::create([
             'nama_sentra' => $data['nama_sentra'] ?? null,
@@ -190,7 +192,6 @@ class TempatKulinerController extends Controller
             'status_bangunan' => $data['status_bangunan'] ?? null,
             'fasilitas_pendukung' => $data['fasilitas_pendukung'] ?? null,
             'dapur' => $data['dapur'] ?? null,
-            'pengelolaan_limbah' => $data['pengelolaan_limbah'] ?? null,
             'pelatihan_k3' => $data['pelatihan_k3'] ?? null,
             'jumlah_penjamah_makanan' => $data['jumlah_penjamah_makanan'] ?? null,
             'apd_penjamah_makanan' => $data['apd_penjamah_makanan'] ?? null,
@@ -248,6 +249,10 @@ class TempatKulinerController extends Controller
         $kuliner = TempatKuliner::with(['foto', 'jamOperasional'])->findOrFail($id);
 
         // Ambil teks “Lainnya” dari kategori atau sertifikat kalau ada
+        $kategoriData = is_array($kuliner->kategori)
+            ? $kuliner->kategori
+            : json_decode($kuliner->kategori, true);
+
         $kategoriLain = '';
         if (is_array($kuliner->kategori)) {
             foreach ($kuliner->kategori as $item) {
@@ -257,6 +262,9 @@ class TempatKulinerController extends Controller
             }
         }
 
+        $sertifikatData = is_array($kuliner->sertifikat_lain)
+            ? $kuliner->sertifikat_lain
+            : json_decode($kuliner->sertifikat_lain, true);
         $sertifikatLainText = '';
         if (is_array($kuliner->sertifikat_lain)) {
             foreach ($kuliner->sertifikat_lain as $item) {
@@ -334,12 +342,17 @@ class TempatKulinerController extends Controller
             : null;
 
         // === BOOLEAN / RADIO ===
-        $data['pelatihan_k3'] = $request->has('pelatihan_k3') ? 1 : 0;
-        $data['pajak_retribusi'] = $request->has('pajak_retribusi') ? 1 : 0;
-        $data['fifo_fefo'] = $request->has('fifo_fefo') ? 1 : 0;
-        $data['prosedur_sanitasi_alat'] = $request->has('prosedur_sanitasi_alat') ? 1 : 0;
-        $data['prosedur_sanitasi_bahan'] = $request->has('prosedur_sanitasi_bahan') ? 1 : 0;
+        $data['pelatihan_k3'] = $request->input('pelatihan_k3') ? 1 : 0;
+        $data['pajak_retribusi'] = $request->input('pajak_retribusi') ? 1 : 0;
+        $data['fifo_fefo'] = $request->input('fifo_fefo') ? 1 : 0;
+        $data['prosedur_sanitasi_alat'] = $request->input('prosedur_sanitasi_alat') ? 1 : 0;
+        $data['prosedur_sanitasi_bahan'] = $request->input('prosedur_sanitasi_bahan') ? 1 : 0;
 
+        if ($request->status_bangunan === 'Lainnya') {
+        $data['status_bangunan'] = 'Lainnya: ' . $request->status_lain;
+        } else {
+            $data['status_bangunan'] = $request->status_bangunan;
+        }
         // === UPDATE DATA UTAMA ===
         $kuliner->update($data);
 

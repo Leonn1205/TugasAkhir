@@ -326,16 +326,18 @@
                     <!-- Pelatihan & Penjamah -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Pelatihan K3 untuk Penjamah Makanan</label>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
-                                    value="1">
-                                <label class="form-check-label">Ya</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="pelatihan_k3_penjamah"
-                                    value="0">
-                                <label class="form-check-label">Tidak</label>
+                            <label>Pelatihan K3</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="pelatihan_k3"
+                                        value="1">
+                                    <label class="form-check-label">Ya</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="pelatihan_k3"
+                                        value="0">
+                                    <label class="form-check-label">Tidak</label>
+                                </div>
                             </div>
                         </div>
                         <div class="col-md-4 mb-3">
@@ -362,11 +364,17 @@
                     <!-- Sanitasi Alat & Bahan -->
                     <div class="row">
                         <div class="col-md-4 mb-3">
-                            <label>Sanitasi Alat Dapur</label>
-                            <select name="prosedur_sanitasi_alat" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak Melakukan</option>
-                                <option value="1">Melakukan</option>
-                            </select>
+                            <label class="form-label d-block">Sanitasi Alat Dapur</label>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="prosedur_sanitasi_alat"
+                                    id="sanitasi_tidak" value="0">
+                                <label class="form-check-label" for="sanitasi_tidak">Tidak Melakukan</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="prosedur_sanitasi_alat"
+                                    id="sanitasi_ya" value="1">
+                                <label class="form-check-label" for="sanitasi_ya">Melakukan</label>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-alat">
                             <label>Frekuensi Sanitasi Alat</label>
@@ -379,10 +387,16 @@
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <label>Sanitasi Bahan Makanan</label>
-                            <select name="prosedur_sanitasi_bahan" class="form-control" style="max-width:250px;">
-                                <option value="0">Tidak Melakukan</option>
-                                <option value="1">Melakukan</option>
-                            </select>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="prosedur_sanitasi_bahan"
+                                    id="sanitasi_bahan_tidak" value="0">
+                                <label class="form-check-label" for="sanitasi_bahan_tidak">Tidak Melakukan</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="prosedur_sanitasi_bahan"
+                                    id="sanitasi_bahan_ya" value="1">
+                                <label class="form-check-label" for="sanitasi_bahan_ya">Melakukan</label>
+                            </div>
                         </div>
                         <div class="col-md-4 mb-3 frekuensi-sanitasi-bahan">
                             <label>Frekuensi Sanitasi Bahan</label>
@@ -422,12 +436,12 @@
                             <label>Prinsip FIFO / FEFO</label>
                             <div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
+                                    <input class="form-check-input" type="radio" name="fifo_fefo"
                                         value="1">
                                     <label class="form-check-label">Ya</label>
                                 </div>
                                 <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="prinsip_fifo_fefo"
+                                    <input class="form-check-input" type="radio" name="fifo_fefo"
                                         value="0">
                                     <label class="form-check-label">Tidak</label>
                                 </div>

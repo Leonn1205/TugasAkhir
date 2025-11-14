@@ -39,7 +39,7 @@ return new class extends Migration
             $table->string('menu_unggulan')->nullable();
             $table->string('bahan_baku_utama')->nullable();
             $table->string('sumber_bahan_baku')->nullable(); // dropdown (Lokal, Campuran, Impor)
-            $table->json('menu_bersifat')->nullable(); // multi-choice (Tetap, Musiman, Berganti)
+            $table->json('menu_bersifat')->nullable(); 
 
             // -----------------------------
             // 3. TEMPAT & FASILITAS
@@ -55,7 +55,7 @@ return new class extends Migration
             $table->boolean('pelatihan_k3')->default(false);
             $table->json('apd_penjamah_makanan')->nullable(); // checkbox (Masker, Hairnet, Celemek, Sarung tangan)
             $table->boolean('prosedur_sanitasi_alat')->default(false);
-            $table->string('frekuensi_sanitasi_alat')->nullable(); 
+            $table->string('frekuensi_sanitasi_alat')->nullable();
             $table->boolean('prosedur_sanitasi_bahan')->default(false);
             $table->string('frekuensi_sanitasi_bahan')->nullable();
             $table->string('penyimpanan_mentah')->nullable(); // dropdown (Dengan pendingin, Tanpa pendingin, Terpisah, Tidak terpisah)
