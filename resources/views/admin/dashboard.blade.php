@@ -15,12 +15,11 @@
             padding: 0;
             overflow-x: hidden;
             font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            background: #f4f6f9;
         }
 
-        /* Header */
         .header {
-            background-color: #2f5233;
+            background: #2f5233;
             color: white;
             padding: 1.5rem;
             font-size: 22px;
@@ -28,9 +27,8 @@
             text-align: center;
         }
 
-        /* Sidebar */
         .sidebar {
-            background-color: #0d3059;
+            background: #0d3059;
             color: white;
             min-height: 100vh;
             padding-top: 1rem;
@@ -46,13 +44,12 @@
 
         .sidebar a:hover,
         .sidebar a.active {
-            background-color: #15477a;
+            background: #15477a;
         }
 
-        /* Submenu */
         .submenu {
             display: none;
-            background-color: #123456;
+            background: #123456;
         }
 
         .submenu a {
@@ -64,7 +61,6 @@
             display: block;
         }
 
-        /* Peta */
         #map {
             height: 500px;
             border-radius: 10px;
@@ -72,7 +68,6 @@
             margin-bottom: 20px;
         }
 
-        /* Ringkasan */
         .stat-box {
             border-radius: 10px;
             padding: 25px;
@@ -100,17 +95,14 @@
 
 <body>
 
-    <!-- Header -->
     <div class="header d-flex align-items-center justify-content-between px-4">
         <div class="d-flex align-items-center gap-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo Kotabaru" style="height: 50px;">
-            <h1 class="mb-0" style="font-size: 22px;">Kotabaru Tourism Data Center</h1>
+            <img src="{{ asset('images/logo.png') }}" alt="Logo Kotabaru" style="height:50px;">
+            <h1 class="mb-0" style="font-size:22px;">Kotabaru Tourism Data Center</h1>
         </div>
     </div>
 
-    <!-- Layout -->
     <div class="row g-0">
-        <!-- Sidebar -->
         <div class="col-md-2 sidebar">
             <a href="{{ route('dashboard.admin') }}" class="active">
                 <i class="bi bi-house-door-fill me-2"></i> Dashboard
@@ -127,22 +119,16 @@
             </a>
         </div>
 
-        <!-- Content -->
         <div class="col-md-10">
             <div class="container mt-4">
                 <div class="row">
-                    <!-- Map -->
                     <div id="map-container" class="col-md-12">
-                        <div id="map" style="height:500px;"></div>
+                        <div id="map"></div>
                     </div>
-
-                    <!-- Panel detail -->
                     <div id="detail-container" class="col-md-4" style="display:none;">
                         <div id="detail-panel" class="p-3 bg-white border rounded shadow-sm"
                             style="max-height:500px; overflow-y:auto;">
                             <h4 id="detail-nama" class="fw-bold"></h4>
-                            <p><b>Kategori:</b> <span id="detail-kategori"></span></p>
-                            <p id="detail-deskripsi"></p>
                             <h6>Jam Operasional:</h6>
                             <ul id="detail-jam"></ul>
                             <h6>Foto:</h6>
@@ -153,7 +139,6 @@
                 </div>
 
                 <script>
-                    // Submenu toggle
                     document.getElementById("wisataMenu").addEventListener("click", function(e) {
                         e.preventDefault();
                         document.getElementById("submenuWisata").classList.toggle("show");
@@ -169,7 +154,6 @@
 
                     let currentMarkerId = null;
 
-                    // 🔹 Tempat Wisata
                     @foreach ($wisata as $w)
                         if ("{{ $w->latitude }}" && "{{ $w->longitude }}") {
                             var wisataIcon = L.icon({
@@ -184,10 +168,8 @@
 
                             marker.on('click', function() {
                                 showDetail("wisata-{{ $w->id_wisata }}", {
-                                    nama: "{{ $w->nama_wisata }}",
-                                    kategori: "{{ $w->kategori_wisata->nama_kategori ?? '-' }}",
-                                    deskripsi: "{{ $w->deskripsi ?? '-' }}",
-                                    link: "{{ route('wisata.show', $w->id_wisata) }}",
+                                    nama: @json($w->nama_wisata),
+                                    link: @json(route('wisata.show', $w->id_wisata)),
                                     jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
                                             return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
                                                 ? "<li><b>{$jam->hari}:</b> Libur</li>"
@@ -200,10 +182,10 @@
                                         })->implode('') !!}`
                                 }, [{{ $w->latitude }}, {{ $w->longitude }}]);
                             });
+
                         }
                     @endforeach
 
-                    // 🔹 Tempat Kuliner
                     @foreach ($kuliner as $k)
                         if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
                             var kulinerIcon = L.icon({
@@ -218,8 +200,7 @@
 
                             marker.on('click', function() {
                                 showDetail("kuliner-{{ $k->id_kuliner }}", {
-                                    nama: "{{ $k->nama_usaha }}",
-                                    kategori: "{{ $k->kategori_utama ?? '-' }}",
+                                    nama: @json($k->nama_sentra),
                                     link: "{{ route('kuliner.show', $k->id_kuliner) }}",
                                     jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
                                             return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
@@ -236,7 +217,6 @@
                         }
                     @endforeach
 
-                    // 🔹 Fungsi tampilkan detail
                     function showDetail(markerId, data, coords) {
                         let detailContainer = document.getElementById('detail-container');
                         let mapContainer = document.getElementById('map-container');
@@ -254,8 +234,7 @@
                             currentMarkerId = markerId;
 
                             document.getElementById('detail-nama').innerText = data.nama;
-                            document.getElementById('detail-kategori').innerText = data.kategori;
-                            document.getElementById('detail-deskripsi').innerText = data.deskripsi ?? '';
+
                             document.getElementById('detail-link').href = data.link;
                             document.getElementById('detail-jam').innerHTML = data.jam;
                             document.getElementById('detail-foto').innerHTML = data.foto;
@@ -285,6 +264,7 @@
             </div>
         </div>
     </div>
+
 </body>
 
 </html>

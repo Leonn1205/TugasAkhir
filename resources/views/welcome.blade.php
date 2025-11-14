@@ -90,7 +90,7 @@
                 <div id="detail-panel" class="p-3 bg-white border rounded shadow-sm"
                     style="max-height:500px; overflow-y:auto;">
                     <h4 id="detail-nama" class="fw-bold"></h4>
-                    <p><b>Kategori:</b> <span id="detail-kategori"></span></p>
+                    
                     <p id="detail-deskripsi"></p>
                     <h6>Jam Operasional:</h6>
                     <ul id="detail-jam"></ul>
@@ -148,8 +148,7 @@
                 marker.on('click', function() {
                     showDetail("wisata-{{ $w->id_wisata }}", {
                         nama: @json($w->nama_wisata),
-                        kategori: @json($w->kategori_wisata->nama_kategori ?? '-'),
-                        deskripsi: @json($w->deskripsi ?? '-'),
+
                         link: @json(route('wisata.show', $w->id_wisata)),
                         jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
                                 return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
@@ -182,8 +181,8 @@
 
                 marker.on('click', function() {
                     showDetail("kuliner-{{ $k->id_kuliner }}", {
-                        nama: "{{ $k->nama_usaha }}",
-                        kategori: "{{ $k->kategori_utama ?? '-' }}",
+                        nama: @json($k->nama_sentra),
+
                         link: "{{ route('kuliner.show', $k->id_kuliner) }}",
                         jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
                                 return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
@@ -218,8 +217,6 @@
                 currentMarkerId = markerId;
 
                 document.getElementById('detail-nama').innerText = data.nama;
-                document.getElementById('detail-kategori').innerText = data.kategori;
-                document.getElementById('detail-deskripsi').innerText = data.deskripsi ?? '';
                 document.getElementById('detail-link').href = data.link;
                 document.getElementById('detail-jam').innerHTML = data.jam;
                 document.getElementById('detail-foto').innerHTML = data.foto;

@@ -89,7 +89,7 @@
 
 <body>
     <div class="container">
-        <h1>{{ $kuliner->nama_usaha }}</h1>
+        <h1>{{ $kuliner->nama_sentra }}</h1>
 
         {{-- Identitas Usaha --}}
         <h3>Identitas Usaha</h3>

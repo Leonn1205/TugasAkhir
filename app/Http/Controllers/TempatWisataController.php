@@ -28,6 +28,7 @@ class TempatWisataController extends Controller
     {
         $request->validate([
             'nama_wisata'   => 'required|string|max:255',
+            'alamat_lengkap' => 'nullable|string',
             'id_kategori'   => 'required|exists:kategori_wisata,id_kategori',
             'longitude'     => 'nullable|numeric',
             'latitude'      => 'nullable|numeric',
@@ -38,9 +39,14 @@ class TempatWisataController extends Controller
         ]);
 
         $wisata = TempatWisata::create($request->only([
-            'nama_wisata','id_kategori',
-            'longitude','latitude',
-            'deskripsi','sejarah','narasi'
+            'nama_wisata',
+            'alamat_lengkap',
+            'id_kategori',
+            'longitude',
+            'latitude',
+            'deskripsi',
+            'sejarah',
+            'narasi'
         ]));
 
         // Foto

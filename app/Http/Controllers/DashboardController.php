@@ -10,9 +10,9 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $wisata = TempatWisata::all();
-        $kuliner = TempatKuliner::all();
+        $wisata = TempatWisata::with(['kategori', 'foto', 'jamOperasional'])->get();
+        $kuliner = TempatKuliner::with(['foto', 'jamOperasional'])->get();
 
-        return view('dashboard_user', compact('wisata', 'kuliner'));
+        return view('dashboard_admin', compact('wisata', 'kuliner'));
     }
 }
