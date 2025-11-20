@@ -75,6 +75,12 @@
                 transform: translateY(0);
             }
         }
+
+        .list-box {
+            max-height: 140px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
     </style>
 </head>
 
@@ -101,13 +107,67 @@
                 <input type="text" id="searchInput" class="form-control" placeholder="Cari wisata / kuliner">
                 <div id="searchResult" class="list-group mt-2"></div>
 
-                <!-- Filter Kategori -->
-                <label class="fw-bold mb-1">Filter Kategori</label>
-                <select id="filter-kategori" class="form-select mb-3">
-                    <option value="semua">Semua</option>
-                    <option value="wisata">Wisata</option>
-                    <option value="kuliner">Kuliner</option>
-                </select>
+                <!-- Filter Kategori Wisata -->
+                <form method="GET" action="{{ route('home') }}" autocomplete="off" class="mt-2">
+                    <label class="fw-bold mb-1">Filter Kategori Wisata</label>
+                    <select name="filter_wisata" id="filter-wisata" class="form-select mb-3"
+                        onchange="this.form.submit()">
+
+                        <option value="semua"
+                            {{ request('filter_wisata') == 'semua' || request('filter_wisata') == null ? 'selected' : '' }}>
+                            Semua
+                        </option>
+
+                        @foreach ($kategoriWisataList as $k)
+                            <option value="{{ $k->id_kategori }}"
+                                {{ request('filter_wisata') == $k->id_kategori ? 'selected' : '' }}>
+                                {{ $k->nama_kategori }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <h5>Tempat Wisata</h5>
+                <div class="list-box">
+                    <ul id="list-wisata">
+                        @foreach ($wisata as $w)
+                            <li class="wisata-item" data-kategori="{{ $w->id_kategori }}">
+                                <a href="{{ route('wisata.show', $w->id_wisata) }}">
+                                    {{ $w->nama_wisata }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+
+                <form method="GET" action="{{ route('home') }}" class="mt-2">
+                    <label class="fw-bold mb-1">Filter Jenis Menu Kuliner</label>
+                    <select name="filter_kuliner" class="form-select mb-3" onchange="this.form.submit()">
+                        <option value="semua">Semua</option>
+                        @foreach ($kategoriKulinerList as $k)
+                            <option value="{{ $k }}"
+                                {{ request('filter_kuliner') == $k ? 'selected' : '' }}>
+                                {{ $k }}
+                            </option>
+                        @endforeach
+                    </select>
+                </form>
+
+                <h5>Tempat Kuliner</h5>
+                <div class="list-box">
+                    <ul id="list-kuliner">
+                        @foreach ($kulinerFiltered as $k)
+                            @php
+                                $kategoriArray = json_decode($k->kategori, true) ?: [];
+                            @endphp
+                            <li class="kuliner-item" data-kategori="{{ implode(',', $kategoriArray) }}">
+                                <a href="{{ route('kuliner.show', $k->id_kuliner) }}">
+                                    {{ $k->nama_sentra }}
+                                </a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
 
                 <!-- Rekomendasi -->
                 <label class="fw-bold mb-1">Rekomendasi Terdekat</label>
@@ -157,7 +217,7 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <div class="stat-box">
-                            <h3>{{ $kuliner->count() }}</h3>
+                            <h3>{{ $kulinerFiltered->count() }}</h3>
                             <p>Lokasi Kuliner</p>
                         </div>
                     </div>
@@ -167,6 +227,9 @@
     </div>
 
     <script>
+        const dataWisata = @json($wisata);
+        const dataKuliner = @json($kulinerFiltered);
+
         var map = L.map('map').setView([-7.78694, 110.375], 15);
 
         L.tileLayer('https://cartodb-basemaps-a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -212,7 +275,7 @@
         @endforeach
 
         // Tempat Kuliner
-        @foreach ($kuliner as $k)
+        @foreach ($kulinerFiltered as $k)
             if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
                 var kulinerIcon = L.icon({
                     iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',

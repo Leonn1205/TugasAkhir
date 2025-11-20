@@ -11,6 +11,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KategoriWisataController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\MapController;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +25,15 @@ use App\Http\Controllers\SearchController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'index'])->name('home');
+// Route::get('/', function (Request $request) {
+//     dd($request->all());
+// });
+
+
+Route::get('/wisata/{id}', [TempatWisataController::class, 'show'])->name('wisata.show');
+Route::get('/kuliner/{id}', [TempatKulinerController::class, 'show'])->name('kuliner.show');
+
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -52,3 +62,5 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('dashboard')->group(func
 Route::get('/export/{tipe}', [ExportController::class, 'exportExcel'])->name('export.excel');
 
 Route::get('/search', [SearchController::class, 'searchAll']);
+
+Route::get('/map', [MapController::class, 'index']);
