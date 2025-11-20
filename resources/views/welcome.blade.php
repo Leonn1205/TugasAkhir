@@ -30,6 +30,11 @@
             text-align: center;
         }
 
+        .sidebar {
+            height: 100vh;
+            overflow-y: auto;
+        }
+
         #map {
             height: 500px;
             border-radius: 10px;
@@ -100,7 +105,7 @@
     <div class="container-fluid p-0" style="height: 100vh; overflow: hidden;">
         <div class="row m-0 h-100">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 bg-primary text-white p-3" style="background-color: #062b5b !important;">
+            <div class="col-md-3 col-lg-2 bg-primary text-white p-3 sidebar" style="background-color: #062b5b !important;">
 
                 <!-- Input Cari Tempat -->
                 <label class="fw-bold mb-1">Cari Tempat</label>
@@ -171,9 +176,33 @@
 
                 <!-- Rekomendasi -->
                 <label class="fw-bold mb-1">Rekomendasi Terdekat</label>
-                <button class="btn btn-warning w-100 mb-3 fw-bold" id="btn-rekomendasi">
-                    Tampilkan
+                <button id="btn-rekomendasi" class="btn btn-warning w-100 mb-3 fw-bold">
+                    Rekomendasi Terdekat
                 </button>
+
+                <h5>Rekomendasi Wisata Terdekat</h5>
+                <ul>
+                    @foreach ($wisata as $w)
+                        <li>
+                            {{ $w->nama_wisata }}
+                            @isset($w->jarak)
+                                - {{ number_format($w->jarak, 2) }} km
+                            @endisset
+                        </li>
+                    @endforeach
+                </ul>
+                <h5>Rekomendasi Kuliner Terdekat</h5>
+                <ul>
+                    @foreach ($kulinerFiltered as $k)
+                        <li>
+                            {{ $k->nama_sentra }}
+                            @isset($k->jarak)
+                                - {{ number_format($k->jarak, 2) }} km
+                            @endisset
+                        </li>
+                    @endforeach
+                </ul>
+
 
                 <!-- Status Buka -->
                 <label class="fw-bold mb-1">Status Buka</label>
@@ -431,6 +460,25 @@
             if (!searchInput.contains(e.target) && !resultBox.contains(e.target)) {
                 resultBox.innerHTML = "";
             }
+        });
+
+        document.getElementById('btn-rekomendasi').addEventListener('click', function() {
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos) {
+
+                    let lat = pos.coords.latitude;
+                    let lng = pos.coords.longitude;
+
+                    window.location = `?lat=${lat}&lng=${lng}`;
+
+                }, function() {
+                    alert('Lokasi tidak dapat diambil');
+                });
+            } else {
+                alert('Browser tidak mendukung GPS');
+            }
+
         });
     </script>
 </body>
