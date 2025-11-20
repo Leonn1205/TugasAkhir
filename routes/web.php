@@ -10,7 +10,7 @@ use App\Http\Controllers\TempatKulinerController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KategoriWisataController;
 use App\Http\Controllers\ExportController;
-
+use App\Http\Controllers\SearchController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,3 +50,5 @@ Route::middleware(['auth', 'role:Super Admin'])->prefix('dashboard')->group(func
 });
 
 Route::get('/export/{tipe}', [ExportController::class, 'exportExcel'])->name('export.excel');
+
+Route::get('/search', [SearchController::class, 'searchAll']);
