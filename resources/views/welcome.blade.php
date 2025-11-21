@@ -35,6 +35,15 @@
             overflow-y: auto;
         }
 
+        #searchResult {
+            position: absolute;
+            z-index: 1050;
+            width: 100%;
+            max-height: 260px;
+            overflow-y: auto;
+        }
+
+
         #map {
             height: 500px;
             border-radius: 10px;
@@ -105,15 +114,20 @@
     <div class="container-fluid p-0" style="height: 100vh; overflow: hidden;">
         <div class="row m-0 h-100">
             <!-- Sidebar -->
-            <div class="col-md-3 col-lg-2 bg-primary text-white p-3 sidebar" style="background-color: #062b5b !important;">
+            <div class="col-md-3 col-lg-2 bg-primary text-white p-3 sidebar"
+                style="background-color: #062b5b !important;">
 
                 <!-- Input Cari Tempat -->
-                <label class="fw-bold mb-1">Cari Tempat</label>
-                <input type="text" id="searchInput" class="form-control" placeholder="Cari wisata / kuliner">
-                <div id="searchResult" class="list-group mt-2"></div>
+                <div style="position: relative;">
+                    <label class="fw-bold mb-1">Cari Tempat</label>
+                    <input type="text" id="searchInput" class="form-control" placeholder="Cari wisata / kuliner">
+                    <div id="searchResult" class="list-group mt-2"></div>
+                </div>
+
+
 
                 <!-- Filter Kategori Wisata -->
-                <form method="GET" action="{{ route('home') }}" autocomplete="off" class="mt-2">
+                <form method="GET" action="{{ route('home') }}" autocomplete="off" class="mt-2" id="form-wisata">
                     <label class="fw-bold mb-1">Filter Kategori Wisata</label>
                     <select name="filter_wisata" id="filter-wisata" class="form-select mb-3"
                         onchange="this.form.submit()">
@@ -145,7 +159,7 @@
                     </ul>
                 </div>
 
-                <form method="GET" action="{{ route('home') }}" class="mt-2">
+                <form method="GET" action="{{ route('home') }}" autocomplete="off" class="mt-2" id="form-kuliner">
                     <label class="fw-bold mb-1">Filter Jenis Menu Kuliner</label>
                     <select name="filter_kuliner" class="form-select mb-3" onchange="this.form.submit()">
                         <option value="semua">Semua</option>
@@ -375,8 +389,12 @@
             clearTimeout(debounceTimer);
 
             const query = this.value.trim();
-            if (query.length < 2) {
-                resultBox.innerHTML = "";
+
+            // Kosongkan hasil hanya sekali tiap user ketik ulang
+            resultBox.innerHTML = "";
+            activeIndex = -1;
+
+            if (query.length === 0) {
                 return;
             }
 
@@ -387,28 +405,28 @@
             fetch(`/search?query=${encodeURIComponent(query)}`)
                 .then(res => res.json())
                 .then(data => {
-                    resultBox.innerHTML = "";
-                    activeIndex = -1;
-
+                    console.log("HASIL FETCH:", data);
                     if (data.length === 0) {
                         resultBox.innerHTML = `<div class="list-group-item">Tidak ada hasil</div>`;
                         return;
                     }
 
-                    data.forEach((item, index) => {
-                        let highlighted = item.nama.replace(
-                            new RegExp(query, "gi"),
-                            match => `<strong>${match}</strong>`
+                    data.forEach((item) => {
+                        let namaFix = item.nama?.toString().normalize("NFD")
+                            .replace(/[\u0300-\u036f]/g, ""); // Hilangkan karakter aneh/diacritic
+
+                        let highlighted = namaFix.replace(
+                            new RegExp(query.normalize("NFD"), "gi"),
+                            (match) => `<strong>${match}</strong>`
                         );
 
-                        let el = document.createElement('button');
-                        el.classList.add('list-group-item', 'list-group-item-action', 'fade-item');
-                        el.innerHTML = `
-                        ${highlighted}
-                        <small class="text-muted d-block">(${item.tipe})</small>
-                    `;
 
-                        // Klik -> fokus ke marker
+                        const el = document.createElement('button');
+                        el.classList.add('list-group-item', 'list-group-item-action');
+                        el.innerHTML = `
+                    ${highlighted}
+                    <small class="text-muted d-block">(${item.tipe})</small>
+                `;
                         el.addEventListener('click', () => handleResultClick(item));
 
                         resultBox.appendChild(el);

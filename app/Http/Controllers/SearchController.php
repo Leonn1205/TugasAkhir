@@ -12,25 +12,19 @@ class SearchController extends Controller
     {
         $q = $request->input('query');
 
-        // Wisata
-        $wisata = TempatWisata::where('nama_wisata', 'LIKE', "%$q%")
-            ->select('id_wisata as id', 'nama_wisata as nama', 'longitude', 'latitude')
-            ->get()
-            ->map(function ($item) {
-                $item->tipe = 'wisata';
-                return $item;
-            });
 
-        // Kuliner
-        $kuliner = TempatKuliner::where('nama_sentra', 'LIKE', "%$q%")
-            ->select('id_kuliner as id', 'nama_sentra as nama', 'longitude', 'latitude')
+        $results = TempatWisata::select('id_wisata as id', 'nama_wisata as nama', 'longitude', 'latitude')
+            ->where('nama_wisata', 'LIKE', '%' . $q . '%')
             ->get()
-            ->map(function ($item) {
-                $item->tipe = 'kuliner';
-                return $item;
-            });
+            ->map(fn($i) => tap($i, fn() => $i->tipe = 'wisata'))
+            ->concat(
+                TempatKuliner::select('id_kuliner as id', 'nama_sentra as nama', 'longitude', 'latitude')
+                ->where('nama_sentra', 'LIKE', '%' . $q . '%')
+                ->get()
+                ->map(fn($i) => tap($i, fn() => $i->tipe = 'kuliner'))
+            );
 
-        $results = $wisata->merge($kuliner);
+
 
         return response()->json($results);
     }

@@ -40,7 +40,8 @@ class HomeController extends Controller
 
         // ========== FILTERING ==========
 
-        // Filter wisata
+        // Filter wisata\
+
         $filterWisata = $request->filter_wisata;
         $wisata = ($filterWisata && $filterWisata !== 'semua')
             ? TempatWisata::where('id_kategori', $filterWisata)->get()
@@ -56,44 +57,39 @@ class HomeController extends Controller
         $lng = $request->lng;
 
         if ($lat && $lng) {
-            $wisata = TempatWisata::selectRaw("
-                *,
-                (
-                    6371 * acos(
-                        cos(radians(?)) *
-                        cos(radians(latitude)) *
-                        cos(radians(longitude) - radians(?)) +
-                        sin(radians(?)) *
-                        sin(radians(latitude))
-                    )
-                ) AS jarak
-            ", [$lat, $lng, $lat])
-            ->orderBy('jarak', 'ASC')
-            ->limit(10)
-            ->get();
-        } else {
-            $wisata = TempatWisata::all();
-        }
 
-        if ($lat && $lng) {
-            $kulinerFiltered = TempatKuliner::selectRaw("
-                *,
-                (
-                    6371 * acos(
-                        cos(radians(?)) *
-                        cos(radians(latitude)) *
-                        cos(radians(longitude) - radians(?)) +
-                        sin(radians(?)) *
-                        sin(radians(latitude))
-                    )
-                ) AS jarak
-            ", [$lat, $lng, $lat])
-            ->orderBy('jarak', 'ASC')
-            ->limit(10)
-            ->get();
-        } else {
-            $kulinerFiltered = TempatKuliner::all();
-        }
+        $wisata = TempatWisata::selectRaw("
+            *,
+            (
+                6371 * acos(
+                    cos(radians(?)) *
+                    cos(radians(latitude)) *
+                    cos(radians(longitude) - radians(?)) +
+                    sin(radians(?)) *
+                    sin(radians(latitude))
+                )
+            ) AS jarak
+        ", [$lat, $lng, $lat])
+        ->orderBy('jarak')
+        ->limit(10)
+        ->get();
+
+        $kulinerFiltered = TempatKuliner::selectRaw("
+            *,
+            (
+                6371 * acos(
+                    cos(radians(?)) *
+                    cos(radians(latitude)) *
+                    cos(radians(longitude) - radians(?)) +
+                    sin(radians(?)) *
+                    sin(radians(latitude))
+                )
+            ) AS jarak
+        ", [$lat, $lng, $lat])
+        ->orderBy('jarak')
+        ->limit(10)
+        ->get();
+    }
 
         return view('welcome', compact(
             'kategoriWisataList',
