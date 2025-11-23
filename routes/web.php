@@ -12,6 +12,8 @@ use App\Http\Controllers\KategoriWisataController;
 use App\Http\Controllers\ExportController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\MapController;
+use App\Http\Controllers\UserWisataController;
+use App\Http\Controllers\UserKulinerController;
 use Illuminate\Http\Request;
 
 /*
@@ -33,6 +35,14 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/wisata/{id}', [TempatWisataController::class, 'show'])->name('wisata.show');
 Route::get('/kuliner/{id}', [TempatKulinerController::class, 'show'])->name('kuliner.show');
+
+// Wisata
+Route::get('/wisata', [UserWisataController::class, 'index'])->name('user.wisata.index');
+Route::get('/wisata/{id}', [UserWisataController::class, 'show'])->name('user.wisata.show');
+
+// Kuliner
+Route::get('/kuliner', [UserKulinerController::class, 'index'])->name('user.kuliner.index');
+Route::get('/kuliner/{id}', [UserKulinerController::class, 'show'])->name('user.kuliner.show');
 
 
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');

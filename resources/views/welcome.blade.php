@@ -151,7 +151,7 @@
                     <ul id="list-wisata">
                         @foreach ($wisata as $w)
                             <li class="wisata-item" data-kategori="{{ $w->id_kategori }}">
-                                <a href="{{ route('wisata.show', $w->id_wisata) }}">
+                                <a href="{{ route('user.wisata.show', $w->id_wisata) }}">
                                     {{ $w->nama_wisata }}
                                 </a>
                             </li>
@@ -180,7 +180,7 @@
                                 $kategoriArray = json_decode($k->kategori, true) ?: [];
                             @endphp
                             <li class="kuliner-item" data-kategori="{{ implode(',', $kategoriArray) }}">
-                                <a href="{{ route('kuliner.show', $k->id_kuliner) }}">
+                                <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}">
                                     {{ $k->nama_sentra }}
                                 </a>
                             </li>
@@ -301,7 +301,7 @@
                     showDetail("wisata-{{ $w->id_wisata }}", {
                         nama: @json($w->nama_wisata),
 
-                        link: @json(route('wisata.show', $w->id_wisata)),
+                        link: @json(route('user.wisata.show', $w->id_wisata)),
                         jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
                                 return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
                                     ? "<li><b>{$jam->hari}:</b> Libur</li>"
@@ -335,7 +335,7 @@
                     showDetail("kuliner-{{ $k->id_kuliner }}", {
                         nama: @json($k->nama_sentra),
 
-                        link: "{{ route('kuliner.show', $k->id_kuliner) }}",
+                        link: "{{ route('user.kuliner.show', $k->id_kuliner) }}",
                         jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
                                 return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
                                     ? "<li><b>{$jam->hari}:</b> Libur</li>"
