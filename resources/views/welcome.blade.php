@@ -901,7 +901,7 @@
                         <div style="min-width: 200px;">
                             <h6 class="fw-bold mb-2">{{ $w->nama_wisata }}</h6>
                             <p class="mb-2 small">{{ $w->kategoriWisata->nama_kategori ?? 'Tourism' }}</p>
-                            <a href="{{ route('wisata.show', $w->id_wisata) }}" class="btn btn-sm btn-primary w-100">
+                            <a href="{{ route('user.wisata.show', $w->id_wisata) }}" class="btn btn-sm btn-primary w-100">
                                 View Details
                             </a>
                         </div>
@@ -936,7 +936,7 @@
                         <div style="min-width: 200px;">
                             <h6 class="fw-bold mb-2">{{ $k->nama_sentra }}</h6>
                             <p class="mb-2 small">Culinary Spot</p>
-                            <a href="{{ route('kuliner.show', $k->id_kuliner) }}" class="btn btn-sm btn-danger w-100">
+                            <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}" class="btn btn-sm btn-danger w-100">
                                 View Details
                             </a>
                         </div>
