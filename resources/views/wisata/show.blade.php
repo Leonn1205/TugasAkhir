@@ -91,7 +91,14 @@
         <h3>Informasi Umum</h3>
         <div class="section">
             <p><span class="label">Nama Tempat Wisata:</span> {{ $wisata->nama_wisata ?? '-' }}</p>
-            <p><span class="label">Kategori Wisata:</span> {{ $wisata->kategori->nama_kategori ?? '-' }}</p>
+            <p>
+                <span class="label">Kategori Wisata:</span>
+                @forelse ($wisata->kategori as $k)
+                    <span class="badge bg-primary">{{ $k->nama_kategori }}</span>
+                @empty
+                    -
+                @endforelse
+            </p>
             <p><span class="label">Deskripsi:</span> {{ $wisata->deskripsi ?? '-' }}</p>
             <p><span class="label">Sejarah:</span> {{ $wisata->sejarah ?? '-' }}</p>
             <p><span class="label">Narasi:</span> {{ $wisata->narasi ?? '-' }}</p>

@@ -71,17 +71,17 @@
                 </div>
 
                 <div class="mb-3">
-                    <label for="id_kategori">Kategori Wisata</label>
-                    <select name="id_kategori" class="form-control" required>
-                        <option value="">-- Pilih Kategori --</option>
-                        @foreach ($kategori as $k)
-                            <option value="{{ $k->id_kategori }}"
-                                {{ $wisata->id_kategori == $k->id_kategori ? 'selected' : '' }}>
-                                {{ $k->nama_kategori }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <small class="form-text text-muted">Kategori ditentukan oleh admin</small>
+                    <label>Kategori Wisata</label><br>
+
+                    @foreach ($kategori as $k)
+                        <label>
+                            <input type="checkbox" name="kategori[]" value="{{ $k->id_kategori }}"
+                                {{ in_array($k->id_kategori, $wisata->kategori->pluck('id_kategori')->toArray()) ? 'checked' : '' }}>
+                            {{ $k->nama_kategori }}
+                        </label><br>
+                    @endforeach
+
+                    <small class="form-text text-muted">Kategori bisa lebih dari satu, ditentukan oleh admin.</small>
                 </div>
 
                 <div class="row">

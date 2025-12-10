@@ -83,7 +83,11 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $w->nama_wisata }}</td>
-                        <td>{{ $w->kategori->nama_kategori }}</td>
+                        <td>
+                            @foreach ($w->kategori as $k)
+                                <span class="badge bg-primary">{{ $k->nama_kategori }}</span>
+                            @endforeach
+                        </td>
                         <td>{{ $w->latitude }}</td>
                         <td>{{ $w->longitude }}</td>
                         <td class="text-center">

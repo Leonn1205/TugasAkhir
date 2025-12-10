@@ -29,7 +29,8 @@ class TempatWisataController extends Controller
         $request->validate([
             'nama_wisata'   => 'required|string|max:255',
             'alamat_lengkap' => 'nullable|string',
-            'id_kategori'   => 'required|exists:kategori_wisata,id_kategori',
+            'kategori' => 'required|array',
+            'kategori.*' => 'exists:kategori_wisata,id_kategori',
             'longitude'     => 'nullable|numeric',
             'latitude'      => 'nullable|numeric',
             'deskripsi'     => 'nullable|string',
@@ -41,7 +42,6 @@ class TempatWisataController extends Controller
         $wisata = TempatWisata::create($request->only([
             'nama_wisata',
             'alamat_lengkap',
-            'id_kategori',
             'longitude',
             'latitude',
             'deskripsi',
@@ -74,6 +74,8 @@ class TempatWisataController extends Controller
             }
         }
 
+        $wisata->kategori()->sync($request->kategori);
+
         return redirect()->route('wisata.index')
             ->with('success','Tempat wisata berhasil ditambahkan!');
     }
@@ -91,7 +93,9 @@ class TempatWisataController extends Controller
     {
         $request->validate([
             'nama_wisata'   => 'required|string|max:255',
-            'id_kategori'   => 'required|exists:kategori_wisata,id_kategori',
+            'alamat_lengkap' => 'nullable|string',
+            'kategori'    => 'required|array',
+            'kategori.*'  => 'exists:kategori_wisata,id_kategori',
             'longitude'   => 'nullable|numeric',
             'latitude'    => 'nullable|numeric',
             'deskripsi'   => 'nullable|string',
@@ -101,7 +105,7 @@ class TempatWisataController extends Controller
 
         $wisata = TempatWisata::findOrFail($id);
         $wisata->update($request->only([
-            'nama_wisata','id_kategori',
+            'nama_wisata', 'alamat_lengkap',
             'longitude','latitude',
             'deskripsi','sejarah','narasi'
         ]));
@@ -132,6 +136,8 @@ class TempatWisataController extends Controller
                 ]);
             }
         }
+
+        $wisata->kategori()->sync($request->kategori);
 
         return redirect()->route('wisata.index')
             ->with('success','Data berhasil diperbarui!');
