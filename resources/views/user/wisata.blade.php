@@ -91,7 +91,7 @@
         <h3>Informasi Umum</h3>
         <div class="section">
             <p><span class="label">Nama Tempat Wisata:</span> {{ $wisata->nama_wisata ?? '-' }}</p>
-           <p>
+            <p>
                 <span class="label">Kategori Wisata:</span>
                 @forelse ($wisata->kategori as $k)
                     <span class="badge bg-primary">{{ $k->nama_kategori }}</span>

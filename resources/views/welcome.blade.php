@@ -703,6 +703,8 @@
                     </div>
                 @endforeach
             </div>
+        </div>
+    </section>
 
             <div class="text-center">
                 <a href="#map" class="btn-hero btn-primary-hero">

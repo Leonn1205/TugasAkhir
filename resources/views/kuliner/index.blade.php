@@ -78,8 +78,8 @@
                         <td>{{ $k->alamat_lengkap }}</td>
                         <td>{{ $k->latitude }}</td>
                         <td>{{ $k->longitude }}</td>
-                        <td class="text-center">
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                        <td class="text-center" style="white-space: nowrap;">
+                            <div class="d-flex justify-content-center gap-2 flex-nowrap">
                                 <a href="{{ route('kuliner.show', $k->id_kuliner) }}"
                                     class="btn btn-info btn-sm shadow-sm">
                                     <i class="bi bi-eye"></i> Detail
