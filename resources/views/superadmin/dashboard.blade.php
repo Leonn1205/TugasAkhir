@@ -4,289 +4,727 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard - Kotabaru Tourism Data Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f7fa;
             overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
         }
 
-        /* Header */
-        .header {
-            background-color: #2f5233;
+        /* Header/Navbar */
+        .navbar-custom {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
             color: white;
-            padding: 1.5rem;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .header .btn {
-            font-size: 14px;
-            padding: 6px 12px;
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .navbar-brand img {
+            height: 45px;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: white;
+            color: #1b5e20;
+            border-color: white;
         }
 
         /* Sidebar */
         .sidebar {
-            background-color: #0d3059;
-            color: white;
-            min-height: 100vh;
-            padding-top: 1rem;
+            background: linear-gradient(180deg, #1b5e20 0%, #2e7d32 100%);
+            min-height: calc(100vh - 73px);
+            padding: 1.5rem 0;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .sidebar a {
-            color: white;
-            display: block;
-            padding: 15px 20px;
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .menu-link {
+            color: rgba(255, 255, 255, 0.85);
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 20px;
+            transition: all 0.3s ease;
             font-weight: 500;
+            font-size: 15px;
+            position: relative;
         }
 
-        .sidebar a:hover,
-        .sidebar a.active {
-            background-color: #15477a;
+        .menu-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            padding-left: 25px;
         }
 
+        .menu-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-left: 4px solid #ffd54f;
+        }
+
+        .menu-link i {
+            font-size: 18px;
+            width: 24px;
+        }
+
+        .menu-link .badge {
+            margin-left: auto;
+            background: #ffd54f;
+            color: #1b5e20;
+            font-size: 11px;
+            padding: 4px 8px;
+        }
+
+        /* Submenu */
         .submenu {
-            display: none;
-            background-color: #123456;
-        }
-
-        .submenu a {
-            padding-left: 40px;
-            font-size: 14px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .submenu.show {
-            display: block;
+            max-height: 200px;
+        }
+
+        .submenu .menu-link {
+            padding-left: 56px;
+            font-size: 14px;
+        }
+
+        .submenu .menu-link:hover {
+            padding-left: 61px;
+        }
+
+        .menu-toggle {
+            cursor: pointer;
+        }
+
+        .menu-toggle::after {
+            content: '\F282';
+            font-family: 'bootstrap-icons';
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-toggle.active::after {
+            transform: rotate(180deg);
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 2rem;
+            min-height: calc(100vh - 73px);
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: #666;
+            font-size: 15px;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #2e7d32 0%, #66bb6a 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1b5e20;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        .stat-trend {
+            font-size: 12px;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 0.5rem;
+        }
+
+        /* Map Section */
+        .map-section {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 24px;
         }
 
         #map {
             height: 500px;
-            border-radius: 10px;
-            border: 2px solid #ccc;
-            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        .stat-box {
-            border-radius: 10px;
-            padding: 25px;
+        /* Detail Panel */
+        #detail-panel {
             background: white;
-            text-align: center;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            max-height: 500px;
+            overflow-y: auto;
         }
 
-        .stat-box h3 {
-            font-size: 28px;
-            margin: 0;
-            color: #2f5233;
+        #detail-panel::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .stat-box p {
-            margin: 0;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        #detail-panel::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        #detail-panel::-webkit-scrollbar-thumb {
+            background: #2e7d32;
+            border-radius: 10px;
+        }
+
+        #detail-nama {
+            color: #1b5e20;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        #detail-panel h6 {
+            color: #2e7d32;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #detail-panel ul {
+            padding-left: 1.5rem;
+        }
+
+        #detail-panel li {
+            margin-bottom: 0.5rem;
             color: #555;
+        }
+
+        #detail-link {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        #detail-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.3);
+            color: white;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin: 0 auto 1rem;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .action-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: 73px;
+                width: 250px;
+                z-index: 999;
+                transition: left 0.3s ease;
+            }
+
+            .sidebar.show {
+                left: 0;
+            }
+
+            .main-content {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 24px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #map {
+                height: 350px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-toggle {
+                display: block;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <!-- Header -->
-    <div class="header d-flex align-items-center justify-content-between px-4">
-        <div class="d-flex align-items-center gap-3">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo Kotabaru" style="height: 50px;">
-            <h1 class="mb-0" style="font-size: 22px;">Kotabaru Tourism Data Center</h1>
+    <!-- Navbar -->
+    <nav class="navbar-custom">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <button class="mobile-toggle" onclick="toggleSidebar()">
+                    <i class="bi bi-list"></i>
+                </button>
+                <div class="navbar-brand">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo Kotabaru">
+                    <span>Kotabaru Tourism Data Center</span>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn-logout">
+                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                </button>
+            </form>
         </div>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-light text-dark">
-                <i class="bi bi-box-arrow-right me-1"></i> Logout
-            </button>
-        </form>
-    </div>
+    </nav>
 
     <!-- Layout -->
     <div class="row g-0">
         <!-- Sidebar -->
-        <div class="col-md-2 sidebar">
-            <a href="{{ route('dashboard.superadmin') }}" class="active">
-                <i class="bi bi-house-door-fill me-2"></i> Dashboard
-            </a>
-            <a href="#" id="wisataMenu">
-                <i class="bi bi-building me-2"></i> Tempat Wisata
-            </a>
-            <div class="submenu" id="submenuWisata">
-                <a href="{{ route('wisata.index') }}"><i class="bi bi-list-ul me-2"></i> Daftar Wisata</a>
-                <a href="{{ route('kategori-wisata.index') }}"><i class="bi bi-tags me-2"></i> Kategori Wisata</a>
-            </div>
-            <a href="{{ route('kuliner.index') }}">
-                <i class="bi bi-egg-fried me-2"></i> Tempat Kuliner
-            </a>
-            @if (auth()->user()->role === 'Super Admin')
-                <a href="{{ route('superadmin.admin.index') }}">
-                    <i class="bi bi-gear-fill me-2"></i> Admin
-                </a>
-            @endif
+        <div class="col-md-2 sidebar" id="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="{{ route('dashboard.superadmin') }}" class="menu-link active">
+                        <i class="bi bi-speedometer2"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link menu-toggle" id="wisataMenu">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <span>Tempat Wisata</span>
+                    </a>
+                    <ul class="submenu" id="submenuWisata">
+                        <li>
+                            <a href="{{ route('wisata.index') }}" class="menu-link">
+                                <i class="bi bi-list-ul"></i>
+                                <span>Daftar Wisata</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('kategori-wisata.index') }}" class="menu-link">
+                                <i class="bi bi-tags"></i>
+                                <span>Kategori Wisata</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="menu-item">
+                    <a href="{{ route('kuliner.index') }}" class="menu-link">
+                        <i class="bi bi-cup-hot-fill"></i>
+                        <span>Tempat Kuliner</span>
+                    </a>
+                </li>
+                @if (auth()->user()->role === 'Super Admin')
+                    <li class="menu-item">
+                        <a href="{{ route('superadmin.admin.index') }}" class="menu-link">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Kelola Admin</span>
+                        </a>
+                    </li>
+                @endif
+            </ul>
         </div>
 
-        <!-- Content -->
-        <div class="col-md-10">
-            <div class="container mt-4">
+        <!-- Main Content -->
+        <div class="col-md-10 main-content">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard Overview
+                </h1>
+                <p class="page-subtitle">Selamat datang di Kotabaru Tourism Data Center</p>
+            </div>
+
+            <!-- Map Section (DI ATAS) -->
+            <div class="map-section">
                 <div class="row">
                     <div id="map-container" class="col-md-12">
+                        <h2 class="section-title">
+                            <i class="bi bi-map"></i>
+                            Peta Lokasi Wisata & Kuliner
+                        </h2>
                         <div id="map"></div>
                     </div>
                     <div id="detail-container" class="col-md-4" style="display:none;">
-                        <div id="detail-panel" class="p-3 bg-white border rounded shadow-sm"
-                            style="max-height:500px; overflow-y:auto;">
-                            <h4 id="detail-nama" class="fw-bold"></h4>
-                            <h6>Jam Operasional:</h6>
+                        <div id="detail-panel">
+                            <h4 id="detail-nama"></h4>
+                            <h6><i class="bi bi-clock"></i> Jam Operasional:</h6>
                             <ul id="detail-jam"></ul>
-                            <h6>Foto:</h6>
+                            <h6><i class="bi bi-images"></i> Foto:</h6>
                             <div id="detail-foto" class="row"></div>
-                            <a id="detail-link" href="#" class="btn btn-success mt-3">Lihat Selengkapnya</a>
-                        </div>
-                    </div>
-                </div>
-
-                <script>
-                    document.getElementById("wisataMenu").addEventListener("click", function(e) {
-                        e.preventDefault();
-                        document.getElementById("submenuWisata").classList.toggle("show");
-                    });
-
-                    var map = L.map('map').setView([-7.78694, 110.375], 15);
-
-                    L.tileLayer('https://cartodb-basemaps-a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                        attribution: '&copy; OpenStreetMap &copy; CARTO',
-                        subdomains: 'abcd',
-                        maxZoom: 20
-                    }).addTo(map);
-
-                    let currentMarkerId = null;
-
-                    @foreach ($wisata as $w)
-                        if ("{{ $w->latitude }}" && "{{ $w->longitude }}") {
-                            var wisataIcon = L.icon({
-                                iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                                iconSize: [32, 32],
-                                iconAnchor: [16, 32],
-                                popupAnchor: [0, -32]
-                            });
-                            var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
-                                icon: wisataIcon
-                            }).addTo(map);
-
-                            marker.on('click', function() {
-                                showDetail("wisata-{{ $w->id_wisata }}", {
-                                    nama: @json($w->nama_wisata),
-                                    link: @json(route('wisata.show', $w->id_wisata)),
-                                    jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
-                                            return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
-                                                ? "<li><b>{$jam->hari}:</b> Libur</li>"
-                                                : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
-                                        })->implode('') !!}`,
-                                    foto: `{!! collect($w->foto)->map(function ($f) {
-                                            return "<div class='col-md-6 mb-2'><img src='" .
-                                                asset('storage/' . $f->path_foto) .
-                                                "' class='img-fluid rounded'></div>";
-                                        })->implode('') !!}`
-                                }, [{{ $w->latitude }}, {{ $w->longitude }}]);
-                            });
-
-                        }
-                    @endforeach
-
-                    @foreach ($kuliner as $k)
-                        if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
-                            var kulinerIcon = L.icon({
-                                iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-                                iconSize: [32, 32],
-                                iconAnchor: [16, 32],
-                                popupAnchor: [0, -32]
-                            });
-                            var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
-                                icon: kulinerIcon
-                            }).addTo(map);
-
-                            marker.on('click', function() {
-                                showDetail("kuliner-{{ $k->id_kuliner }}", {
-                                    nama: @json($k->nama_sentra),
-                                    link: "{{ route('kuliner.show', $k->id_kuliner) }}",
-                                    jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
-                                            return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
-                                                ? "<li><b>{$jam->hari}:</b> Libur</li>"
-                                                : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
-                                        })->implode('') !!}`,
-                                    foto: `{!! collect($k->foto)->map(function ($f) {
-                                            return "<div class='col-md-6 mb-2'><img src='" .
-                                                asset('storage/' . $f->path_foto) .
-                                                "' class='img-fluid rounded'></div>";
-                                        })->implode('') !!}`
-                                }, [{{ $k->latitude }}, {{ $k->longitude }}]);
-                            });
-                        }
-                    @endforeach
-
-                    function showDetail(markerId, data, coords) {
-                        let detailContainer = document.getElementById('detail-container');
-                        let mapContainer = document.getElementById('map-container');
-
-                        if (currentMarkerId === markerId) {
-                            detailContainer.style.display = 'none';
-                            mapContainer.classList.remove('col-md-8');
-                            mapContainer.classList.add('col-md-12');
-                            currentMarkerId = null;
-                            map.invalidateSize();
-                        } else {
-                            detailContainer.style.display = 'block';
-                            mapContainer.classList.remove('col-md-12');
-                            mapContainer.classList.add('col-md-8');
-                            currentMarkerId = markerId;
-
-                            document.getElementById('detail-nama').innerText = data.nama;
-
-                            document.getElementById('detail-link').href = data.link;
-                            document.getElementById('detail-jam').innerHTML = data.jam;
-                            document.getElementById('detail-foto').innerHTML = data.foto;
-
-                            map.setView(coords, 17);
-                            map.invalidateSize();
-                        }
-                    }
-                </script>
-
-                <!-- Ringkasan -->
-                <h5 class="mb-3">Ringkasan Data</h5>
-                <div class="row text-center">
-                    <div class="col-md-6 mb-3">
-                        <div class="stat-box">
-                            <h3>{{ $wisata->count() }}</h3>
-                            <p>Lokasi Wisata</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <div class="stat-box">
-                            <h3>{{ $kuliner->count() }}</h3>
-                            <p>Lokasi Kuliner</p>
+                            <a id="detail-link" href="#" class="mt-3">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Lihat Selengkapnya
+                            </a>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Stats Cards (DI BAWAH - HANYA 2 CARDS) -->
+            <div class="page-header" style="margin-top: 2rem; margin-bottom: 1rem;">
+                <h2 class="section-title">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    Ringkasan Data
+                </h2>
+            </div>
+            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ $wisata->count() }}</div>
+                        <div class="stat-label">Lokasi Wisata</div>
+                        <div class="stat-trend">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            Total destinasi wisata
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="bi bi-cup-hot-fill"></i>
+                    </div>
+                    <div class="stat-info">
+                        <div class="stat-value">{{ $kuliner->count() }}</div>
+                        <div class="stat-label">Lokasi Kuliner</div>
+                        <div class="stat-trend">
+                            <i class="bi bi-graph-up-arrow"></i>
+                            Total sentra kuliner
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sidebar Toggle
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('show');
+        }
+
+        // Submenu Toggle
+        document.getElementById("wisataMenu").addEventListener("click", function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById("submenuWisata");
+            const toggle = this;
+
+            submenu.classList.toggle("show");
+            toggle.classList.toggle("active");
+        });
+
+        // Map Initialization
+        var map = L.map('map').setView([-7.78694, 110.375], 15);
+
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; OpenStreetMap &copy; CARTO',
+            maxZoom: 20
+        }).addTo(map);
+
+        let currentMarkerId = null;
+
+        // Add Wisata Markers
+        @foreach ($wisata as $w)
+            if ("{{ $w->latitude }}" && "{{ $w->longitude }}") {
+                var wisataIcon = L.icon({
+                    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                    popupAnchor: [0, -32]
+                });
+
+                var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
+                    icon: wisataIcon
+                }).addTo(map);
+
+                marker.on('click', function() {
+                    showDetail("wisata-{{ $w->id_wisata }}", {
+                        nama: @json($w->nama_wisata),
+                        link: @json(route('wisata.show', $w->id_wisata)),
+                        jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
+                                return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                                    ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                    : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                            })->implode('') !!}`,
+                        foto: `{!! collect($w->foto)->map(function ($f) {
+                                return "<div class='col-md-6 mb-2'><img src='" .
+                                    asset('storage/' . $f->path_foto) .
+                                    "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
+                            })->implode('') !!}`
+                    }, [{{ $w->latitude }}, {{ $w->longitude }}]);
+                });
+            }
+        @endforeach
+
+        // Add Kuliner Markers
+        @foreach ($kuliner as $k)
+            if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
+                var kulinerIcon = L.icon({
+                    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                    iconSize: [32, 32],
+                    iconAnchor: [16, 32],
+                    popupAnchor: [0, -32]
+                });
+
+                var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
+                    icon: kulinerIcon
+                }).addTo(map);
+
+                marker.on('click', function() {
+                    showDetail("kuliner-{{ $k->id_kuliner }}", {
+                        nama: @json($k->nama_sentra),
+                        link: "{{ route('kuliner.show', $k->id_kuliner) }}",
+                        jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
+                                return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                                    ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                    : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                            })->implode('') !!}`,
+                        foto: `{!! collect($k->foto)->map(function ($f) {
+                                return "<div class='col-md-6 mb-2'><img src='" .
+                                    asset('storage/' . $f->path_foto) .
+                                    "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
+                            })->implode('') !!}`
+                    }, [{{ $k->latitude }}, {{ $k->longitude }}]);
+                });
+            }
+        @endforeach
+
+        // Show Detail Panel
+        function showDetail(markerId, data, coords) {
+            let detailContainer = document.getElementById('detail-container');
+            let mapContainer = document.getElementById('map-container');
+
+            if (currentMarkerId === markerId) {
+                detailContainer.style.display = 'none';
+                mapContainer.classList.remove('col-md-8');
+                mapContainer.classList.add('col-md-12');
+                currentMarkerId = null;
+                map.invalidateSize();
+            } else {
+                detailContainer.style.display = 'block';
+                mapContainer.classList.remove('col-md-12');
+                mapContainer.classList.add('col-md-8');
+                currentMarkerId = markerId;
+
+                document.getElementById('detail-nama').innerText = data.nama;
+                document.getElementById('detail-link').href = data.link;
+                document.getElementById('detail-jam').innerHTML = data.jam;
+                document.getElementById('detail-foto').innerHTML = data.foto;
+
+                map.setView(coords, 17);
+                map.invalidateSize();
+            }
+        }
+
+        // Close sidebar on link click (mobile)
+        document.querySelectorAll('.menu-link').forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    document.getElementById('sidebar').classList.remove('show');
+                }
+            });
+        });
+    </script>
 </body>
 
 </html>

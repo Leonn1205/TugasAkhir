@@ -40,7 +40,7 @@
         <h2 class="text-center fw-bold text-success mb-4">Edit Admin</h2>
 
         <div class="form-container shadow">
-            <form method="POST" action="{{ route('superadmin.admin.update', $admin->id) }}">
+            <form method="POST" action="{{ route('superadmin.admin.update', $admin->id_user) }}">
                 @csrf
                 @method('PUT')
 

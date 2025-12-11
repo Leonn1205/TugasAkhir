@@ -9,7 +9,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable;
-    protected $primaryKey = 'id_user'; // 👈 Tambahkan ini
+    protected $primaryKey = 'id_user'; 
     public $incrementing = true;
     protected $keyType = 'int';
 

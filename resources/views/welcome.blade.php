@@ -840,7 +840,7 @@
             </div>
             <hr style="border-color: rgba(255,255,255,0.1); margin: 2rem 0;">
             <div class="text-center" style="color: rgba(255,255,255,0.6);">
-                <p class="mb-0">&copy; 2024 Kotabaru Tourism Data Center. All Rights Reserved.</p>
+                <p class="mb-0">&copy; 2025 Kotabaru Tourism Data Center. All Rights Reserved.</p>
             </div>
         </div>
     </footer>

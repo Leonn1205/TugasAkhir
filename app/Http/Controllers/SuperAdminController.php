@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\TempatWisata;
 use App\Models\TempatKuliner;
+use App\Models\User;
 
 class SuperAdminController extends Controller
 {
@@ -31,6 +32,7 @@ class SuperAdminController extends Controller
         $request->validate([
             'username' => 'required|unique:users',
             'password' => 'required|confirmed|min:6',
+            'role' => 'required|in:Super Admin,Admin,User',
         ]);
 
         \App\Models\User::create([
@@ -42,9 +44,9 @@ class SuperAdminController extends Controller
         return redirect()->route('superadmin.admin.index')->with('success', 'Admin berhasil ditambahkan.');
     }
 
-    public function editAdmin($id)
+    public function editAdmin($id_user)
     {
-        $admin = \App\Models\User::where('role', 'Admin')->findOrFail($id);
+        $admin = User::findOrFail($id_user);
         return view('superadmin.admin.edit', compact('admin'));
     }
 

@@ -17,11 +17,11 @@ return new class extends Migration
             $table->id('id_wisata');
             $table->string('nama_wisata');
             $table->text('alamat_lengkap');
-            $table->decimal('longitude', 10, 6)->nullable();
-            $table->decimal('latitude', 10, 6)->nullable();
-            $table->text('deskripsi')->nullable();
-            $table->text('sejarah')->nullable();
-            $table->text('narasi')->nullable(); // bisa dipakai untuk teks / audio
+            $table->decimal('longitude', 10, 6);
+            $table->decimal('latitude', 10, 6);
+            $table->text('deskripsi');
+            $table->text('sejarah');
+            $table->text('narasi'); // bisa dipakai untuk teks / audio
             $table->timestamps();
         });
     }

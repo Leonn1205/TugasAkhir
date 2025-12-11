@@ -7,9 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -24,6 +22,144 @@
             background-size: cover;
             min-height: 100vh;
             padding: 20px 0;
+        }
+
+        /* Alert Notifications */
+        .alert-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 350px;
+            max-width: 500px;
+            animation: slideInRight 0.4s ease;
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-custom {
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: none;
+            backdrop-filter: blur(10px);
+        }
+
+        .alert-success-custom {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+        }
+
+        .alert-danger-custom {
+            background: linear-gradient(135deg, #c62828 0%, #d32f2f 100%);
+            color: white;
+        }
+
+        .alert-custom i {
+            font-size: 24px;
+        }
+
+        .alert-custom .alert-content {
+            flex: 1;
+        }
+
+        .alert-custom .alert-title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+
+        .alert-custom .alert-message {
+            font-size: 13px;
+            opacity: 0.95;
+        }
+
+        .alert-custom .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        /* Validation Error Messages */
+        .invalid-feedback {
+            display: block;
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .invalid-feedback i {
+            margin-right: 5px;
+        }
+
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #d32f2f;
+            background-color: #ffebee;
+        }
+
+        .form-control.is-invalid:focus,
+        .form-select.is-invalid:focus {
+            border-color: #c62828;
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.15);
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9998;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-content {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e8f5e9;
+            border-top-color: #2e7d32;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #1b5e20;
+            font-weight: 600;
+            font-size: 16px;
         }
 
         .header-section {
@@ -181,12 +317,12 @@
             cursor: pointer;
         }
 
-        .kategori-item input[type="checkbox"]:checked~.kategori-label {
+        .kategori-item input[type="checkbox"]:checked ~ .kategori-label {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
         }
 
-        .kategori-item input[type="checkbox"]:checked~.kategori-label::before {
+        .kategori-item input[type="checkbox"]:checked ~ .kategori-label::before {
             content: '\f26e';
             font-family: 'bootstrap-icons';
             position: absolute;
@@ -465,7 +601,6 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
-
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -490,6 +625,43 @@
 </head>
 
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Menyimpan data wisata...</div>
+        </div>
+    </div>
+
+    <!-- Alert Notifications -->
+    @if(session('success'))
+    <div class="alert-notification">
+        <div class="alert alert-success-custom alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle-fill"></i>
+            <div class="alert-content">
+                <div class="alert-title">Berhasil!</div>
+                <div class="alert-message">{{ session('success') }}</div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+    @endif
+
+    @if($errors->any())
+    <div class="alert-notification">
+        <div class="alert alert-danger-custom alert-custom alert-dismissible fade show" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i>
+            <div class="alert-content">
+                <div class="alert-title">Terjadi Kesalahan!</div>
+                <div class="alert-message">
+                    {{ $errors->count() }} kesalahan ditemukan. Silakan periksa form Anda.
+                </div>
+            </div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    </div>
+    @endif
+
     <!-- Header Section -->
     <div class="header-section">
         <div class="container">
@@ -516,15 +688,17 @@
                         Nama Tempat Wisata
                         <span class="required">*</span>
                     </label>
-                    <input type="text" name="nama_wisata" class="form-control"
-                        placeholder="Masukkan nama lengkap tempat wisata" required>
+                    <input type="text" name="nama_wisata" class="form-control @error('nama_wisata') is-invalid @enderror"
+                           placeholder="Contoh: Museum Sandi" value="{{ old('nama_wisata') }}" required>
+                    @error('nama_wisata')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
-                        Contoh: Museum Sandi
+                        Masukkan nama lengkap tempat wisata
                     </div>
-                    @error('nama_wisata')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 <div class="mb-4">
@@ -534,24 +708,27 @@
                         <span class="required">*</span>
                         <span class="counter-badge" id="selectedCount">0 dipilih</span>
                     </label>
-                    <div class="kategori-container">
+                    <div class="kategori-container @error('kategori') is-invalid @enderror">
                         @foreach ($kategori as $k)
                             <div class="kategori-item">
                                 <input type="checkbox" name="kategori[]" value="{{ $k->id_kategori }}"
-                                    id="kat_{{ $k->id_kategori }}" class="kategori-checkbox">
+                                       id="kat_{{ $k->id_kategori }}" class="kategori-checkbox"
+                                       {{ in_array($k->id_kategori, old('kategori', [])) ? 'checked' : '' }}>
                                 <label class="kategori-label" for="kat_{{ $k->id_kategori }}">
                                     {{ $k->nama_kategori }}
                                 </label>
                             </div>
                         @endforeach
                     </div>
+                    @error('kategori')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-check-circle"></i>
                         Pilih satu atau lebih kategori yang sesuai
                     </div>
-                    @error('kategori')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
                 </div>
 
                 <div class="section-divider"></div>
@@ -566,12 +743,18 @@
                     <label class="form-label">
                         <i class="bi bi-house-fill"></i>
                         Alamat Lengkap
+                        <span class="required">*</span>
                     </label>
-                    <textarea name="alamat_lengkap" class="form-control" rows="3"
-                        placeholder="Tulis alamat selengkap mungkin termasuk nama jalan, kelurahan, dan kecamatan"></textarea>
+                    <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror"
+                              rows="3" placeholder="Contoh: Jl. Faridan M Noto No.21, Kotabaru, Gondokusuman, Yogyakarta" required>{{ old('alamat_lengkap') }}</textarea>
+                    @error('alamat_lengkap')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
-                        Contoh: Jl. Faridan M Noto No.21, Kotabaru, Gondokusuman, Yogyakarta
+                        Tulis alamat selengkap mungkin termasuk nama jalan, kelurahan, dan kecamatan
                     </div>
                 </div>
 
@@ -582,15 +765,17 @@
                             Longitude
                             <span class="required">*</span>
                         </label>
-                        <input type="text" name="longitude" class="form-control"
-                            placeholder="Koordinat bujur (sumbu X)" required>
+                        <input type="text" name="longitude" class="form-control @error('longitude') is-invalid @enderror"
+                               placeholder="Contoh: 110.3750" value="{{ old('longitude') }}" required>
+                        @error('longitude')
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
                         <div class="form-text">
                             <i class="bi bi-info-circle"></i>
-                            Contoh: 110.3750
+                            Koordinat bujur (sumbu X)
                         </div>
-                        @error('longitude')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
                     </div>
                     <div class="col-md-6 mb-4">
                         <label class="form-label">
@@ -598,22 +783,23 @@
                             Latitude
                             <span class="required">*</span>
                         </label>
-                        <input type="text" name="latitude" class="form-control"
-                            placeholder="Koordinat lintang (sumbu Y)" required>
+                        <input type="text" name="latitude" class="form-control @error('latitude') is-invalid @enderror"
+                               placeholder="Contoh: -7.7869" value="{{ old('latitude') }}" required>
+                        @error('latitude')
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
                         <div class="form-text">
                             <i class="bi bi-info-circle"></i>
-                            Contoh: -7.7869
+                            Koordinat lintang (sumbu Y)
                         </div>
-                        @error('latitude')
-                            <div class="invalid-feedback d-block">{{ $message }}</div>
-                        @enderror
                     </div>
                 </div>
 
                 <div class="coordinate-helper">
                     <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Tips:</strong> Gunakan <a href="https://www.google.com/maps" target="_blank">Google Maps</a>
-                    untuk mendapatkan koordinat. Klik kanan pada lokasi → pilih koordinat untuk menyalin.
+                    <strong>Tips:</strong> Gunakan <a href="https://www.google.com/maps" target="_blank">Google Maps</a> untuk mendapatkan koordinat. Klik kanan pada lokasi → pilih koordinat untuk menyalin.
                 </div>
 
                 <div class="section-divider"></div>
@@ -630,8 +816,13 @@
                         Deskripsi Wisata
                         <span class="required">*</span>
                     </label>
-                    <textarea name="deskripsi" class="form-control" rows="4"
-                        placeholder="Deskripsikan tempat wisata, fasilitas yang tersedia, dan daya tarik utamanya..." required></textarea>
+                    <textarea name="deskripsi" class="form-control @error('deskripsi') is-invalid @enderror"
+                              rows="4" placeholder="Deskripsikan tempat wisata, fasilitas yang tersedia, dan daya tarik utamanya..." required>{{ old('deskripsi') }}</textarea>
+                    @error('deskripsi')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
                         Gambaran umum tentang tempat wisata yang akan ditampilkan di website
@@ -642,12 +833,18 @@
                     <label class="form-label">
                         <i class="bi bi-clock-history"></i>
                         Sejarah Wisata
+                        <span class="required">*</span>
                     </label>
-                    <textarea name="sejarah" class="form-control" rows="4"
-                        placeholder="Ceritakan sejarah, asal usul, atau latar belakang tempat wisata ini..."></textarea>
+                    <textarea name="sejarah" class="form-control @error('sejarah') is-invalid @enderror"
+                              rows="4" placeholder="Ceritakan sejarah, asal usul, atau latar belakang tempat wisata ini..." required>{{ old('sejarah') }}</textarea>
+                    @error('sejarah')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
-                        Informasi historis atau latar belakang tempat (opsional)
+                        Informasi historis atau latar belakang tempat
                     </div>
                 </div>
 
@@ -655,12 +852,18 @@
                     <label class="form-label">
                         <i class="bi bi-mic-fill"></i>
                         Narasi Audio (Teks)
+                        <span class="required">*</span>
                     </label>
-                    <textarea name="narasi" class="form-control" rows="3"
-                        placeholder="Tulis narasi yang akan dibacakan sebagai audio guide..."></textarea>
+                    <textarea name="narasi" class="form-control @error('narasi') is-invalid @enderror"
+                              rows="3" placeholder="Tulis narasi yang akan dibacakan sebagai audio guide..." required>{{ old('narasi') }}</textarea>
+                    @error('narasi')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
-                        Teks narasi untuk audio guide (opsional)
+                        Teks narasi untuk audio guide
                     </div>
                 </div>
 
@@ -702,16 +905,13 @@
                                         <span class="day-name">{{ $day }}</span>
                                     </td>
                                     <td>
-                                        <input type="time" name="jam_buka[]" class="form-control form-control-sm"
-                                            value="00:00">
+                                        <input type="time" name="jam_buka[]" class="form-control form-control-sm" value="00:00">
                                     </td>
                                     <td>
-                                        <input type="time" name="jam_tutup[]" class="form-control form-control-sm"
-                                            value="23:59">
+                                        <input type="time" name="jam_tutup[]" class="form-control form-control-sm" value="23:59">
                                     </td>
                                     <td class="text-center">
-                                        <input class="libur-checkbox" type="checkbox" name="libur[]"
-                                            value="{{ $loop->index }}">
+                                        <input class="libur-checkbox" type="checkbox" name="libur[]" value="{{ $loop->index }}">
                                     </td>
                                 </tr>
                             @endforeach
@@ -729,7 +929,7 @@
 
                 <div class="mb-4">
                     <div class="file-upload-wrapper">
-                        <input type="file" name="foto[]" multiple accept="image/*" id="fileInput">
+                        <input type="file" name="foto[]" multiple accept="image/*" id="fileInput" class="@error('foto.*') is-invalid @enderror">
                         <div class="file-upload-icon">
                             <i class="bi bi-cloud-upload"></i>
                         </div>
@@ -740,6 +940,11 @@
                             Format: JPG, PNG, JPEG | Maksimal: 2MB per file | Bisa multiple
                         </div>
                     </div>
+                    @error('foto.*')
+                        <div class="invalid-feedback" style="display: block;">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
                     <div class="selected-files" id="selectedFiles"></div>
                 </div>
 
@@ -760,6 +965,15 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Auto-hide alerts after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert-notification .alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
         // Jam Operasional Logic
         document.addEventListener("DOMContentLoaded", function() {
             const rows = document.querySelectorAll(".table-operasional tbody tr");
@@ -796,6 +1010,9 @@
             selectedCountBadge.textContent = `${checkedCount} dipilih`;
         }
 
+        // Initialize counter on page load (for old values)
+        updateKategoriCount();
+
         kategoriCheckboxes.forEach(checkbox => {
             checkbox.addEventListener('change', updateKategoriCount);
         });
@@ -811,29 +1028,92 @@
             if (files.length > 0) {
                 files.forEach(file => {
                     const fileSize = (file.size / 1024).toFixed(2); // KB
+                    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2); // MB
+
+                    // Check file size
+                    const isOversized = file.size > 2 * 1024 * 1024; // 2MB
+
                     const fileItem = document.createElement('div');
                     fileItem.className = 'file-item';
                     fileItem.innerHTML = `
                         <div class="file-item-name">
                             <i class="bi bi-file-image"></i>
                             <span>${file.name}</span>
+                            ${isOversized ? '<span style="color: #d32f2f; font-size: 11px; margin-left: 8px;">(Ukuran terlalu besar!)</span>' : ''}
                         </div>
-                        <div class="file-item-size">${fileSize} KB</div>
+                        <div class="file-item-size">${fileSize > 1024 ? fileSizeMB + ' MB' : fileSize + ' KB'}</div>
                     `;
+                    if (isOversized) {
+                        fileItem.style.borderColor = '#d32f2f';
+                        fileItem.style.background = '#ffebee';
+                    }
                     selectedFilesDiv.appendChild(fileItem);
                 });
             }
         });
 
-        // Form Validation
-        document.getElementById('wisataForm').addEventListener('submit', function(e) {
+        // Form Validation & Loading
+        const form = document.getElementById('wisataForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        form.addEventListener('submit', function(e) {
+            // Check kategori
             const kategoriChecked = document.querySelectorAll('.kategori-checkbox:checked').length;
 
             if (kategoriChecked === 0) {
                 e.preventDefault();
-                alert('Pilih minimal 1 kategori wisata!');
+
+                // Scroll to kategori section
+                document.querySelector('[name="kategori[]"]').closest('.mb-4').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+
+                // Show error
+                alert('❌ Pilih minimal 1 kategori wisata!');
                 return false;
             }
+
+            // Check file sizes
+            const files = fileInput.files;
+            let hasOversizedFile = false;
+
+            for (let file of files) {
+                if (file.size > 2 * 1024 * 1024) { // 2MB
+                    hasOversizedFile = true;
+                    break;
+                }
+            }
+
+            if (hasOversizedFile) {
+                e.preventDefault();
+                alert('❌ Ada file yang melebihi ukuran 2MB. Silakan pilih file yang lebih kecil.');
+                return false;
+            }
+
+            // Validate coordinates
+            const longitude = document.querySelector('[name="longitude"]').value;
+            const latitude = document.querySelector('[name="latitude"]').value;
+
+            if (isNaN(longitude) || isNaN(latitude)) {
+                e.preventDefault();
+                alert('❌ Longitude dan Latitude harus berupa angka!');
+                return false;
+            }
+
+            // Show loading
+            loadingOverlay.classList.add('active');
+        });
+
+        // Remove 'is-invalid' class on input change
+        document.querySelectorAll('.form-control, .form-select').forEach(input => {
+            input.addEventListener('input', function() {
+                this.classList.remove('is-invalid');
+                const feedback = this.nextElementSibling;
+                if (feedback && feedback.classList.contains('invalid-feedback')) {
+                    feedback.style.display = 'none';
+                }
+            });
         });
     </script>
 </body>

@@ -21,21 +21,22 @@ class TempatWisataController extends Controller
     public function create()
     {
         $kategori = KategoriWisata::all(); // ambil semua kategori untuk dropdown
-        return view('wisata.create', compact('kategori'));
+        $selectedKategori = old('kategori', []);
+        return view('wisata.create', compact('kategori', 'selectedKategori'));
     }
 
     public function store(Request $request)
     {
         $request->validate([
             'nama_wisata'   => 'required|string|max:255',
-            'alamat_lengkap' => 'nullable|string',
+            'alamat_lengkap' => 'required|string',
             'kategori' => 'required|array',
             'kategori.*' => 'exists:kategori_wisata,id_kategori',
-            'longitude'     => 'nullable|numeric',
-            'latitude'      => 'nullable|numeric',
-            'deskripsi'     => 'nullable|string',
-            'sejarah'       => 'nullable|string',
-            'narasi'        => 'nullable|string',
+            'longitude'     => 'required|numeric',
+            'latitude'      => 'required|numeric',
+            'deskripsi'     => 'required|string',
+            'sejarah'       => 'required|string',
+            'narasi'        => 'required|string',
             'foto.*'        => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
