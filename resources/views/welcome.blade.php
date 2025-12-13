@@ -104,13 +104,18 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)),
-                        url('{{ asset('images/bg-login.png') }}') center/cover;
+                url('{{ asset('images/bg-login.png') }}') center/cover;
             animation: zoomIn 20s infinite alternate;
         }
 
         @keyframes zoomIn {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.1); }
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
         }
 
         .hero-content {
@@ -187,6 +192,7 @@
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -209,8 +215,15 @@
         }
 
         @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(10px); }
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(10px);
+            }
         }
 
         /* Section Styling */
@@ -465,7 +478,7 @@
         /* CTA Section */
         .cta-section {
             background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
-                        url('{{ asset('images/cta-kotabaru.jpg') }}') center/cover;
+                url('{{ asset('images/cta-kotabaru.jpg') }}') center/cover;
             color: white;
             text-align: center;
             padding: 150px 0;
@@ -627,7 +640,8 @@
         <div class="container">
             <div style="position: relative;">
                 <div class="search-box">
-                    <input type="text" id="quickSearch" placeholder="Search destinations, culinary, or activities...">
+                    <input type="text" id="quickSearch"
+                        placeholder="Search destinations, culinary, or activities...">
                     <select id="categoryFilter">
                         <option value="all">All Categories</option>
                         <option value="wisata">Tourism</option>
@@ -646,19 +660,23 @@
     <section id="destinations">
         <div class="container">
             <h2 class="section-title">Top Destinations</h2>
-            <p class="section-subtitle">Explore the most beautiful places in Kotabaru, from colonial heritage buildings to lush green parks</p>
+            <p class="section-subtitle">Explore the most beautiful places in Kotabaru, from colonial heritage buildings
+                to lush green parks</p>
 
             <div class="row g-4 mb-4">
                 @foreach ($wisata->take(6) as $index => $w)
                     <div class="col-md-4">
-                        <div class="destination-card" onclick="showOnMap({{ $w->latitude }}, {{ $w->longitude }}, 'wisata')">
-                            @if($w->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $w->foto->first()->path_foto) }}" alt="{{ $w->nama_wisata }}">
+                        <div class="destination-card"
+                            onclick="showOnMap({{ $w->latitude }}, {{ $w->longitude }}, 'wisata')">
+                            @if ($w->foto->count() > 0)
+                                <img src="{{ asset('storage/' . $w->foto->first()->path_foto) }}"
+                                    alt="{{ $w->nama_wisata }}">
                             @else
                                 <img src="{{ asset('images/default-heritage.jpg') }}" alt="{{ $w->nama_wisata }}">
                             @endif
                             <div class="destination-badge">
-                                <i class="bi bi-geo-alt-fill me-1"></i>{{ $w->kategoriWisata->nama_kategori ?? 'Tourism' }}
+                                <i
+                                    class="bi bi-geo-alt-fill me-1"></i>{{ $w->kategoriWisata->nama_kategori ?? 'Tourism' }}
                             </div>
                             <div class="destination-overlay">
                                 <h3>{{ $w->nama_wisata }}</h3>
@@ -686,13 +704,16 @@
             <div class="row g-4 mb-4">
                 @foreach ($kulinerFiltered->take(6) as $k)
                     <div class="col-md-4">
-                        <div class="destination-card" onclick="showOnMap({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner')">
-                            @if($k->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $k->foto->first()->path_foto) }}" alt="{{ $k->nama_sentra }}">
+                        <div class="destination-card"
+                            onclick="showOnMap({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner')">
+                            @if ($k->foto->count() > 0)
+                                <img src="{{ asset('storage/' . $k->foto->first()->path_foto) }}"
+                                    alt="{{ $k->nama_sentra }}">
                             @else
                                 <img src="{{ asset('images/default-culinary.jpg') }}" alt="{{ $k->nama_sentra }}">
                             @endif
-                            <div class="destination-badge" style="background: rgba(212, 175, 55, 0.95); color: #3e2723;">
+                            <div class="destination-badge"
+                                style="background: rgba(212, 175, 55, 0.95); color: #3e2723;">
                                 <i class="bi bi-cup-hot-fill me-1"></i>Culinary
                             </div>
                             <div class="destination-overlay">
@@ -706,12 +727,12 @@
         </div>
     </section>
 
-            <div class="text-center">
-                <a href="#map" class="btn-hero btn-primary-hero">
-                    Explore More Culinary <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
+    <div class="text-center">
+        <a href="#map" class="btn-hero btn-primary-hero">
+            Explore More Culinary <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+    </div>
+    </div>
     </section>
 
     <!-- Stats Section -->
@@ -777,7 +798,8 @@
                         <div class="place-list">
                             <h6 class="fw-bold mb-3">Popular Places</h6>
                             @foreach ($wisata->take(5) as $w)
-                                <div class="place-item" onclick="focusOnPlace({{ $w->latitude }}, {{ $w->longitude }})">
+                                <div class="place-item"
+                                    onclick="focusOnPlace({{ $w->latitude }}, {{ $w->longitude }})">
                                     <h6>{{ $w->nama_wisata }}</h6>
                                     <small><i class="bi bi-geo-alt me-1"></i>Tourism Destination</small>
                                 </div>
@@ -809,7 +831,8 @@
             <div class="row">
                 <div class="col-md-4 mb-4">
                     <h5>Kotabaru Tourism</h5>
-                    <p style="color: rgba(255,255,255,0.7);">Discover the hidden paradise of Kotabaru Yogyakarta. Experience heritage, culture, and culinary delights.</p>
+                    <p style="color: rgba(255,255,255,0.7);">Discover the hidden paradise of Kotabaru Yogyakarta.
+                        Experience heritage, culture, and culinary delights.</p>
                     <div class="social-links mt-3">
                         <a href="#"><i class="bi bi-facebook"></i></a>
                         <a href="#"><i class="bi bi-instagram"></i></a>
@@ -879,13 +902,27 @@
             maxZoom: 20
         }).addTo(map);
 
+        fetch('/geojson/kotabru.geojson')
+            .then(res => res.json())
+            .then(data => {
+                var border = L.geoJSON(data, {
+                    style: {
+                        color: "#ff5500",
+                        weight: 3,
+                        fillOpacity: 0
+                    }
+                }).addTo(map);
+
+                map.fitBounds(border.getBounds());
+            });
+
         // Store markers
         let wisataMarkers = [];
         let kulinerMarkers = [];
 
         // Add Tourism Markers
         @foreach ($wisata as $w)
-            @if($w->latitude && $w->longitude)
+            @if ($w->latitude && $w->longitude)
                 {
                     const wisataIcon = L.icon({
                         iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
@@ -916,7 +953,7 @@
 
         // Add Culinary Markers
         @foreach ($kulinerFiltered as $k)
-            @if($k->latitude && $k->longitude)
+            @if ($k->latitude && $k->longitude)
                 {
                     const kulinerIcon = L.icon({
                         iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
@@ -952,7 +989,9 @@
         // Show on Map Function
         function showOnMap(lat, lng, type) {
             const mapSection = document.getElementById('map');
-            mapSection.scrollIntoView({ behavior: 'smooth' });
+            mapSection.scrollIntoView({
+                behavior: 'smooth'
+            });
 
             setTimeout(() => {
                 map.setView([lat, lng], 16);
@@ -1025,7 +1064,9 @@
                             iconAnchor: [16, 32]
                         });
 
-                        L.marker([lat, lng], { icon: userIcon })
+                        L.marker([lat, lng], {
+                                icon: userIcon
+                            })
                             .addTo(map)
                             .bindPopup('Your Location')
                             .openPopup();
