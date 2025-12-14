@@ -135,6 +135,158 @@
             margin-top: 5px;
         }
 
+        .file-upload-wrapper {
+            position: relative;
+            border: 3px dashed #2e7d32;
+            border-radius: 15px;
+            padding: 3rem 2rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .file-upload-wrapper:hover {
+            border-color: #1b5e20;
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(46, 125, 50, 0.2);
+        }
+
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .file-upload-icon {
+            font-size: 60px;
+            color: #2e7d32;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-wrapper:hover .file-upload-icon {
+            transform: scale(1.1);
+            color: #1b5e20;
+        }
+
+        .file-upload-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1b5e20;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-upload-hint {
+            font-size: 13px;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        /* Selected Files Display */
+        .selected-files {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .file-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: white;
+            transition: all 0.3s ease;
+        }
+
+        .file-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .file-item img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .file-item-name {
+            padding: 10px;
+            font-size: 12px;
+            color: #333;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: #f8f9fa;
+        }
+
+        .file-item-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(211, 47, 47, 0.95);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            z-index: 3;
+        }
+
+        .file-item-remove:hover {
+            background: #c62828;
+            transform: scale(1.1);
+        }
+
+        .file-item-size {
+            position: absolute;
+            bottom: 40px;
+            left: 8px;
+            background: rgba(46, 125, 50, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Drag and Drop Active State */
+        .file-upload-wrapper.drag-over {
+            border-color: #1b5e20;
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            transform: scale(1.02);
+        }
+
+        /* Invalid State */
+        .file-upload-wrapper:has(input.is-invalid) {
+            border-color: #d32f2f;
+        }
+
+        .invalid-feedback {
+            color: #d32f2f;
+            font-size: 14px;
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         /* Alert Info */
         .alert-info {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
@@ -309,6 +461,26 @@
 
             .table-responsive {
                 font-size: 12px;
+            }
+
+            .selected-files {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .file-item img {
+                height: 120px;
+            }
+
+            .file-upload-wrapper {
+                padding: 2rem 1rem;
+            }
+
+            .file-upload-icon {
+                font-size: 48px;
+            }
+
+            .file-upload-text {
+                font-size: 16px;
             }
         }
 
@@ -878,11 +1050,31 @@
 
                 <!-- 6. FOTO -->
                 <div class="form-section">
-                    <h5><i class="bi bi-camera"></i> 6. Foto Kuliner</h5>
-                    <div class="mb-3">
-                        <label>Upload Foto (Multiple)</label>
-                        <input type="file" name="foto[]" class="form-control" multiple accept="image/*">
-                        <small class="form-text note">Anda dapat memilih lebih dari satu foto</small>
+                    <div class="section-title">
+                        <i class="bi bi-camera"></i>
+                        Foto Kuliner
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="file-upload-wrapper">
+                            <input type="file" name="foto[]" multiple accept="image/*" id="fileInput"
+                                class="@error('foto.*') is-invalid @enderror">
+                            <div class="file-upload-icon">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <div class="file-upload-text">
+                                Klik untuk upload foto atau drag & drop
+                            </div>
+                            <div class="file-upload-hint">
+                                Format: JPG, PNG, JPEG | Maksimal: 2MB per file | Bisa multiple
+                            </div>
+                        </div>
+                        @error('foto.*')
+                            <div class="invalid-feedback" style="display: block;">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                        <div class="selected-files" id="selectedFiles"></div>
                     </div>
                 </div>
 
@@ -967,6 +1159,109 @@
                         });
                     }
                 });
+            });
+
+            document.addEventListener('DOMContentLoaded', function() {
+                const fileInput = document.getElementById('fileInput');
+                const selectedFilesContainer = document.getElementById('selectedFiles');
+                const uploadWrapper = document.querySelector('.file-upload-wrapper');
+                let selectedFiles = [];
+
+                // File input change event
+                fileInput.addEventListener('change', function(e) {
+                    handleFiles(e.target.files);
+                });
+
+                // Drag and drop events
+                uploadWrapper.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadWrapper.classList.add('drag-over');
+                });
+
+                uploadWrapper.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    uploadWrapper.classList.remove('drag-over');
+                });
+
+                uploadWrapper.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadWrapper.classList.remove('drag-over');
+
+                    const files = e.dataTransfer.files;
+                    handleFiles(files);
+                });
+
+                function handleFiles(files) {
+                    // Convert FileList to Array and add to selectedFiles
+                    const filesArray = Array.from(files);
+
+                    filesArray.forEach(file => {
+                        // Validate file type
+                        if (!file.type.match('image.*')) {
+                            alert(file.name + ' bukan file gambar!');
+                            return;
+                        }
+
+                        // Validate file size (2MB)
+                        if (file.size > 2 * 1024 * 1024) {
+                            alert(file.name + ' terlalu besar! Maksimal 2MB');
+                            return;
+                        }
+
+                        selectedFiles.push(file);
+                    });
+
+                    displayFiles();
+                    updateFileInput();
+                }
+
+                function displayFiles() {
+                    selectedFilesContainer.innerHTML = '';
+
+                    selectedFiles.forEach((file, index) => {
+                        const fileItem = document.createElement('div');
+                        fileItem.className = 'file-item';
+
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            fileItem.innerHTML = `
+                    <img src="${e.target.result}" alt="${file.name}">
+                    <div class="file-item-size">${formatFileSize(file.size)}</div>
+                    <button type="button" class="file-item-remove" onclick="removeFile(${index})">
+                        <i class="bi bi-x"></i>
+                    </button>
+                    <div class="file-item-name" title="${file.name}">${file.name}</div>
+                `;
+                        };
+                        reader.readAsDataURL(file);
+
+                        selectedFilesContainer.appendChild(fileItem);
+                    });
+                }
+
+                function updateFileInput() {
+                    // Create a new DataTransfer object to update the file input
+                    const dataTransfer = new DataTransfer();
+                    selectedFiles.forEach(file => {
+                        dataTransfer.items.add(file);
+                    });
+                    fileInput.files = dataTransfer.files;
+                }
+
+                function formatFileSize(bytes) {
+                    if (bytes === 0) return '0 Bytes';
+                    const k = 1024;
+                    const sizes = ['Bytes', 'KB', 'MB'];
+                    const i = Math.floor(Math.log(bytes) / Math.log(k));
+                    return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+                }
+
+                // Make removeFile globally accessible
+                window.removeFile = function(index) {
+                    selectedFiles.splice(index, 1);
+                    displayFiles();
+                    updateFileInput();
+                };
             });
 
             // Show loading on form submit

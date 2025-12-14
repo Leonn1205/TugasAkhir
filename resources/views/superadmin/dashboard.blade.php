@@ -165,6 +165,7 @@
             min-height: calc(100vh - 73px);
         }
 
+        /* Page Header - Konsisten */
         .page-header {
             margin-bottom: 2rem;
         }
@@ -175,101 +176,24 @@
             font-weight: 700;
             color: #1b5e20;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-title i {
+            font-size: 32px;
         }
 
         .page-subtitle {
             color: #666;
             font-size: 15px;
+            margin-left: 42px;
         }
 
-        /* Stats Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(180deg, #2e7d32 0%, #66bb6a 100%);
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
-        }
-
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            color: #2e7d32;
-        }
-
-        .stat-info {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 36px;
-            font-weight: 700;
-            color: #1b5e20;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 14px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .stat-trend {
-            font-size: 12px;
-            color: #2e7d32;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            margin-top: 0.5rem;
-        }
-
-        /* Map Section */
-        .map-section {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-bottom: 2rem;
-        }
-
+        /* Section Title - Konsisten */
         .section-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 600;
             color: #1b5e20;
             margin-bottom: 1.5rem;
@@ -280,6 +204,15 @@
 
         .section-title i {
             font-size: 24px;
+        }
+
+        /* Map Section */
+        .map-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 2rem;
         }
 
         #map {
@@ -297,6 +230,7 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
             max-height: 500px;
             overflow-y: auto;
+            margin-top: 1.5rem;
         }
 
         #detail-panel::-webkit-scrollbar {
@@ -328,15 +262,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 16px;
         }
 
         #detail-panel ul {
             padding-left: 1.5rem;
+            margin-bottom: 0;
         }
 
         #detail-panel li {
             margin-bottom: 0.5rem;
             color: #555;
+            font-size: 14px;
         }
 
         #detail-link {
@@ -347,8 +284,11 @@
             border-radius: 50px;
             font-weight: 600;
             text-decoration: none;
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
             transition: all 0.3s ease;
+            margin-top: 1rem;
         }
 
         #detail-link:hover {
@@ -357,47 +297,105 @@
             color: white;
         }
 
-        /* Quick Actions */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .action-card {
+        /* Stats Section */
+        .stats-section {
             background: white;
-            border-radius: 12px;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%);
+            border-radius: 15px;
             padding: 1.5rem;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
             transition: all 0.3s ease;
-            text-decoration: none;
-            color: inherit;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(46, 125, 50, 0.1);
         }
 
-        .action-card:hover {
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #2e7d32 0%, #66bb6a 100%);
+        }
+
+        .stat-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.15);
         }
 
-        .action-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 12px;
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 28px;
-            margin: 0 auto 1rem;
-            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            font-size: 32px;
+            background: white;
             color: #2e7d32;
+            box-shadow: 0 4px 15px rgba(46, 125, 50, 0.1);
+            flex-shrink: 0;
         }
 
-        .action-label {
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1b5e20;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
             font-size: 14px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             font-weight: 600;
-            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-trend {
+            font-size: 13px;
+            color: #2e7d32;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+
+        .stat-trend i {
+            font-size: 14px;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 20px;
         }
 
         /* Responsive */
@@ -423,6 +421,18 @@
                 font-size: 24px;
             }
 
+            .page-title i {
+                font-size: 24px;
+            }
+
+            .page-subtitle {
+                margin-left: 34px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
             }
@@ -430,22 +440,14 @@
             #map {
                 height: 350px;
             }
-        }
 
-        /* Mobile Menu Toggle */
-        .mobile-toggle {
-            display: none;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-size: 20px;
-        }
-
-        @media (max-width: 768px) {
             .mobile-toggle {
                 display: block;
+            }
+
+            .map-section,
+            .stats-section {
+                padding: 1.5rem;
             }
         }
     </style>
@@ -528,68 +530,70 @@
             <!-- Page Header -->
             <div class="page-header">
                 <h1 class="page-title">
-                    <i class="bi bi-speedometer2 me-2"></i>Dashboard Overview
+                    <i class="bi bi-speedometer2"></i>
+                    Dashboard Overview
                 </h1>
                 <p class="page-subtitle">Selamat datang di Kotabaru Tourism Data Center</p>
             </div>
 
-            <!-- Map Section (DI ATAS) -->
+            <!-- Map Section -->
             <div class="map-section">
+                <h2 class="section-title">
+                    <i class="bi bi-map"></i>
+                    Peta Lokasi Wisata & Kuliner
+                </h2>
                 <div class="row">
-                    <div id="map-container" class="col-md-12">
-                        <h2 class="section-title">
-                            <i class="bi bi-map"></i>
-                            Peta Lokasi Wisata & Kuliner
-                        </h2>
+                    <div id="map-container" class="col-12">
                         <div id="map"></div>
                     </div>
-                    <div id="detail-container" class="col-md-4" style="display:none;">
+                    <div id="detail-container" class="col-12" style="display:none;">
                         <div id="detail-panel">
                             <h4 id="detail-nama"></h4>
-                            <h6><i class="bi bi-clock"></i> Jam Operasional:</h6>
+                            <h6><i class="bi bi-clock"></i> Jam Operasional</h6>
                             <ul id="detail-jam"></ul>
-                            <h6><i class="bi bi-images"></i> Foto:</h6>
+                            <h6><i class="bi bi-images"></i> Foto</h6>
                             <div id="detail-foto" class="row"></div>
-                            <a id="detail-link" href="#" class="mt-3">
-                                <i class="bi bi-arrow-right-circle me-2"></i>Lihat Selengkapnya
+                            <a id="detail-link" href="#">
+                                <i class="bi bi-arrow-right-circle"></i>
+                                <span>Lihat Selengkapnya</span>
                             </a>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Stats Cards (DI BAWAH - HANYA 2 CARDS) -->
-            <div class="page-header" style="margin-top: 2rem; margin-bottom: 1rem;">
+            <!-- Stats Section -->
+            <div class="stats-section">
                 <h2 class="section-title">
                     <i class="bi bi-bar-chart-fill"></i>
                     Ringkasan Data
                 </h2>
-            </div>
-            <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-geo-alt-fill"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value">{{ $wisata->count() }}</div>
-                        <div class="stat-label">Lokasi Wisata</div>
-                        <div class="stat-trend">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            Total destinasi wisata
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-geo-alt-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ $wisata->count() }}</div>
+                            <div class="stat-label">Lokasi Wisata</div>
+                            <div class="stat-trend">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                Total destinasi wisata
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="bi bi-cup-hot-fill"></i>
-                    </div>
-                    <div class="stat-info">
-                        <div class="stat-value">{{ $kuliner->count() }}</div>
-                        <div class="stat-label">Lokasi Kuliner</div>
-                        <div class="stat-trend">
-                            <i class="bi bi-graph-up-arrow"></i>
-                            Total sentra kuliner
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="bi bi-cup-hot-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value">{{ $kuliner->count() }}</div>
+                            <div class="stat-label">Lokasi Kuliner</div>
+                            <div class="stat-trend">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                Total sentra kuliner
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -7,6 +7,10 @@ use App\Models\FotoWisata;
 use App\Models\JamOperasionalWisata;
 use App\Models\KategoriWisata;
 use Illuminate\Http\Request;
+use App\Services\WilayahKotabaruService;
+use App\Services\TempatWisataService;
+use Illuminate\Support\Facades\Log;
+
 
 class TempatWisataController extends Controller
 {
@@ -25,9 +29,9 @@ class TempatWisataController extends Controller
         return view('wisata.create', compact('kategori', 'selectedKategori'));
     }
 
-    public function store(Request $request)
+    public function store(Request $request , WilayahKotabaruService $wilayah, TempatWisataService $wisataServices)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_wisata'   => 'required|string|max:255',
             'alamat_lengkap' => 'required|string',
             'kategori' => 'required|array',
@@ -40,42 +44,23 @@ class TempatWisataController extends Controller
             'foto.*'        => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $wisata = TempatWisata::create($request->only([
-            'nama_wisata',
-            'alamat_lengkap',
-            'longitude',
-            'latitude',
-            'deskripsi',
-            'sejarah',
-            'narasi'
-        ]));
-
-        // Foto
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('wisata', 'public');
-                FotoWisata::create([
-                    'id_wisata' => $wisata->id_wisata,
-                    'path_foto' => $path,
-                ]);
-            }
+        if (! $wilayah->dalamBoundingBox(
+            $validated['latitude'],
+            $validated['longitude']
+            )) {
+            return back()->withInput()
+                ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
-        // Jam Operasional
-        if ($request->filled('hari')) {
-            foreach ($request->hari as $index => $hari) {
-                $isLibur = isset($request->libur[$index]) && $request->libur[$index] == 1;
+        try {
+            $wisataServices->buatWisata($validated, $request);
+        } catch(\Throwable $e) {
+            Log::error($e);
 
-                JamOperasionalWisata::create([
-                    'id_wisata' => $wisata->id_wisata,
-                    'hari'      => $hari,
-                    'jam_buka'  => $isLibur ? null : ($request->jam_buka[$index] ?? null),
-                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
-                ]);
-            }
-        }
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);}
 
-        $wisata->kategori()->sync($request->kategori);
 
         return redirect()->route('wisata.index')
             ->with('success','Tempat wisata berhasil ditambahkan!');
@@ -90,55 +75,48 @@ class TempatWisataController extends Controller
     }
 
     // Update
-    public function update(Request $request, $id)
+    public function update(Request $request, $id , WilayahKotabaruService $wilayah, TempatWisataService $wisataServices)
     {
-        $request->validate([
+        $validated = $request->validate([
             'nama_wisata'   => 'required|string|max:255',
-            'alamat_lengkap' => 'nullable|string',
+            'alamat_lengkap' => 'required|string',
             'kategori'    => 'required|array',
             'kategori.*'  => 'exists:kategori_wisata,id_kategori',
-            'longitude'   => 'nullable|numeric',
-            'latitude'    => 'nullable|numeric',
-            'deskripsi'   => 'nullable|string',
-            'sejarah'     => 'nullable|string',
-            'narasi'      => 'nullable|string',
+            'longitude'   => 'required|numeric',
+            'latitude'    => 'required|numeric',
+            'deskripsi'   => 'required|string',
+            'sejarah'     => 'required|string',
+            'narasi'      => 'required|string',
         ]);
 
-        $wisata = TempatWisata::findOrFail($id);
-        $wisata->update($request->only([
-            'nama_wisata', 'alamat_lengkap',
-            'longitude','latitude',
-            'deskripsi','sejarah','narasi'
-        ]));
-
-        // Tambah foto baru kalau ada
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('wisata', 'public');
-                FotoWisata::create([
-                    'id_wisata' => $wisata->id_wisata,
-                    'path_foto' => $path,
-                ]);
-            }
+        if (
+            isset($validated['latitude'], $validated['longitude']) &&
+            ! $wilayah->dalamBoundingBox(
+                $validated['latitude'],
+                $validated['longitude']
+            )
+        ) {
+            return back()->withInput()
+                ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
-        // Update jam operasional → hapus semua dulu biar bersih
-        $wisata->jamOperasional()->delete();
+        $foto = $request->file('foto');
+        $jam_operasional = [
+            'hari' => $request->input('hari', []),
+            'jam_buka' => $request->input('jam_buka', []),
+            'jam_tutup' => $request->input('jam_tutup', []),
+            'libur' => $request->input('libur', []),
+        ];
 
-        if ($request->filled('hari')) {
-            foreach ($request->hari as $index => $hari) {
-                $isLibur = isset($request->libur[$index]) && $request->libur[$index] == 1;
+        try {
+            $wisataServices->updateWisata($id, $validated, $foto, $jam_operasional);
+        } catch(\Throwable $e) {
+            Log::error($e);
 
-                JamOperasionalWisata::create([
-                    'id_wisata' => $wisata->id_wisata,
-                    'hari'      => $hari,
-                    'jam_buka'  => $isLibur ? null : ($request->jam_buka[$index] ?? null),
-                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
-                ]);
-            }
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi.']);
         }
-
-        $wisata->kategori()->sync($request->kategori);
 
         return redirect()->route('wisata.index')
             ->with('success','Data berhasil diperbarui!');
