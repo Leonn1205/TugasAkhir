@@ -437,6 +437,51 @@
             border-color: #2e7d32;
         }
 
+        /* Stats Card */
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+        }
+
+        .stat-info h3 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin: 0;
+        }
+
+        .stat-info p {
+            font-size: 13px;
+            color: #666;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-section h1 {
@@ -581,6 +626,17 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
             @endif
+
+            <!-- Stats Card -->
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="bi bi-shop"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>{{ $wisata->count() }}</h3>
+                    <p>Total Tempat Wisata/Bersejarah</p>
+                </div>
+            </div>
 
             <!-- Search & Filter Bar -->
             <div class="search-filter-bar">

@@ -9,7 +9,7 @@ class WilayahKotabaruService
 
     public function __construct()
     {
-        $path = public_path('geojson/kotabaru.geojson');
+        $path = public_path('geojson/kotabru.geojson');
 
         $geojson = json_decode(file_get_contents($path), true);
 
