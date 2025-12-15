@@ -22,6 +22,25 @@
             padding: 20px 0;
         }
 
+        /* Alert Info */
+        .alert-info-custom {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: none;
+            border-left: 4px solid #2196f3;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 1.5rem;
+        }
+
+        .alert-info-custom strong {
+            color: #1565c0;
+        }
+
+        .alert-info-custom ul {
+            margin: 8px 0 0 20px;
+            color: #1976d2;
+        }
+
         .alert-notification {
             position: fixed;
             top: 20px;
@@ -690,7 +709,14 @@
                     Jam Operasional
                 </div>
 
-               
+               <div class="alert-info-custom">
+                    <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk Pengisian:</strong>
+                    <ul>
+                        <li>Jam default: <strong>00:00 – 23:59</strong> (buka 24 jam)</li>
+                        <li>Sesuaikan jam buka dan tutup sesuai operasional tempat</li>
+                        <li>Centang <strong>"Libur"</strong> jika tempat tidak buka pada hari tersebut</li>
+                    </ul>
+                </div>
 
                 <div class="table-responsive">
                     <table class="table table-operasional">

@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         * {
@@ -61,7 +63,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
@@ -225,12 +229,12 @@
             cursor: pointer;
         }
 
-        .kategori-item input[type="checkbox"]:checked ~ .kategori-label {
+        .kategori-item input[type="checkbox"]:checked~.kategori-label {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
         }
 
-        .kategori-item input[type="checkbox"]:checked ~ .kategori-label::before {
+        .kategori-item input[type="checkbox"]:checked~.kategori-label::before {
             content: '\f26e';
             font-family: 'bootstrap-icons';
             position: absolute;
@@ -558,6 +562,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -590,7 +595,8 @@
     <!-- Form Container -->
     <div class="container">
         <div class="form-container">
-            <form method="POST" action="{{ route('wisata.update', $wisata->id_wisata) }}" enctype="multipart/form-data" id="editForm">
+            <form method="POST" action="{{ route('wisata.update', $wisata->id_wisata) }}" enctype="multipart/form-data"
+                id="editForm">
                 @csrf
                 @method('PUT')
 
@@ -606,7 +612,8 @@
                         Nama Tempat Wisata
                         <span class="required">*</span>
                     </label>
-                    <input type="text" name="nama_wisata" class="form-control" value="{{ $wisata->nama_wisata }}" placeholder="Contoh: Museum Sandi" required>
+                    <input type="text" name="nama_wisata" class="form-control" value="{{ $wisata->nama_wisata }}"
+                        placeholder="Contoh: Museum Sandi" required>
                     <div class="form-text">
                         <i class="bi bi-lightbulb"></i>
                         Masukkan nama lengkap tempat wisata
@@ -624,8 +631,8 @@
                         @foreach ($kategori as $k)
                             <div class="kategori-item">
                                 <input type="checkbox" name="kategori[]" value="{{ $k->id_kategori }}"
-                                       id="kat_{{ $k->id_kategori }}" class="kategori-checkbox"
-                                       {{ in_array($k->id_kategori, $wisata->kategori->pluck('id_kategori')->toArray()) ? 'checked' : '' }}>
+                                    id="kat_{{ $k->id_kategori }}" class="kategori-checkbox"
+                                    {{ in_array($k->id_kategori, $wisata->kategori->pluck('id_kategori')->toArray()) ? 'checked' : '' }}>
                                 <label class="kategori-label" for="kat_{{ $k->id_kategori }}">
                                     {{ $k->nama_kategori }}
                                 </label>
@@ -646,6 +653,27 @@
                     Lokasi & Koordinat
                 </div>
 
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-house-fill"></i>
+                        Alamat Lengkap
+                        <span class="required">*</span>
+                    </label>
+                    <textarea name="alamat_lengkap"
+                        class="form-control @error('alamat_lengkap') is-invalid @enderror"
+                        rows="3" placeholder="Contoh: Jl. Faridan M Noto No.21, Kotabaru"
+                        required>{{ old('alamat_lengkap', $wisata->alamat_lengkap) }}</textarea>
+                    <div class="form-text">
+                        <i class="bi bi-lightbulb"></i>
+                        Alamat lengkap tempat wisata
+                    </div>
+                    @error('alamat_lengkap')
+                        <div class="invalid-feedback">
+                            <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                        </div>
+                    @enderror
+                </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-4">
                         <label class="form-label">
@@ -653,11 +681,18 @@
                             Longitude
                             <span class="required">*</span>
                         </label>
-                        <input type="text" name="longitude" class="form-control" value="{{ $wisata->longitude }}" placeholder="Contoh: 110.3750" required>
+                        <input type="text" name="longitude"
+                            class="form-control  @error('longitude') is-invalid @enderror"
+                            value="{{ old('longitude', $wisata->longitude) }}" required>
                         <div class="form-text">
                             <i class="bi bi-info-circle"></i>
                             Koordinat bujur (sumbu X)
                         </div>
+                        @error('longitude')
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-4">
                         <label class="form-label">
@@ -665,12 +700,24 @@
                             Latitude
                             <span class="required">*</span>
                         </label>
-                        <input type="text" name="latitude" class="form-control" value="{{ $wisata->latitude }}" placeholder="Contoh: -7.7869" required>
+                        <input type="text" name="latitude"
+                            class="form-control @error('latitude') is-invalid @enderror"
+                            value="{{ old('latitude', $wisata->latitude) }}" required>
                         <div class="form-text">
                             <i class="bi bi-info-circle"></i>
                             Koordinat lintang (sumbu Y)
                         </div>
+                        @error('latitude')
+                            <div class="invalid-feedback">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
                     </div>
+                    @if ($errors->has('lokasi'))
+                        <div class="alert alert-danger">
+                            <i class="bi bi-geo-alt-fill"></i> {{ $errors->first('lokasi') }}
+                        </div>
+                    @endif
                 </div>
 
                 <div class="section-divider"></div>
@@ -760,15 +807,16 @@
                                     </td>
                                     <td>
                                         <input type="time" name="jam_buka[]" class="form-control form-control-sm"
-                                               value="{{ $jamOps[$day]->jam_buka ?? '00:00' }}">
+                                            value="{{ $jamOps[$day]->jam_buka ?? '00:00' }}">
                                     </td>
                                     <td>
                                         <input type="time" name="jam_tutup[]" class="form-control form-control-sm"
-                                               value="{{ $jamOps[$day]->jam_tutup ?? '23:59' }}">
+                                            value="{{ $jamOps[$day]->jam_tutup ?? '23:59' }}">
                                     </td>
                                     <td class="text-center">
-                                        <input class="libur-checkbox" type="checkbox" name="libur[]" value="{{ $loop->index }}"
-                                               {{ empty($jamOps[$day]->jam_buka) && empty($jamOps[$day]->jam_tutup) ? 'checked' : '' }}>
+                                        <input class="libur-checkbox" type="checkbox" name="libur[]"
+                                            value="{{ $loop->index }}"
+                                            {{ empty($jamOps[$day]->jam_buka) && empty($jamOps[$day]->jam_tutup) ? 'checked' : '' }}>
                                     </td>
                                 </tr>
                             @endforeach
@@ -789,11 +837,12 @@
                         <i class="bi bi-image-fill"></i>
                         Foto Saat Ini
                     </label>
-                    @if($wisata->foto->count() > 0)
+                    @if ($wisata->foto->count() > 0)
                         <div class="photo-gallery">
                             @foreach ($wisata->foto as $index => $f)
                                 <div class="photo-item">
-                                    <img src="{{ asset('storage/' . $f->path_foto) }}" alt="Foto {{ $wisata->nama_wisata }}">
+                                    <img src="{{ asset('storage/' . $f->path_foto) }}"
+                                        alt="Foto {{ $wisata->nama_wisata }}">
                                     <div class="photo-badge">Foto {{ $index + 1 }}</div>
                                     <div class="photo-overlay">
                                         <small style="color: white; font-size: 11px;">

@@ -77,6 +77,8 @@ class TempatWisataController extends Controller
     // Update
     public function update(Request $request, $id , WilayahKotabaruService $wilayah, TempatWisataService $wisataServices)
     {
+        // dd($request->all());
+
         $validated = $request->validate([
             'nama_wisata'   => 'required|string|max:255',
             'alamat_lengkap' => 'required|string',
@@ -88,6 +90,17 @@ class TempatWisataController extends Controller
             'sejarah'     => 'required|string',
             'narasi'      => 'required|string',
         ]);
+
+
+        // dd([
+        //     'lat' => $validated['latitude'],
+        //     'lng' => $validated['longitude'],
+        //     'hasil_bbox' => $wilayah->dalamBoundingBox(
+        //         $validated['latitude'],
+        //         $validated['longitude']
+        //     ),
+        // ]);
+
 
         if (
             isset($validated['latitude'], $validated['longitude']) &&
