@@ -5,9 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class KategoriWisata extends Model
+
+class KategoriKuliner extends Model
 {
-    protected $table = 'kategori_wisata';
+    protected $table = 'kategori_kuliner';
     protected $primaryKey = 'id_kategori';
     protected $fillable = ['nama_kategori', 'status'];
 
@@ -18,8 +19,8 @@ class KategoriWisata extends Model
         return $query->where('status', true);
     }
 
-    public function tempatWisata()
+    public function tempatKuliner()
     {
-        return $this->belongsToMany(TempatWisata::class, 'tempat_wisata_kategori', 'id_kategori', 'id_wisata');
+        return $this->belongsToMany(TempatKuliner::class, 'tempat_kuliner_kategori', 'id_kategori', 'id_kuliner');
     }
 }

@@ -11,26 +11,43 @@ class TempatWisata extends Model
     protected $fillable = [
         'nama_wisata',
         'alamat_lengkap',
-        'id_kategori',
         'longitude',
         'latitude',
         'deskripsi',
         'sejarah',
-        'narasi'
+        'narasi',
+        'status'
     ];
 
-    public function jamOperasional()
+    protected $casts = [
+        'status' => 'boolean',
+        'longitude' => 'float',
+        'latitude' => 'float',
+    ];
+
+    public function jamOperasionalUser()
+    {
+        return $this->hasMany(JamOperasionalWisata::class, 'id_wisata')->where('libur', false);
+    }
+
+    public function jamOperasionalAdmin()
     {
         return $this->hasMany(JamOperasionalWisata::class, 'id_wisata');
     }
 
     public function foto()
     {
-        return $this->hasMany(FotoWisata::class, 'id_wisata');
+        return $this->hasMany(FotoWisata::class, 'id_wisata')->orderBy('id_foto', 'asc');
     }
 
     public function kategori()
     {
         return $this->belongsToMany(KategoriWisata::class, 'tempat_wisata_kategori', 'id_wisata', 'id_kategori');
     }
+
+    public function scopeAktif($query)
+    {
+        return $query->where('status', true);
+    }
+
 }

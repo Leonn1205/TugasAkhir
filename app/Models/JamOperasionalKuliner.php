@@ -13,7 +13,11 @@ class JamOperasionalKuliner extends Model
     'jam_buka',
     'jam_tutup',
     'jam_sibuk_mulai',
-    'jam_sibuk_selesai'];
+    'jam_sibuk_selesai',
+    'libur'
+    ];
+
+    protected $casts = ['libur' => 'boolean'];
 
     public function kuliner()
     {

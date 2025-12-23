@@ -21,7 +21,8 @@ return new class extends Migration
             $table->decimal('latitude', 10, 6);
             $table->text('deskripsi');
             $table->text('sejarah');
-            $table->text('narasi'); // bisa dipakai untuk teks / audio
+            $table->text('narasi');
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
     }

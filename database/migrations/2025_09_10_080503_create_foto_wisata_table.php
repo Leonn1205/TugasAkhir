@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id('id_foto');
             $table->unsignedBigInteger('id_wisata');
             $table->string('path_foto');
-            $table->string('keterangan')->nullable();
             $table->timestamps();
 
             $table->foreign('id_wisata')

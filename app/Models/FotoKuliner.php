@@ -9,7 +9,7 @@ class FotoKuliner extends Model
 {
     use HasFactory;
     protected $table = 'foto_kuliner';
-    protected $fillable = ['id_kuliner','path_foto','keterangan'];
+    protected $fillable = ['id_kuliner','path_foto'];
 
     public function kuliner()
     {

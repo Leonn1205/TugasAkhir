@@ -13,12 +13,18 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('foto_kuliner', function (Blueprint $table) {
-            $table->id('id_foto_kuliner');
+        Schema::create('jam_operasional_kuliner', function (Blueprint $table) {
+            $table->id("id_jam_operasional");
             $table->unsignedBigInteger('id_kuliner');
-            $table->string('path_foto');
-            $table->string('keterangan')->nullable();
+            $table->enum('hari', ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']);
+            $table->time('jam_buka')->nullable();
+            $table->time('jam_tutup')->nullable();
+            $table->time('jam_sibuk_mulai')->nullable();
+            $table->time('jam_sibuk_selesai')->nullable();
+            $table->boolean('libur')->default(false);
             $table->timestamps();
+
+            $table->unique(['id_kuliner', 'hari']);
 
             $table->foreign('id_kuliner')
                 ->references('id_kuliner')
@@ -35,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('foto_kuliner');
+        Schema::dropIfExists('jam_operasional_kuliner');
     }
 };

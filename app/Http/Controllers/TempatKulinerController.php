@@ -6,14 +6,17 @@ use App\Models\TempatKuliner;
 use App\Models\FotoKuliner;
 use App\Models\JamOperasionalKuliner;
 use Illuminate\Http\Request;
-
+use App\Services\WilayahKotabaruService;
+use App\Services\TempatKulinerService;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 
 class TempatKulinerController extends Controller
 {
     // GET /dashboard/kuliner
     public function index()
     {
-        $kuliner = TempatKuliner::with(['foto','jamOperasional'])->get();
+        $kuliner = TempatKuliner::with(['foto','jamOperasionalAdmin'])->get();
         return view('kuliner.index', compact('kuliner'));
     }
 
@@ -23,221 +26,128 @@ class TempatKulinerController extends Controller
         return view('kuliner.create');
     }
 
-    public function store(Request $request)
+    public function store(Request $request, WilayahKotabaruService $wilayah, TempatKulinerService $kulinerServices)
     {
-        $request->validate([
+        //dd($request->all());
+
+        $validated = $request->validate([
+             // Identitas Usaha
             'nama_sentra' => 'required|string|max:255',
+            'tahun_berdiri' => 'required|numeric|min:1900|max:' . date('Y'),
+            'nama_pemilik' => 'required|string|max:255',
+            'kepemilikan' => 'required|in:Pribadi,Keluarga,Komunitas,Waralaba',
             'alamat_lengkap' => 'required|string',
-            'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
+            'telepon' => 'nullable|string|max:12',
             'email' => 'nullable|email',
-            'tahun_berdiri' => 'nullable|numeric|min:1900|max:' . date('Y'),
-            'prosedur_sanitasi_alat' => 'required|string',
-            'prosedur_sanitasi_bahan' => 'required|string',
+            'no_nib' => 'nullable|digits:13',
+            'sertifikat_lain' => 'nullable|array',
+            'sertifikat_lain.*' => 'string',
+            'sertifikat_text' => 'required_if:sertifikat_lain.*,Lainnya|nullable|string|max:255',
+            'jumlah_pegawai' => 'required|integer|min:0',
+            'jumlah_kursi' => 'required|integer|min:0',
+            'jumlah_gerai' => 'required|integer|min:0',
+            'jumlah_pelanggan_per_hari' => 'required|integer|min:0',
+            'hari' => 'required|array|size:7',
+            'hari.*' => 'required|in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+            'jam_buka' => 'nullable|array|size:7',
+            'jam_buka.*' => 'nullable|date_format:H:i',
+            'jam_tutup' => 'nullable|array|size:7',
+            'jam_tutup.*' => 'nullable|date_format:H:i',
+            'jam_sibuk_mulai' => 'nullable|array|size:7',
+            'jam_sibuk_mulai.*' => 'nullable|date_format:H:i',
+            'jam_sibuk_selesai' => 'nullable|array|size:7',
+            'jam_sibuk_selesai.*' => 'nullable|date_format:H:i',
+            'libur' => 'nullable|array',
+            'profil_pelanggan' => 'required|array',
+            'profil_pelanggan.*' => 'string|in:Lokal,Wisatawan,Pelajar/Mahasiswa,Pekerja',
+            'metode_pembayaran' => 'required|array',
+            'metode_pembayaran.*' => 'string|in:Tunai,Qris / Transfer',
+            'pajak_retribusi' => 'required|in:Ya,Tidak',
+
+            // Jenis Kuliner
+            'kategori' => 'required|array',
+            'kategori.*' => 'required|in:Tradisional/Domestik,Modern/Luar Negeri,Street Food,Lainnya',
+            'kategori_lain' => 'required_if:kategori.*,Lainnya|nullable|string|max:255',
+            'menu_unggulan' => 'required|string|max:255',
+            'bahan_baku_utama' => 'required|string|max:255',
+            'sumber_bahan_baku' => 'required|in:Lokal,Domestik / Luar Kota,Import / Luar Negeri,Campuran',
+            'menu_bersifat' => 'required|array',
+            'menu_bersifat.*' => 'string|in:Tetap,Musiman',
+
+            // Tempat & Fasilitas
+            'bentuk_fisik' => 'required|in:Restoran,Warung,Kafe,Food Court,Jasa Boga (Katering), Penyedia Makanan oleh Pedagang Keliling, Penyedia Makanan oleh Pedagang Tidak Keliling',
+            'status_bangunan'      => 'required|string|in:Milik Sendiri,Sewa,Pinjam Pakai,Lainnya...',
+            'status_bangunan_lain' => 'required_if:status_bangunan,Lainnya...|nullable|string|max:255',
+            'fasilitas_pendukung' => 'required|array',
+            'fasilitas_pendukung.*' => 'string|in:Toilet,Wastafel,Parkir,Mushola,WiFi,Tempat Sampah',
+
+            // Praktik K3 & Sanitasi
+            'pelatihan_k3' => 'required|in:Ya,Tidak',
+            'jumlah_penjamah_makanan' => 'required|integer|min:0',
+            'apd_penjamah_makanan' => 'required|array',
+            'apd_penjamah_makanan.*' => 'string|in:Masker,Hairnet,Celemek,Sarung Tangan',
+            'prosedur_sanitasi_alat' => 'required|in:Tidak Melakukan,Melakukan',
+            'frekuensi_sanitasi_alat' => 'required|string|max:14',
+            'prosedur_sanitasi_bahan' => 'required|in:Tidak Melakukan,Melakukan',
+            'frekuensi_sanitasi_bahan' => 'required|string|max:14',
+            'penyimpanan_mentah' => [
+                'required',
+                Rule::in([
+                    'Dengan Pendingin, Terpisah',
+                    'Dengan Pendingin, Tidak Terpisah',
+                    'Tanpa Pendingin, Terpisah',
+                    'Tanpa Pendingin, Tidak Terpisah'
+                ])
+            ],
+            'penyimpanan_matang' => [
+                'required',
+                Rule::in([
+                    'Dengan Pendingin, Terpisah',
+                    'Dengan Pendingin, Tidak Terpisah',
+                    'Tanpa Pendingin, Terpisah',
+                    'Tanpa Pendingin, Tidak Terpisah'
+                ])
+            ],
+             'fifo_fefo' => 'required|in:Ya,Tidak',
+            'limbah_dapur' => 'required|in:Dipisah,Tidak dipisah',
+            'ventilasi_dapur' => 'required|in:Alami,Buatan',
+            'dapur' => [
+                'required',
+                Rule::in([
+                    'Ada, terpisah',
+                    'Ada, tidak terpisah',
+                    'Tidak ada'
+                ])
+            ],
+            'sumber_air_cuci' => 'required|in:PDAM,Sumur,Air Isi Ulang',
+            'sumber_air_masak' => 'required|in:PDAM,Sumur,Air Isi Ulang',
+            'sumber_air_minum' => 'required|in:PDAM,Sumur,Air Isi Ulang',
+
+            // Koordinat Lokasi
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+
+            // Foto
+            'foto'   => 'nullable|array|min:1',
+            'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        $data = $request->all();
-
-
-        // === KONVERSI ARRAY / CHECKBOX ===
-        // Sertifikat
-        $sertifikat = $request->input('sertifikat_lain', []);
-        if (in_array('Lainnya', $sertifikat)) {
-            $lain = trim($request->input('sertifikat_lain_text'));
-            $key = array_search('Lainnya', $sertifikat);
-            $sertifikat[$key] = $lain ? 'Lainnya: ' . $lain : 'Lainnya';
-        }
-        $data['sertifikat_lain'] = json_encode($sertifikat);
-
-        // Profil pelanggan
-        $data['profil_pelanggan'] = $request->profil_pelanggan
-            ? json_encode($request->profil_pelanggan)
-            : null;
-
-        // Metode pembayaran
-        $data['metode_pembayaran'] = $request->metode_pembayaran
-            ? json_encode($request->metode_pembayaran)
-            : null;
-
-        // Kategori kuliner
-        $kategori = $request->input('kategori', []);
-        if (in_array('Lainnya', $kategori)) {
-            $lain = trim($request->input('kategori_lain'));
-            $key = array_search('Lainnya', $kategori);
-            $kategori[$key] = $lain ? 'Lainnya: ' . $lain : 'Lainnya';
-        }
-        $data['kategori'] = json_encode($kategori);
-
-        // Bahan baku
-        $data['bahan_baku'] = $request->bahan_baku
-            ? json_encode($request->bahan_baku)
-            : null;
-
-        // Metode transaksi
-        $data['metode_transaksi'] = $request->metode_transaksi
-            ? json_encode($request->metode_transaksi)
-            : null;
-
-        // Menu bersifat
-        $data['menu_bersifat'] = $request->menu_bersifat
-            ? json_encode($request->menu_bersifat)
-            : null;
-
-        // APD penjamah makanan
-        $data['apd_penjamah_makanan'] = $request->apd_penjamah_makanan
-            ? json_encode($request->apd_penjamah_makanan)
-            : null;
-
-        // === KONVERSI RADIO BUTTON ===
-        $data['pelatihan_k3'] = $request->has('pelatihan_k3') ? 1 : 0;
-        $data['pajak_retribusi'] = $request->has('pajak_retribusi') ? 1 : 0;
-        $data['fifo_fefo'] = $request->has('fifo_fefo') ? 1 : 0;
-
-
-        // === KONVERSI DROPDOWN ===
-        $data['dapur'] = match ($request->input('dapur')) {
-            'Terpisah' => 'Terpisah',
-            'Tidak Terpisah' => 'Tidak Terpisah',
-            'Tidak Ada' => 'Tidak Ada',
-            default => null,
-        };
-
-        $data['prosedur_sanitasi_alat'] = (int) $request->input('prosedur_sanitasi_alat');
-        $data['prosedur_sanitasi_bahan'] = (int) $request->input('prosedur_sanitasi_bahan');
-
-        $data['penyimpanan_mentah'] = match ($request->input('penyimpanan_mentah')) {
-            'Dengan Pendingin, Terpisah' => 'Dengan Pendingin, Terpisah',
-            'Dengan Pendingin, Tidak Terpisah' => 'Dengan Pendingin, Tidak Terpisah',
-            'Tanpa Pendingin, Terpisah' => 'Tanpa Pendingin, Terpisah',
-            'Tanpa Pendingin, Tidak Terpisah' => 'Tanpa Pendingin, Tidak Terpisah',
-            default => null,
-        };
-
-        $data['penyimpanan_matang'] = match ($request->input('penyimpanan_matang')) {
-            'Dengan Pendingin, Terpisah' => 'Dengan Pendingin, Terpisah',
-            'Dengan Pendingin, Tidak Terpisah' => 'Dengan Pendingin, Tidak Terpisah',
-            'Tanpa Pendingin, Terpisah' => 'Tanpa Pendingin, Terpisah',
-            'Tanpa Pendingin, Tidak Terpisah' => 'Tanpa Pendingin, Tidak Terpisah',
-            default => null,
-        };
-
-        $data['limbah_dapur'] = match ($request->input('limbah_dapur')) {
-            'Dipisah' => 'Dipisah',
-            'Tidak dipisah' => 'Tidak dipisah',
-            default => null,
-        };
-
-        $data['ventilasi_dapur'] = match ($request->input('ventilasi_dapur')) {
-            'Alami' => 'Alami',
-            'Buatan' => 'Buatan',
-            default => null,
-        };
-
-        $data['dapur'] = match ($request->input('dapur')) {
-            'Ada, terpisah' => 'Ada, terpisah',
-            'Ada, tidak terpisah' => 'Ada, tidak terpisah',
-            'Tidak ada' => 'Tidak ada',
-        };
-
-        $data['sumber_air_cuci'] = match ($request->input('sumber_air_cuci')) {
-            'PDAM' => 'PDAM',
-            'Sumur' => 'Sumur',
-            'Air Isi Ulang' => 'Air Isi Ulang',
-            default => null,
-        };
-
-        $data['sumber_air_masak'] = match ($request->input('sumber_air_masak')) {
-            'PDAM' => 'PDAM',
-            'Sumur' => 'Sumur',
-            'Air Isi Ulang' => 'Air Isi Ulang',
-            default => null,
-        };
-
-        $data['sumber_air_minum'] = match ($request->input('sumber_air_minum')) {
-            'PDAM' => 'PDAM',
-            'Sumur' => 'Sumur',
-            'Air Isi Ulang' => 'Air Isi Ulang',
-            default => null,
-        };
-
-        if ($request->input('status_bangunan') === 'Lainnya') {
-            $data['status_bangunan'] = $request->input('status_lain');
-        } else {
-            $data['status_bangunan'] = $request->input('status_bangunan');
+        if (! $wilayah->dalamBoundingBox(
+            $validated['latitude'],
+            $validated['longitude']
+            )) {
+            return back()->withInput()
+                ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
-        // === SIMPAN DATA UTAMA ===
-        $kuliner = TempatKuliner::create([
-            'nama_sentra' => $data['nama_sentra'] ?? null,
-            'tahun_berdiri' => $data['tahun_berdiri'] ?? null,
-            'nama_pemilik' => $data['nama_pemilik'] ?? null,
-            'kepemilikan' => $data['kepemilikan'] ?? null,
-            'alamat_lengkap' => $data['alamat_lengkap'] ?? null,
-            'telepon' => $data['telepon'] ?? null,
-            'email' => $data['email'] ?? null,
-            'no_nib' => $data['no_nib'] ?? null,
-            'sertifikat_lain' => $data['sertifikat_lain'] ?? null,
-            'jumlah_pegawai' => $data['jumlah_pegawai'] ?? null,
-            'jumlah_kursi' => $data['jumlah_kursi'] ?? null,
-            'jumlah_gerai' => $data['jumlah_gerai'] ?? null,
-            'jumlah_pelanggan_per_hari' => $data['jumlah_pelanggan_per_hari'] ?? null,
-            'profil_pelanggan' => $data['profil_pelanggan'] ?? null,
-            'metode_pembayaran' => $data['metode_pembayaran'] ?? null,
-            'pajak_retribusi' => $data['pajak_retribusi'] ?? null,
-            'kategori' => $data['kategori'] ?? null,
-            'menu_unggulan' => $data['menu_unggulan'] ?? null,
-            'bahan_baku_utama' => $data['bahan_baku_utama'] ?? null,
-            'sumber_bahan_baku' => $data['sumber_bahan_baku'] ?? null,
-            'menu_bersifat' => $data['menu_bersifat'] ?? null,
-            'bentuk_fisik' => $data['bentuk_fisik'] ?? null,
-            'status_bangunan' => $data['status_bangunan'] ?? null,
-            'fasilitas_pendukung' => $data['fasilitas_pendukung'] ?? null,
-            'dapur' => $data['dapur'] ?? null,
-            'pelatihan_k3' => $data['pelatihan_k3'] ?? null,
-            'jumlah_penjamah_makanan' => $data['jumlah_penjamah_makanan'] ?? null,
-            'apd_penjamah_makanan' => $data['apd_penjamah_makanan'] ?? null,
-            'prosedur_sanitasi_alat' => $data['prosedur_sanitasi_alat'] ?? null,
-            'frekuensi_sanitasi_alat' => $data['frekuensi_sanitasi_alat'] ?? null,
-            'prosedur_sanitasi_bahan' => $data['prosedur_sanitasi_bahan'] ?? null,
-            'frekuensi_sanitasi_bahan' => $data['frekuensi_sanitasi_bahan'] ?? null,
-            'penyimpanan_mentah' => $data['penyimpanan_mentah'] ?? null,
-            'penyimpanan_matang' => $data['penyimpanan_matang'] ?? null,
-            'fifo_fefo' => $data['fifo_fefo'] ?? null,
-            'limbah_dapur' => $data['limbah_dapur'] ?? null,
-            'ventilasi_dapur' => $data['ventilasi_dapur'] ?? null,
-            'dapur' => $data['dapur'] ?? null,
-            'sumber_air_cuci' => $data['sumber_air_cuci'] ?? null,
-            'sumber_air_masak' => $data['sumber_air_masak'] ?? null,
-            'sumber_air_minum' => $data['sumber_air_minum'] ?? null,
-            'latitude' => $data['latitude'] ?? null,
-            'longitude' => $data['longitude'] ?? null,
-        ]);
+        try {
+            $kulinerServices->storeData($validated, $request);
+        } catch(\Throwable $e) {
+            Log::error($e);
 
-        // === SIMPAN FOTO ===
-        if ($request->hasFile('foto')) {
-            foreach ($request->file('foto') as $file) {
-                $path = $file->store('kuliner', 'public');
-                FotoKuliner::create([
-                    'id_kuliner' => $kuliner->id_kuliner,
-                    'path_foto' => $path,
-                ]);
-            }
-        }
-
-        // === SIMPAN JAM OPERASIONAL ===
-        if ($request->filled('hari')) {
-            foreach ($request->hari as $i => $hari) {
-                $isLibur = isset($request->libur[$i]);
-
-                JamOperasionalKuliner::create([
-                    'id_kuliner' => $kuliner->id_kuliner,
-                    'hari' => $hari,
-                    'jam_buka' => $isLibur ? null : ($request->jam_buka[$i] ?? null),
-                    'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$i] ?? null),
-                    'jam_sibuk_mulai' => $isLibur ? null : ($request->jam_sibuk_mulai[$i] ?? null),
-                    'jam_sibuk_selesai' => $isLibur ? null : ($request->jam_sibuk_selesai[$i] ?? null),
-                ]);
-            }
-        }
+            return back()
+                ->withInput()
+                ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);}
 
         return redirect()->route('kuliner.index')
             ->with('success', 'Data tempat kuliner berhasil ditambahkan!');
@@ -297,7 +207,14 @@ class TempatKulinerController extends Controller
             'nama_sentra' => 'required|string|max:255',
             'alamat_lengkap' => 'required|string',
             'email' => 'nullable|email',
+            'telepon' => 'nullable|string|max:12',
             'tahun_berdiri' => 'nullable|numeric|min:1900|max:' . date('Y'),
+            'no_nib' => 'nullable|digits:13',
+            'jumlah_pegawai' => 'nullable|integer|min:0',
+            'jumlah_penjamah_makanan' => 'nullable|integer|min:0',
+            'jumlah_kursi' => 'nullable|integer|min:0',
+            'jumlah_gerai' => 'nullable|integer|min:0',
+            'jumlah_pelanggan_per_hari' => 'nullable|integer|min:0',
         ]);
 
         $data = $request->all();
@@ -349,10 +266,11 @@ class TempatKulinerController extends Controller
         $data['prosedur_sanitasi_bahan'] = $request->input('prosedur_sanitasi_bahan') ? 1 : 0;
 
         if ($request->status_bangunan === 'Lainnya') {
-        $data['status_bangunan'] = 'Lainnya: ' . $request->status_lain;
+            $data['status_bangunan'] = 'Lainnya: ' . $request->status_lain;
         } else {
             $data['status_bangunan'] = $request->status_bangunan;
         }
+
         // === UPDATE DATA UTAMA ===
         $kuliner->update($data);
 

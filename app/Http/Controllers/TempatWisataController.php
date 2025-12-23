@@ -92,16 +92,6 @@ class TempatWisataController extends Controller
         ]);
 
 
-        // dd([
-        //     'lat' => $validated['latitude'],
-        //     'lng' => $validated['longitude'],
-        //     'hasil_bbox' => $wilayah->dalamBoundingBox(
-        //         $validated['latitude'],
-        //         $validated['longitude']
-        //     ),
-        // ]);
-
-
         if (
             isset($validated['latitude'], $validated['longitude']) &&
             ! $wilayah->dalamBoundingBox(

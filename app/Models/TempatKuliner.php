@@ -31,7 +31,6 @@ class TempatKuliner extends Model
         'metode_pembayaran',
 
         // 2. Kategori & Menu
-        'kategori',
         'menu_unggulan',
         'bahan_baku_utama',
         'sumber_bahan_baku',
@@ -41,7 +40,7 @@ class TempatKuliner extends Model
         'bentuk_fisik',
         'status_bangunan',
         'fasilitas_pendukung',
-        'dapur',
+
 
         // 4. Praktik K3 & Sanitasi
         'pelatihan_k3',
@@ -56,6 +55,7 @@ class TempatKuliner extends Model
         'fifo_fefo',
         'limbah_dapur',
         'ventilasi_dapur',
+        'dapur',
         'sumber_air_cuci',
         'sumber_air_masak',
         'sumber_air_minum',
@@ -63,6 +63,8 @@ class TempatKuliner extends Model
         // 5. Koordinat
         'longitude',
         'latitude',
+
+        'status',
     ];
 
     protected $casts = [
@@ -81,15 +83,32 @@ class TempatKuliner extends Model
 
         'longitude' => 'float',
         'latitude' => 'float',
+
+        'status' => 'boolean',
     ];
+
+    public function scopeAktif($query)
+    {
+        return $query->where('status', true);
+    }
 
     public function foto()
     {
-        return $this->hasMany(FotoKuliner::class, 'id_kuliner');
+        return $this->hasMany(FotoKuliner::class, 'id_kuliner')->orderBy('id_foto', 'asc');
     }
 
-    public function jamOperasional()
+    public function jamOperasionalUser()
+    {
+        return $this->hasMany(JamOperasionalKuliner::class, 'id_kuliner')->where('libur', false);
+    }
+
+    public function jamOperasionalAdmin()
     {
         return $this->hasMany(JamOperasionalKuliner::class, 'id_kuliner');
+    }
+
+    public function kategori()
+    {
+        return $this->belongsToMany(KategoriKuliner::class, 'tempat_kuliner_kategori', 'id_kuliner', 'id_kategori');
     }
 }

@@ -8,7 +8,7 @@ class FotoWisata extends Model
     use HasFactory;
 
     protected $table = 'foto_wisata';
-    protected $fillable = ['id_wisata', 'path_foto', 'keterangan'];
+    protected $fillable = ['id_wisata', 'path_foto'];
 
     public function wisata()
     {
