@@ -14,92 +14,139 @@ class TempatWisataService
     {
         $uploadedFiles = [];
 
-        DB::transaction(function () use ($data, $request, &$uploadedFiles) {
+        try {
+            DB::transaction(function () use ($data, $request, &$uploadedFiles) {
 
-            $wisata = TempatWisata::create([
-                'nama_wisata'    => $data['nama_wisata'],
-                'alamat_lengkap' => $data['alamat_lengkap'],
-                'longitude'      => $data['longitude'],
-                'latitude'       => $data['latitude'],
-                'deskripsi'      => $data['deskripsi'],
-                'sejarah'        => $data['sejarah'],
-                'narasi'         => $data['narasi'],
-            ]);
+                // Create wisata record
+                $wisata = TempatWisata::create([
+                    'nama_wisata'    => $data['nama_wisata'],
+                    'alamat_lengkap' => $data['alamat_lengkap'],
+                    'longitude'      => $data['longitude'],
+                    'latitude'       => $data['latitude'],
+                    'deskripsi'      => $data['deskripsi'],
+                    'sejarah'        => $data['sejarah'],
+                    'narasi'         => $data['narasi'],
+                    'status'         => true,
+                ]);
 
-            // Foto
-            if ($request->hasFile('foto')) {
-                foreach ($request->file('foto') as $file) {
-                    $path = $file->store('wisata', 'public');
-                    $uploadedFiles[] = $path;
+                // Handle foto upload
+                if ($request->hasFile('foto')) {
+                    foreach ($request->file('foto') as $file) {
+                        $path = $file->store('wisata', 'public');
+                        $uploadedFiles[] = $path;
 
-                    FotoWisata::create([
-                        'id_wisata' => $wisata->id_wisata,
-                        'path_foto' => $path,
-                    ]);
+                        FotoWisata::create([
+                            'id_wisata' => $wisata->id_wisata,
+                            'path_foto' => $path,
+                        ]);
+                    }
+                }
+
+                // Handle jam operasional
+                if (!empty($data['hari'])) {
+                    foreach ($data['hari'] as $index => $hari) {
+                        $isLibur = isset($data['libur'][$index]);
+
+                        JamOperasionalWisata::create([
+                            'id_wisata'  => $wisata->id_wisata,
+                            'hari'       => $hari,
+                            'jam_buka'   => $isLibur ? null : ($data['jam_buka'][$index] ?? null),
+                            'jam_tutup'  => $isLibur ? null : ($data['jam_tutup'][$index] ?? null),
+                            'libur'      => $isLibur,
+                        ]);
+                    }
+                }
+
+                // Sync kategori (many-to-many)
+                $wisata->kategori()->sync($data['kategori']);
+            });
+        } catch (\Throwable $e) {
+            // Rollback uploaded files if transaction fails
+            foreach ($uploadedFiles as $path) {
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
                 }
             }
 
-            // Jam operasional
-            if ($request->filled('hari')) {
-                foreach ($request->hari as $index => $hari) {
-                    $isLibur = isset($request->libur[$index]);
-
-                    JamOperasionalWisata::create([
-                        'id_wisata' => $wisata->id_wisata,
-                        'hari'      => $hari,
-                        'jam_buka'  => $isLibur ? null : ($request->jam_buka[$index] ?? null),
-                        'jam_tutup' => $isLibur ? null : ($request->jam_tutup[$index] ?? null),
-                    ]);
-                }
-            }
-
-            $wisata->kategori()->sync($data['kategori']);
-        });
+            throw $e;
+        }
     }
 
     public function updateWisata(int $id, array $data, ?array $foto, array $jamOperasional): void
     {
-        DB::transaction(function () use ($id, $data, $foto, $jamOperasional) {
+        $uploadedFiles = [];
 
-            $wisata = TempatWisata::findOrFail($id);
+        try {
+            DB::transaction(function () use ($id, $data, $foto, $jamOperasional, &$uploadedFiles) {
 
-            $wisata->update([
-                'nama_wisata'    => $data['nama_wisata'],
-                'alamat_lengkap' => $data['alamat_lengkap'] ?? null,
-                'longitude'      => $data['longitude'] ?? $wisata->longitude,
-                'latitude'       => $data['latitude'] ?? $wisata->latitude,
-                'deskripsi'      => $data['deskripsi'] ?? null,
-                'sejarah'        => $data['sejarah'] ?? null,
-                'narasi'         => $data['narasi'] ?? null,
-            ]);
+                $wisata = TempatWisata::findOrFail($id);
 
-            // Foto baru (append, bukan replace)
-            if (!empty($foto)) {
-                foreach ($foto as $file) {
-                    $path = $file->store('wisata', 'public');
+                // Update wisata data
+                $wisata->update([
+                    'nama_wisata'    => $data['nama_wisata'],
+                    'alamat_lengkap' => $data['alamat_lengkap'],
+                    'longitude'      => $data['longitude'],
+                    'latitude'       => $data['latitude'],
+                    'deskripsi'      => $data['deskripsi'],
+                    'sejarah'        => $data['sejarah'],
+                    'narasi'         => $data['narasi'],
+                ]);
 
-                    FotoWisata::create([
-                        'id_wisata' => $wisata->id_wisata,
-                        'path_foto' => $path,
-                    ]);
+                // Handle foto baru (append mode)
+                if (!empty($foto)) {
+                    foreach ($foto as $file) {
+                        $path = $file->store('wisata', 'public');
+                        $uploadedFiles[] = $path;
+
+                        FotoWisata::create([
+                            'id_wisata' => $wisata->id_wisata,
+                            'path_foto' => $path,
+                        ]);
+                    }
+                }
+
+                // Reset jam operasional (delete existing, then create new)
+                $wisata->jamOperasionalAdmin()->delete();
+
+                if (!empty($jamOperasional['hari'])) {
+                    foreach ($jamOperasional['hari'] as $index => $hari) {
+                        $isLibur = isset($jamOperasional['libur'][$index]);
+
+                        JamOperasionalWisata::create([
+                            'id_wisata'  => $wisata->id_wisata,
+                            'hari'       => $hari,
+                            'jam_buka'   => $isLibur ? null : ($jamOperasional['jam_buka'][$index] ?? null),
+                            'jam_tutup'  => $isLibur ? null : ($jamOperasional['jam_tutup'][$index] ?? null),
+                            'libur'      => $isLibur,
+                        ]);
+                    }
+                }
+
+                // Sync kategori (many-to-many)
+                $wisata->kategori()->sync($data['kategori']);
+            });
+        } catch (\Throwable $e) {
+            // Rollback uploaded files if transaction fails
+            foreach ($uploadedFiles as $path) {
+                if (Storage::disk('public')->exists($path)) {
+                    Storage::disk('public')->delete($path);
                 }
             }
 
-            // Jam operasional → reset total
-            $wisata->jamOperasional()->delete();
+            throw $e;
+        }
+    }
 
-            foreach ($jamOperasional['hari'] as $index => $hari) {
-                $isLibur = isset($jamOperasional['libur'][$index]);
+    public function hapusFoto(int $idFoto): void
+    {
+        $foto = FotoWisata::findOrFail($idFoto);
 
-                JamOperasionalWisata::create([
-                    'id_wisata' => $wisata->id_wisata,
-                    'hari'      => $hari,
-                    'jam_buka'  => $isLibur ? null : ($jamOperasional['jam_buka'][$index] ?? null),
-                    'jam_tutup' => $isLibur ? null : ($jamOperasional['jam_tutup'][$index] ?? null),
-                ]);
-            }
+        // Delete file from storage
+        if (Storage::disk('public')->exists($foto->path_foto)) {
+            Storage::disk('public')->delete($foto->path_foto);
+        }
 
-            $wisata->kategori()->sync($data['kategori']);
-        });
+        // Delete database record
+        $foto->delete();
     }
 }

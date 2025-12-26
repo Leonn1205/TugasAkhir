@@ -3,39 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\KategoriWisata;
+use App\Models\KategoriKuliner;
 use Illuminate\Support\Facades\Log;
 
-class KategoriWisataController extends Controller
+class KategoriKulinerController extends Controller
 {
     public function index()
     {
-        $kategori = KategoriWisata::orderBy('created_at', 'desc')->get();
-        return view('kategori_wisata.index', compact('kategori'));
+        $kategori = KategoriKuliner::orderBy('created_at', 'desc')->get();
+        return view('kategori_kuliner.index', compact('kategori'));
     }
 
     public function create()
     {
-        return view('kategori_wisata.create');
+        return view('kategori_kuliner.create');
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_kategori' => 'required|string|max:100|unique:kategori_wisata,nama_kategori',
+            'nama_kategori' => 'required|string|max:100|unique:kategori_kuliner,nama_kategori',
             'status' => 'nullable|boolean',
         ]);
 
         try {
-            KategoriWisata::create([
+            KategoriKuliner::create([
                 'nama_kategori' => $validated['nama_kategori'],
                 'status' => $validated['status'] ?? true,
             ]);
 
-            return redirect()->route('kategori-wisata.index')
-                ->with('success', 'Kategori wisata berhasil ditambahkan');
+            return redirect()->route('kategori-kuliner.index')
+                ->with('success', 'Kategori kuliner berhasil ditambahkan');
         } catch (\Throwable $e) {
-            Log::error('Error creating kategori wisata: ' . $e->getMessage());
+            Log::error('Error creating kategori kuliner: ' . $e->getMessage());
 
             return back()
                 ->withInput()
@@ -45,16 +45,16 @@ class KategoriWisataController extends Controller
 
     public function edit($id)
     {
-        $kategori = KategoriWisata::findOrFail($id);
-        return view('kategori_wisata.edit', compact('kategori'));
+        $kategori = KategoriKuliner::findOrFail($id);
+        return view('kategori_kuliner.edit', compact('kategori'));
     }
 
     public function update(Request $request, $id)
     {
-        $kategori = KategoriWisata::findOrFail($id);
+        $kategori = KategoriKuliner::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_kategori' => 'required|string|max:100|unique:kategori_wisata,nama_kategori,' . $id . ',id_kategori',
+            'nama_kategori' => 'required|string|max:100|unique:kategori_kuliner,nama_kategori,' . $id . ',id_kategori',
             'status' => 'nullable|boolean',
         ]);
 
@@ -64,10 +64,10 @@ class KategoriWisataController extends Controller
                 'status' => $validated['status'] ?? $kategori->status,
             ]);
 
-            return redirect()->route('kategori-wisata.index')
-                ->with('success', 'Kategori wisata berhasil diperbarui');
+            return redirect()->route('kategori-kuliner.index')
+                ->with('success', 'Kategori kuliner berhasil diperbarui');
         } catch (\Throwable $e) {
-            Log::error('Error updating kategori wisata: ' . $e->getMessage());
+            Log::error('Error updating kategori kuliner: ' . $e->getMessage());
 
             return back()
                 ->withInput()
@@ -78,22 +78,22 @@ class KategoriWisataController extends Controller
     public function destroy($id)
     {
         try {
-            $kategori = KategoriWisata::findOrFail($id);
+            $kategori = KategoriKuliner::findOrFail($id);
 
-            // Check if kategori is being used by any tempat wisata
-            if ($kategori->tempatWisata()->count() > 0) {
+            // Check if kategori is being used by any tempat kuliner
+            if ($kategori->tempatKuliner()->count() > 0) {
                 return back()->withErrors([
                     'error' => 'Kategori tidak dapat dihapus karena masih digunakan oleh ' .
-                               $kategori->tempatWisata()->count() . ' tempat wisata.'
+                               $kategori->tempatKuliner()->count() . ' tempat kuliner.'
                 ]);
             }
 
             $kategori->delete();
 
-            return redirect()->route('kategori-wisata.index')
-                ->with('success', 'Kategori wisata berhasil dihapus');
+            return redirect()->route('kategori-kuliner.index')
+                ->with('success', 'Kategori kuliner berhasil dihapus');
         } catch (\Throwable $e) {
-            Log::error('Error deleting kategori wisata: ' . $e->getMessage());
+            Log::error('Error deleting kategori kuliner: ' . $e->getMessage());
 
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data.']);
         }
@@ -102,12 +102,12 @@ class KategoriWisataController extends Controller
     public function toggleStatus($id)
     {
         try {
-            $kategori = KategoriWisata::findOrFail($id);
+            $kategori = KategoriKuliner::findOrFail($id);
             $kategori->update(['status' => !$kategori->status]);
 
             return back()->with('success', 'Status kategori berhasil diubah');
         } catch (\Throwable $e) {
-            Log::error('Error toggling kategori wisata status: ' . $e->getMessage());
+            Log::error('Error toggling kategori kuliner status: ' . $e->getMessage());
 
             return back()->withErrors(['error' => 'Terjadi kesalahan saat mengubah status.']);
         }
