@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         * {
@@ -94,7 +96,7 @@
             padding: 2.5rem;
         }
 
-        /* Badge Categories */
+        /* ✅ UPDATED: Badge Categories - Pisahkan Aktif dan Nonaktif */
         .category-badges {
             display: flex;
             gap: 10px;
@@ -112,6 +114,28 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+        }
+
+        /* Badge untuk kategori nonaktif */
+        .badge-category-inactive {
+            background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            opacity: 0.7;
+            position: relative;
+        }
+
+        .badge-category-inactive::after {
+            content: '(Nonaktif)';
+            font-size: 11px;
+            margin-left: 4px;
+            opacity: 0.8;
         }
 
         /* Section Styling */
@@ -260,6 +284,9 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .status-open {
@@ -411,12 +438,30 @@
             color: white;
         }
 
+        /* ✅ NEW: Info Alert untuk Kategori Nonaktif */
+        .category-info-alert {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border-left: 4px solid #ff9800;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-top: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: #e65100;
+        }
+
+        .category-info-alert i {
+            font-size: 20px;
+        }
+
         /* Stats Mini Cards */
         .mini-stats {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1rem;
-            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
         }
 
         .mini-stat-card {
@@ -552,10 +597,9 @@
         <div class="main-container">
 
             <!-- Hero Image -->
-            @if($wisata->foto->count() > 0)
-                <img src="{{ asset('storage/' . $wisata->foto->first()->path_foto) }}"
-                     alt="{{ $wisata->nama_wisata }}"
-                     class="hero-image">
+            @if ($wisata->foto->count() > 0)
+                <img src="{{ asset('storage/' . $wisata->foto->first()->path_foto) }}" alt="{{ $wisata->nama_wisata }}"
+                    class="hero-image">
             @else
                 <div class="hero-placeholder">
                     <i class="bi bi-image"></i>
@@ -565,20 +609,79 @@
             <!-- Content Wrapper -->
             <div class="content-wrapper">
 
-                <!-- Kategori Badges -->
+                {{-- ✅ UPDATED: Kategori Badges dengan Pemisahan Aktif/Nonaktif --}}
+                <div class="section-title">
+                    <i class="bi bi-tags-fill"></i>
+                    Kategori Wisata
+                </div>
+
+                @php
+                    $kategoriAktif = $wisata->kategoriAktif;
+                    $kategoriNonaktif = $wisata->kategori->whereNotIn(
+                        'id_kategori',
+                        $kategoriAktif->pluck('id_kategori'),
+                    );
+                @endphp
+
                 <div class="category-badges">
-                    @forelse ($wisata->kategori as $k)
+                    {{-- Kategori Aktif --}}
+                    @forelse ($kategoriAktif as $k)
                         <span class="badge-category">
                             <i class="bi bi-tag-fill"></i>
                             {{ $k->nama_kategori }}
                         </span>
                     @empty
+                    @endforelse
+
+                    {{-- Kategori Nonaktif --}}
+                    @foreach ($kategoriNonaktif as $k)
+                        <span class="badge-category-inactive" title="Kategori ini sudah dinonaktifkan">
+                            <i class="bi bi-dash-circle"></i>
+                            {{ $k->nama_kategori }}
+                        </span>
+                    @endforeach
+
+                    {{-- Jika tidak ada kategori sama sekali --}}
+                    @if ($kategoriAktif->isEmpty() && $kategoriNonaktif->isEmpty())
                         <span class="badge-category">
-                            <i class="bi bi-tag-fill"></i>
+                            <i class="bi bi-exclamation-triangle"></i>
                             Tidak ada kategori
                         </span>
-                    @endforelse
+                    @endif
                 </div>
+
+                {{-- Info Alert jika ada kategori nonaktif --}}
+                @if ($kategoriNonaktif->isNotEmpty())
+                    <div class="category-info-alert">
+                        <i class="bi bi-info-circle-fill"></i>
+                        <span>
+                            Kategori dengan label <strong>"(Nonaktif)"</strong> tidak akan ditampilkan di halaman public
+                            dan form input.
+                            Total kategori nonaktif: <strong>{{ $kategoriNonaktif->count() }}</strong>
+                        </span>
+                    </div>
+                @endif
+
+                <!-- Mini Stats -->
+                <div class="mini-stats">
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon"><i class="bi bi-tags"></i></div>
+                        <div class="mini-stat-value">{{ $wisata->kategori->count() }}</div>
+                        <div class="mini-stat-label">Total Kategori</div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon"><i class="bi bi-check-circle"></i></div>
+                        <div class="mini-stat-value">{{ $kategoriAktif->count() }}</div>
+                        <div class="mini-stat-label">Kategori Aktif</div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="mini-stat-icon"><i class="bi bi-images"></i></div>
+                        <div class="mini-stat-value">{{ $wisata->foto->count() }}</div>
+                        <div class="mini-stat-label">Total Foto</div>
+                    </div>
+                </div>
+
+                <div class="detail-section"></div>
 
                 <!-- Section: Deskripsi -->
                 <div class="detail-section">
@@ -613,9 +716,20 @@
                 <div class="detail-section">
                     <div class="section-title">
                         <i class="bi bi-map-fill"></i>
-                        Koordinat Lokasi
+                        Lokasi & Koordinat
                     </div>
+
                     <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-house-fill"></i>
+                                Alamat Lengkap
+                            </div>
+                            <div class="info-value">{{ $wisata->alamat_lengkap ?? '-' }}</div>
+                        </div>
+                    </div>
+
+                    <div class="info-grid" style="margin-top: 1.5rem;">
                         <div class="info-item">
                             <div class="info-label">
                                 <i class="bi bi-arrow-up-down"></i>
@@ -633,7 +747,6 @@
                     </div>
                 </div>
 
-                <!-- Section: Jam Operasional -->
                 <div class="detail-section">
                     <div class="section-title">
                         <i class="bi bi-clock-fill"></i>
@@ -650,13 +763,25 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($wisata->jamOperasional as $jam)
+                                @forelse ($wisata->jamOperasionalAdmin as $jam)
                                     <tr>
                                         <td class="day-name">{{ $jam->hari }}</td>
-                                        <td>{{ $jam->jam_buka ?? '-' }}</td>
-                                        <td>{{ $jam->jam_tutup ?? '-' }}</td>
                                         <td>
-                                            @if (($jam->jam_buka == '00:00' && $jam->jam_tutup == '00:00') || !$jam->jam_buka)
+                                            @if ($jam->libur || !$jam->jam_buka)
+                                                <span style="color: #999;">-</span>
+                                            @else
+                                                {{ $jam->jam_buka->format('H:i') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($jam->libur || !$jam->jam_tutup)
+                                                <span style="color: #999;">-</span>
+                                            @else
+                                                {{ $jam->jam_tutup->format('H:i') }}
+                                            @endif
+                                        </td>
+                                        <td>
+                                            @if ($jam->libur)
                                                 <span class="status-badge status-closed">
                                                     <i class="bi bi-x-circle"></i> Libur
                                                 </span>
@@ -669,7 +794,9 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4">Belum ada data jam operasional</td>
+                                        <td colspan="4" style="text-align: center; color: #999; padding: 2rem;">
+                                            <i class="bi bi-calendar-x"></i> Belum ada data jam operasional
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
@@ -683,12 +810,13 @@
                         <i class="bi bi-images"></i>
                         Galeri Foto ({{ $wisata->foto->count() }})
                     </div>
-                    @if($wisata->foto->count() > 0)
+                    @if ($wisata->foto->count() > 0)
                         <div class="photo-gallery">
                             @foreach ($wisata->foto as $index => $foto)
-                                <div class="photo-item" onclick="openLightbox('{{ asset('storage/' . $foto->path_foto) }}')">
+                                <div class="photo-item"
+                                    onclick="openLightbox('{{ asset('storage/' . $foto->path_foto) }}')">
                                     <img src="{{ asset('storage/' . $foto->path_foto) }}"
-                                         alt="Foto {{ $wisata->nama_wisata }} {{ $index + 1 }}">
+                                        alt="Foto {{ $wisata->nama_wisata }} {{ $index + 1 }}">
                                     <div class="photo-number">Foto {{ $index + 1 }}</div>
                                     <div class="photo-overlay">
                                         <small style="color: white; font-size: 12px;">
@@ -712,8 +840,12 @@
                         <i class="bi bi-arrow-left-circle"></i>
                         Kembali ke Daftar
                     </a>
+                    <a href="{{ route('wisata.edit', $wisata->id_wisata) }}" class="btn-custom btn-edit">
+                        <i class="bi bi-pencil-square"></i>
+                        Edit Data
+                    </a>
                     <a href="https://www.google.com/maps?q={{ $wisata->latitude }},{{ $wisata->longitude }}"
-                       target="_blank" class="btn-custom btn-map">
+                        target="_blank" class="btn-custom btn-map">
                         <i class="bi bi-pin-map-fill"></i>
                         Lihat di Google Maps
                     </a>

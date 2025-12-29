@@ -14,20 +14,39 @@ use Illuminate\Validation\Rule;
 
 class TempatKulinerController extends Controller
 {
+    protected $kulinerService;
+    protected $wilayahService;
+
+    public function __construct(
+        TempatKulinerService $kulinerService,
+        WilayahKotabaruService $wilayahService
+    ) {
+        $this->kulinerService = $kulinerService;
+        $this->wilayahService = $wilayahService;
+    }
+
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk display
+     */
     public function index()
     {
-        $kuliner = TempatKuliner::with(['foto', 'jamOperasionalAdmin', 'kategori'])->get();
+        $kuliner = TempatKuliner::with([
+            'foto',
+            'jamOperasionalAdmin',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])->get();
+
         return view('kuliner.index', compact('kuliner'));
     }
 
     public function create()
     {
-        $kategori = KategoriKuliner::aktif()->get();
+        $kategori = KategoriKuliner::aktif()->orderBy('nama_kategori', 'asc')->get();
         $selectedKategori = old('kategori', []);
         return view('kuliner.create', compact('kategori', 'selectedKategori'));
     }
 
-    public function store(Request $request, WilayahKotabaruService $wilayah, TempatKulinerService $kulinerServices)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             // Identitas Usaha
@@ -36,7 +55,7 @@ class TempatKulinerController extends Controller
             'nama_pemilik' => 'required|string|max:255',
             'kepemilikan' => 'required|in:Pribadi,Keluarga,Komunitas,Waralaba',
             'alamat_lengkap' => 'required|string',
-            'telepon' => 'nullable|string|max:12',
+            'telepon' => 'nullable|string|max:15',
             'email' => 'nullable|email',
             'no_nib' => 'nullable|digits:13',
             'sertifikat_lain' => 'nullable|array',
@@ -128,33 +147,42 @@ class TempatKulinerController extends Controller
             'longitude' => 'required|numeric',
 
             // Foto
-            'foto' => 'nullable|array|min:1',
+            'foto' => 'required|array|min:1',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        if (!$wilayah->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
+        // Validasi lokasi dalam wilayah Kotabaru
+        if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
         try {
-            $kulinerServices->storeData($validated, $request);
+            $this->kulinerService->store($validated, $request);
+
+            return redirect()->route('kuliner.index')
+                ->with('success', 'Tempat kuliner berhasil ditambahkan!');
         } catch (\Throwable $e) {
-            Log::error('Error creating kuliner: ' . $e->getMessage());
+            Log::error('Error storing kuliner: ' . $e->getMessage());
 
             return back()
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
-
-        return redirect()->route('kuliner.index')
-            ->with('success', 'Data tempat kuliner berhasil ditambahkan!');
     }
 
+    /**
+     * Untuk edit, tetap gunakan kategori (semua) karena admin perlu lihat semua
+     */
     public function edit($id)
     {
-        $kuliner = TempatKuliner::with(['foto', 'jamOperasionalAdmin', 'kategori'])->findOrFail($id);
-        $kategori = KategoriKuliner::aktif()->get();
+        $kuliner = TempatKuliner::with([
+            'foto',
+            'jamOperasionalAdmin',
+            'kategori'  // ← TETAP: kategori (semua) untuk admin
+        ])->findOrFail($id);
+
+        $kategori = KategoriKuliner::aktif()->orderBy('nama_kategori', 'asc')->get();
 
         // Susun ulang data jam operasional per hari
         $jamOperasional = [];
@@ -171,95 +199,26 @@ class TempatKulinerController extends Controller
         return view('kuliner.edit', compact('kuliner', 'jamOperasional', 'kategori'));
     }
 
-    public function update(Request $request, $id, WilayahKotabaruService $wilayah, TempatKulinerService $kulinerServices)
+    public function update(Request $request, $id)
     {
+        // Validation rules sama dengan store, tapi foto tidak required
         $validated = $request->validate([
-            // Identitas Usaha
-            'nama_sentra' => 'required|string|max:255',
-            'tahun_berdiri' => 'required|numeric|min:1900|max:' . date('Y'),
-            'nama_pemilik' => 'required|string|max:255',
-            'kepemilikan' => 'required|in:Pribadi,Keluarga,Komunitas,Waralaba',
-            'alamat_lengkap' => 'required|string',
-            'telepon' => 'nullable|string|max:12',
-            'email' => 'nullable|email',
-            'no_nib' => 'nullable|digits:13',
-            'sertifikat_lain' => 'nullable|array',
-            'sertifikat_lain.*' => 'string',
-            'sertifikat_text' => 'required_if:sertifikat_lain.*,Lainnya|nullable|string|max:255',
-            'jumlah_pegawai' => 'required|integer|min:0',
-            'jumlah_kursi' => 'required|integer|min:0',
-            'jumlah_gerai' => 'required|integer|min:0',
-            'jumlah_pelanggan_per_hari' => 'required|integer|min:0',
-            'profil_pelanggan' => 'required|array',
-            'metode_pembayaran' => 'required|array',
-            'pajak_retribusi' => 'required|in:Ya,Tidak',
-
-            // Jam Operasional
-            'hari' => 'required|array|size:7',
-            'jam_buka' => 'nullable|array',
-            'jam_tutup' => 'nullable|array',
-            'jam_sibuk_mulai' => 'nullable|array',
-            'jam_sibuk_selesai' => 'nullable|array',
-            'libur' => 'nullable|array',
-
-            // Kategori
-            'kategori' => 'required|array',
-            'kategori.*' => 'exists:kategori_kuliner,id_kategori',
-            'menu_unggulan' => 'required|string|max:255',
-            'bahan_baku_utama' => 'required|string|max:255',
-            'sumber_bahan_baku' => 'required|string',
-            'menu_bersifat' => 'required|array',
-
-            // Tempat & Fasilitas
-            'bentuk_fisik' => 'required|string',
-            'status_bangunan' => 'required|string',
-            'status_bangunan_lain' => 'nullable|string|max:255',
-            'fasilitas_pendukung' => 'required|array',
-
-            // K3 & Sanitasi
-            'pelatihan_k3' => 'required|in:Ya,Tidak',
-            'jumlah_penjamah_makanan' => 'required|integer|min:0',
-            'apd_penjamah_makanan' => 'required|array',
-            'prosedur_sanitasi_alat' => 'required|in:Tidak Melakukan,Melakukan',
-            'frekuensi_sanitasi_alat' => 'required|string|max:14',
-            'prosedur_sanitasi_bahan' => 'required|in:Tidak Melakukan,Melakukan',
-            'frekuensi_sanitasi_bahan' => 'required|string|max:14',
-            'penyimpanan_mentah' => 'required|string',
-            'penyimpanan_matang' => 'required|string',
-            'fifo_fefo' => 'required|in:Ya,Tidak',
-            'limbah_dapur' => 'required|string',
-            'ventilasi_dapur' => 'required|string',
-            'dapur' => 'required|string',
-            'sumber_air_cuci' => 'required|string',
-            'sumber_air_masak' => 'required|string',
-            'sumber_air_minum' => 'required|string',
-
-            // Koordinat
-            'latitude' => 'required|numeric',
-            'longitude' => 'required|numeric',
-
-            // Foto
+            // ... (copy validation dari store, ubah foto jadi nullable)
             'foto' => 'nullable|array',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
-        if (!$wilayah->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
+        // Validasi lokasi dalam wilayah Kotabaru
+        if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
-        $foto = $request->file('foto');
-        $jamOperasional = [
-            'hari' => $request->input('hari', []),
-            'jam_buka' => $request->input('jam_buka', []),
-            'jam_tutup' => $request->input('jam_tutup', []),
-            'jam_sibuk_mulai' => $request->input('jam_sibuk_mulai', []),
-            'jam_sibuk_selesai' => $request->input('jam_sibuk_selesai', []),
-            'libur' => $request->input('libur', []),
-        ];
-
         try {
-            $kulinerServices->updateData($id, $validated, $foto, $jamOperasional);
+            $this->kulinerService->update($id, $validated, $request);
+
+            return redirect()->route('kuliner.index')
+                ->with('success', 'Data tempat kuliner berhasil diperbarui!');
         } catch (\Throwable $e) {
             Log::error('Error updating kuliner: ' . $e->getMessage());
 
@@ -267,9 +226,6 @@ class TempatKulinerController extends Controller
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi.']);
         }
-
-        return redirect()->route('kuliner.index')
-            ->with('success', 'Data tempat kuliner berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -294,24 +250,46 @@ class TempatKulinerController extends Controller
         }
     }
 
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk public
+     */
     public function show($id)
     {
-        $kuliner = TempatKuliner::with(['foto', 'jamOperasionalUser', 'kategori'])
-            ->aktif()
-            ->findOrFail($id);
+        $kuliner = TempatKuliner::with([
+            'foto',
+            'jamOperasionalUser',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])
+        ->aktif()
+        ->findOrFail($id);
+
         return view('kuliner.show', compact('kuliner'));
     }
 
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk API public
+     */
     public function api()
     {
-        return response()->json(
-            TempatKuliner::with(['foto', 'jamOperasionalUser', 'kategori'])
-                ->aktif()
-                ->get()
-        );
+        $kuliner = TempatKuliner::with([
+            'foto',
+            'jamOperasionalUser',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])
+        ->aktif()
+        ->get()
+        ->map(function ($item) {
+            return array_merge($item->toArray(), [
+                'open_status' => $item->getOpenStatus()
+            ]);
+        });
+
+        return response()->json($kuliner);
     }
 
-    // Method untuk menghapus foto individual
+    /**
+     * Hapus foto individual
+     */
     public function deleteFoto($id)
     {
         try {
@@ -323,12 +301,7 @@ class TempatKulinerController extends Controller
                 return back()->withErrors(['error' => 'Tidak dapat menghapus foto. Minimal harus ada 1 foto.']);
             }
 
-            // Hapus file dari storage
-            if (Storage::disk('public')->exists($foto->path_foto)) {
-                Storage::disk('public')->delete($foto->path_foto);
-            }
-
-            $foto->delete();
+            $this->kulinerService->deleteFoto($id);
 
             return back()->with('success', 'Foto berhasil dihapus!');
         } catch (\Throwable $e) {

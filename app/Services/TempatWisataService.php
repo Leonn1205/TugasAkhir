@@ -10,14 +10,17 @@ use Illuminate\Support\Facades\Storage;
 
 class TempatWisataService
 {
-    public function buatWisata(array $data, $request): void
+    /**
+     * Buat data wisata baru
+     */
+    public function store(array $data, $request): TempatWisata
     {
         $uploadedFiles = [];
 
         try {
-            DB::transaction(function () use ($data, $request, &$uploadedFiles) {
+            return DB::transaction(function () use ($data, $request, &$uploadedFiles) {
 
-                // Create wisata record
+                // 1. Create wisata record
                 $wisata = TempatWisata::create([
                     'nama_wisata'    => $data['nama_wisata'],
                     'alamat_lengkap' => $data['alamat_lengkap'],
@@ -29,7 +32,7 @@ class TempatWisataService
                     'status'         => true,
                 ]);
 
-                // Handle foto upload
+                // 2. Handle foto upload
                 if ($request->hasFile('foto')) {
                     foreach ($request->file('foto') as $file) {
                         $path = $file->store('wisata', 'public');
@@ -42,10 +45,14 @@ class TempatWisataService
                     }
                 }
 
-                // Handle jam operasional
+                // 3. Handle jam operasional
+                // ✅ FIXED: Convert libur array to set for proper checking
+                $liburIndexes = $data['libur'] ?? [];
+
                 if (!empty($data['hari'])) {
                     foreach ($data['hari'] as $index => $hari) {
-                        $isLibur = isset($data['libur'][$index]);
+                        // ✅ FIXED: Check if index exists in libur array VALUES
+                        $isLibur = in_array($index, $liburIndexes);
 
                         JamOperasionalWisata::create([
                             'id_wisata'  => $wisata->id_wisata,
@@ -57,8 +64,10 @@ class TempatWisataService
                     }
                 }
 
-                // Sync kategori (many-to-many)
+                // 4. Sync kategori (many-to-many)
                 $wisata->kategori()->sync($data['kategori']);
+
+                return $wisata;
             });
         } catch (\Throwable $e) {
             // Rollback uploaded files if transaction fails
@@ -72,16 +81,19 @@ class TempatWisataService
         }
     }
 
-    public function updateWisata(int $id, array $data, ?array $foto, array $jamOperasional): void
+    /**
+     * Update data wisata
+     */
+    public function update(int $id, array $data, $request): TempatWisata
     {
         $uploadedFiles = [];
 
         try {
-            DB::transaction(function () use ($id, $data, $foto, $jamOperasional, &$uploadedFiles) {
+            return DB::transaction(function () use ($id, $data, $request, &$uploadedFiles) {
 
                 $wisata = TempatWisata::findOrFail($id);
 
-                // Update wisata data
+                // 1. Update wisata data
                 $wisata->update([
                     'nama_wisata'    => $data['nama_wisata'],
                     'alamat_lengkap' => $data['alamat_lengkap'],
@@ -92,9 +104,9 @@ class TempatWisataService
                     'narasi'         => $data['narasi'],
                 ]);
 
-                // Handle foto baru (append mode)
-                if (!empty($foto)) {
-                    foreach ($foto as $file) {
+                // 2. Handle foto baru (append mode)
+                if ($request->hasFile('foto')) {
+                    foreach ($request->file('foto') as $file) {
                         $path = $file->store('wisata', 'public');
                         $uploadedFiles[] = $path;
 
@@ -105,25 +117,31 @@ class TempatWisataService
                     }
                 }
 
-                // Reset jam operasional (delete existing, then create new)
+                // 3. Reset jam operasional (delete existing, then create new)
                 $wisata->jamOperasionalAdmin()->delete();
 
-                if (!empty($jamOperasional['hari'])) {
-                    foreach ($jamOperasional['hari'] as $index => $hari) {
-                        $isLibur = isset($jamOperasional['libur'][$index]);
+                // ✅ FIXED: Convert libur array to set for proper checking
+                $liburIndexes = $data['libur'] ?? [];
+
+                if (!empty($data['hari'])) {
+                    foreach ($data['hari'] as $index => $hari) {
+                        // ✅ FIXED: Check if index exists in libur array VALUES
+                        $isLibur = in_array($index, $liburIndexes);
 
                         JamOperasionalWisata::create([
                             'id_wisata'  => $wisata->id_wisata,
                             'hari'       => $hari,
-                            'jam_buka'   => $isLibur ? null : ($jamOperasional['jam_buka'][$index] ?? null),
-                            'jam_tutup'  => $isLibur ? null : ($jamOperasional['jam_tutup'][$index] ?? null),
+                            'jam_buka'   => $isLibur ? null : ($data['jam_buka'][$index] ?? null),
+                            'jam_tutup'  => $isLibur ? null : ($data['jam_tutup'][$index] ?? null),
                             'libur'      => $isLibur,
                         ]);
                     }
                 }
 
-                // Sync kategori (many-to-many)
+                // 4. Sync kategori (many-to-many)
                 $wisata->kategori()->sync($data['kategori']);
+
+                return $wisata;
             });
         } catch (\Throwable $e) {
             // Rollback uploaded files if transaction fails
@@ -137,7 +155,10 @@ class TempatWisataService
         }
     }
 
-    public function hapusFoto(int $idFoto): void
+    /**
+     * Hapus foto wisata
+     */
+    public function deleteFoto(int $idFoto): void
     {
         $foto = FotoWisata::findOrFail($idFoto);
 

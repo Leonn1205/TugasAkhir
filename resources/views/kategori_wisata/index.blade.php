@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Daftar Tempat Wisata - Kotabaru Tourism</title>
+    <title>Daftar Kategori Wisata - Kotabaru Tourism</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
@@ -132,12 +132,6 @@
             margin-bottom: 0.25rem;
         }
 
-        .alert-success-custom .btn-close,
-        .alert-error-custom .btn-close {
-            color: inherit;
-            opacity: 0.7;
-        }
-
         /* Toolbar */
         .toolbar {
             display: flex;
@@ -146,18 +140,6 @@
             margin-bottom: 2rem;
             flex-wrap: wrap;
             gap: 1rem;
-        }
-
-        .toolbar-left {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-
-        .toolbar-right {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
         }
 
         /* Buttons */
@@ -171,6 +153,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
 
         .btn-back {
@@ -196,224 +179,6 @@
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
             color: white;
-        }
-
-        .btn-export {
-            background: linear-gradient(135deg, #ffd54f 0%, #ffca28 100%);
-            color: #1b5e20;
-            box-shadow: 0 4px 15px rgba(255, 213, 79, 0.3);
-        }
-
-        .btn-export:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(255, 213, 79, 0.4);
-            color: #1b5e20;
-        }
-
-        /* Search & Filter */
-        .search-filter-bar {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-            position: relative;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 16px 12px 45px;
-            border: 2px solid #c8e6c9;
-            border-radius: 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-
-        .search-box input:focus {
-            border-color: #388e3c;
-            box-shadow: 0 0 0 0.2rem rgba(56, 142, 60, 0.15);
-            outline: none;
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #66bb6a;
-            font-size: 18px;
-        }
-
-        .filter-select {
-            padding: 12px 16px;
-            border: 2px solid #c8e6c9;
-            border-radius: 12px;
-            font-size: 14px;
-            min-width: 200px;
-            transition: all 0.3s ease;
-        }
-
-        .filter-select:focus {
-            border-color: #388e3c;
-            box-shadow: 0 0 0 0.2rem rgba(56, 142, 60, 0.15);
-            outline: none;
-        }
-
-        /* Table Container */
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-        }
-
-        .table-responsive {
-            border-radius: 15px;
-        }
-
-        /* Table Styling */
-        .table-custom {
-            margin-bottom: 0;
-        }
-
-        .table-custom thead {
-            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
-            color: white;
-        }
-
-        .table-custom thead th {
-            font-weight: 600;
-            font-size: 14px;
-            padding: 16px;
-            border: none;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .table-custom tbody tr {
-            border-bottom: 1px solid #e8f5e9;
-            transition: all 0.3s ease;
-        }
-
-        .table-custom tbody tr:hover {
-            background: #f1f8f4;
-        }
-
-        .table-custom tbody tr:last-child {
-            border-bottom: none;
-        }
-
-        .table-custom tbody td {
-            padding: 16px;
-            vertical-align: middle;
-            font-size: 14px;
-            color: #333;
-        }
-
-        /* Badge Styling */
-        .badge-category {
-            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin: 2px;
-            display: inline-block;
-        }
-
-        /* Badge untuk kategori nonaktif (hanya untuk admin view) */
-        .badge-category-inactive {
-            background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            margin: 2px;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            opacity: 0.7;
-        }
-
-        /* Action Buttons */
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn-action {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            border: none;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-detail {
-            background: #2196f3;
-            color: white;
-        }
-
-        .btn-detail:hover {
-            background: #1976d2;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-        }
-
-        .btn-edit {
-            background: #ff9800;
-            color: white;
-        }
-
-        .btn-edit:hover {
-            background: #f57c00;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
-        }
-
-        .btn-delete {
-            background: #f44336;
-            color: white;
-        }
-
-        .btn-delete:hover {
-            background: #d32f2f;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 4rem 2rem;
-        }
-
-        .empty-state i {
-            font-size: 80px;
-            color: #c8e6c9;
-            margin-bottom: 1rem;
-        }
-
-        .empty-state h4 {
-            color: #666;
-            margin-bottom: 0.5rem;
-        }
-
-        .empty-state p {
-            color: #999;
-            margin-bottom: 1.5rem;
         }
 
         /* Stats Card */
@@ -461,6 +226,260 @@
             letter-spacing: 0.5px;
         }
 
+        /* Additional Stats */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .mini-stat {
+            background: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mini-stat-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .mini-stat-icon.active {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .mini-stat-icon.inactive {
+            background: linear-gradient(135deg, #fafafa 0%, #e0e0e0 100%);
+            color: #757575;
+        }
+
+        .mini-stat-info h4 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .mini-stat-info h4.active-count {
+            color: #2e7d32;
+        }
+
+        .mini-stat-info h4.inactive-count {
+            color: #757575;
+        }
+
+        .mini-stat-info p {
+            font-size: 11px;
+            color: #999;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Table Styling */
+        .table-custom {
+            margin-bottom: 0;
+        }
+
+        .table-custom thead {
+            background: linear-gradient(135deg, #1b5e20 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        .table-custom thead th {
+            font-weight: 600;
+            font-size: 14px;
+            padding: 16px;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-custom tbody tr {
+            border-bottom: 1px solid #e8f5e9;
+            transition: all 0.3s ease;
+        }
+
+        .table-custom tbody tr:hover {
+            background: #f1f8f4;
+        }
+
+        .table-custom tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .table-custom tbody td {
+            padding: 16px;
+            vertical-align: middle;
+            font-size: 14px;
+            color: #333;
+        }
+
+        /* Badge Kategori */
+        .badge-category {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .status-inactive {
+            background: linear-gradient(135deg, #fafafa 0%, #e0e0e0 100%);
+            color: #757575;
+        }
+
+        /* Usage Badge */
+        .usage-badge {
+            background: #f5f5f5;
+            color: #666;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: none;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-edit {
+            background: #ff9800;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        }
+
+        .btn-toggle {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-toggle:hover {
+            background: #1976d2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-delete {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #d32f2f;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-state i {
+            font-size: 80px;
+            color: #c8e6c9;
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h4 {
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: #999;
+            margin-bottom: 1.5rem;
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .header-section h1 {
@@ -472,23 +491,18 @@
                 align-items: stretch;
             }
 
-            .toolbar-left,
-            .toolbar-right {
-                flex-direction: column;
-                width: 100%;
-            }
-
             .btn-custom {
                 width: 100%;
                 justify-content: center;
             }
 
-            .search-filter-bar {
+            .stat-card {
                 flex-direction: column;
+                text-align: center;
             }
 
-            .filter-select {
-                width: 100%;
+            .stats-row {
+                grid-template-columns: 1fr;
             }
 
             .action-buttons {
@@ -556,41 +570,14 @@
     <!-- Header Section -->
     <div class="header-section">
         <div class="container text-center">
-            <h1><i class="bi bi-geo-alt-fill me-2"></i>Daftar Tempat Wisata</h1>
-            <p>Kelola data tempat wisata Kotabaru Tourism Data Center</p>
+            <h1><i class="bi bi-tags-fill me-2"></i>Daftar Kategori Wisata</h1>
+            <p>Kelola kategori destinasi wisata Kotabaru Tourism Data Center</p>
         </div>
     </div>
 
     <!-- Main Container -->
     <div class="container">
         <div class="main-container">
-
-            <!-- Toolbar -->
-            <div class="toolbar">
-                <div class="toolbar-left">
-                    @if (auth()->user()->role === 'Super Admin')
-                        <a href="{{ route('dashboard.superadmin') }}" class="btn-custom btn-back">
-                            <i class="bi bi-arrow-left"></i>
-                            Kembali ke Dashboard
-                        </a>
-                    @else
-                        <a href="{{ route('dashboard.admin') }}" class="btn-custom btn-back">
-                            <i class="bi bi-arrow-left"></i>
-                            Kembali ke Dashboard
-                        </a>
-                    @endif
-                </div>
-                <div class="toolbar-right">
-                    <a href="{{ route('export.excel', ['tipe' => 'wisata']) }}" class="btn-custom btn-export">
-                        <i class="bi bi-file-earmark-spreadsheet"></i>
-                        Export Excel
-                    </a>
-                    <a href="{{ route('wisata.create') }}" class="btn-custom btn-add">
-                        <i class="bi bi-plus-circle"></i>
-                        Tambah Wisata
-                    </a>
-                </div>
-            </div>
 
             <!-- Alert Success -->
             @if (session('success'))
@@ -619,129 +606,138 @@
                 </div>
             @endif
 
-            <!-- Stats Card -->
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-geo-alt-fill"></i>
-                </div>
-                <div class="stat-info">
-                    <h3>{{ $wisata->count() }}</h3>
-                    <p>Total Tempat Wisata</p>
-                </div>
+            <!-- Toolbar -->
+            <div class="toolbar">
+                @if (auth()->user()->role === 'Super Admin')
+                    <a href="{{ route('dashboard.superadmin') }}" class="btn-custom btn-back">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali ke Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('dashboard.admin') }}" class="btn-custom btn-back">
+                        <i class="bi bi-arrow-left"></i>
+                        Kembali ke Dashboard
+                    </a>
+                @endif
+                <a href="{{ route('kategori-wisata.create') }}" class="btn-custom btn-add">
+                    <i class="bi bi-plus-circle"></i>
+                    Tambah Kategori
+                </a>
             </div>
 
-            <!-- Search & Filter Bar -->
-            <div class="search-filter-bar">
-                <div class="search-box">
-                    <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari nama wisata, kategori, atau lokasi..."
-                        onkeyup="searchTable()">
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <!-- Total Kategori -->
+                <div class="stat-card" style="grid-column: span 2;">
+                    <div class="stat-icon">
+                        <i class="bi bi-collection-fill"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>{{ $kategori->count() }}</h3>
+                        <p>Total Kategori Wisata</p>
+                    </div>
                 </div>
-                <select class="filter-select" id="filterKategori" onchange="filterTable()">
-                    <option value="">Semua Kategori</option>
-                    {{-- ✅ CHANGED: Hanya tampilkan kategori AKTIF di filter --}}
-                    @php
-                        $allKategori = $wisata
-                            ->pluck('kategoriAktif')
-                            ->flatten()
-                            ->unique('id_kategori')
-                            ->sortBy('nama_kategori');
-                    @endphp
-                    @foreach ($allKategori as $kat)
-                        <option value="{{ $kat->nama_kategori }}">{{ $kat->nama_kategori }}</option>
-                    @endforeach
-                </select>
+
+                <!-- Kategori Aktif -->
+                <div class="mini-stat">
+                    <div class="mini-stat-icon active">
+                        <i class="bi bi-check-circle-fill"></i>
+                    </div>
+                    <div class="mini-stat-info">
+                        <h4 class="active-count">{{ $kategori->where('status', true)->count() }}</h4>
+                        <p>Kategori Aktif</p>
+                    </div>
+                </div>
+
+                <!-- Kategori Nonaktif -->
+                <div class="mini-stat">
+                    <div class="mini-stat-icon inactive">
+                        <i class="bi bi-dash-circle-fill"></i>
+                    </div>
+                    <div class="mini-stat-info">
+                        <h4 class="inactive-count">{{ $kategori->where('status', false)->count() }}</h4>
+                        <p>Kategori Nonaktif</p>
+                    </div>
+                </div>
             </div>
 
             <!-- Table -->
             <div class="table-container">
                 <div class="table-responsive">
-                    <table class="table table-custom" id="wisataTable">
+                    <table class="table table-custom">
                         <thead>
                             <tr>
                                 <th style="width: 5%;">No</th>
-                                <th style="width: 25%;">Nama Wisata</th>
-                                <th style="width: 20%;">Kategori</th>
-                                <th style="width: 12%;">Latitude</th>
-                                <th style="width: 12%;">Longitude</th>
-                                <th style="width: 26%;" class="text-center">Aksi</th>
+                                <th style="width: 40%;">Nama Kategori</th>
+                                <th style="width: 20%;" class="text-center">Digunakan</th>
+                                <th style="width: 15%;" class="text-center">Status</th>
+                                <th style="width: 20%;" class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($wisata as $index => $w)
+                            @forelse($kategori as $index => $kat)
                                 <tr>
                                     <td class="text-center"><strong>{{ $index + 1 }}</strong></td>
                                     <td>
-                                        <strong style="color: #1b5e20;">{{ $w->nama_wisata }}</strong>
+                                        <div class="badge-category">
+                                            <i class="bi bi-bookmark-fill"></i>
+                                            {{ $kat->nama_kategori }}
+                                        </div>
                                     </td>
-                                    <td>
-                                        {{-- ✅ CHANGED: Tampilkan kategori aktif dan nonaktif dengan badge berbeda --}}
+                                    <td class="text-center">
                                         @php
-                                            $kategoriAktif = $w->kategoriAktif;
-                                            $kategoriNonaktif = $w->kategori->whereNotIn(
-                                                'id_kategori',
-                                                $kategoriAktif->pluck('id_kategori'),
-                                            );
+                                            $usageCount = $kat->tempatWisata()->count();
                                         @endphp
-
-                                        {{-- Kategori Aktif --}}
-                                        @forelse($kategoriAktif as $k)
-                                            <span class="badge-category">{{ $k->nama_kategori }}</span>
-                                        @empty
-                                        @endforelse
-
-                                        {{-- Kategori Nonaktif (dengan styling berbeda) --}}
-                                        @foreach ($kategoriNonaktif as $k)
-                                            <span class="badge-category-inactive"
-                                                title="Kategori ini sudah dinonaktifkan">
-                                                <i class="bi bi-dash-circle"></i>
-                                                {{ $k->nama_kategori }}
+                                        @if ($usageCount > 0)
+                                            <span class="usage-badge">
+                                                <i class="bi bi-geo-alt-fill"></i>
+                                                {{ $usageCount }} tempat
                                             </span>
-                                        @endforeach
-
-                                        {{-- Jika tidak ada kategori sama sekali --}}
-                                        @if ($kategoriAktif->isEmpty() && $kategoriNonaktif->isEmpty())
-                                            <span class="text-muted small">Tidak ada kategori</span>
+                                        @else
+                                            <span class="text-muted" style="font-size: 12px;">
+                                                <i class="bi bi-dash-circle"></i> Belum digunakan
+                                            </span>
                                         @endif
                                     </td>
-                                    <td>{{ number_format($w->latitude, 6) }}</td>
-                                    <td>{{ number_format($w->longitude, 6) }}</td>
+                                    <td class="text-center">
+                                        @if ($kat->status)
+                                            <span class="status-badge status-active">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                Aktif
+                                            </span>
+                                        @else
+                                            <span class="status-badge status-inactive">
+                                                <i class="bi bi-dash-circle-fill"></i>
+                                                Nonaktif
+                                            </span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
-                                            <a href="{{ route('wisata.show', $w->id_wisata) }}"
-                                                class="btn-action btn-detail">
-                                                <i class="bi bi-eye-fill"></i>
-                                                Detail
-                                            </a>
-                                            <a href="{{ route('wisata.edit', $w->id_wisata) }}"
-                                                class="btn-action btn-edit">
-                                                <i class="bi bi-pencil-fill"></i>
-                                                Edit
-                                            </a>
-                                            <form action="{{ route('wisata.destroy', $w->id_wisata) }}" method="POST"
-                                                style="display:inline;" class="delete-form">
+                                            <form
+                                                action="{{ route('kategori-wisata.toggle-status', $kat->id_kategori) }}"
+                                                method="POST" style="display:inline;" class="toggle-form">
                                                 @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn-action btn-delete"
-                                                    onclick="confirmDelete(this)">
-                                                    <i class="bi bi-trash-fill"></i>
-                                                    Hapus
+                                                <button type="button" class="btn-action btn-toggle"
+                                                    onclick="confirmToggle(this, '{{ $kat->nama_kategori }}', {{ $kat->status ? 'true' : 'false' }})">
+                                                    <i class="bi bi-arrow-repeat"></i>
+                                                    {{ $kat->status ? 'Nonaktifkan' : 'Aktifkan' }}
                                                 </button>
                                             </form>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
-                                <tr class="empty-row">
-                                    <td colspan="6">
+                                <tr>
+                                    <td colspan="5">
                                         <div class="empty-state">
                                             <i class="bi bi-inbox"></i>
-                                            <h4>Belum Ada Data Wisata</h4>
-                                            <p>Mulai tambahkan data tempat wisata dengan klik tombol "Tambah Wisata" di
+                                            <h4>Belum Ada Kategori</h4>
+                                            <p>Mulai tambahkan kategori wisata dengan klik tombol "Tambah Kategori" di
                                                 atas</p>
-                                            <a href="{{ route('wisata.create') }}" class="btn-custom btn-add">
+                                            <a href="{{ route('kategori-wisata.create') }}" class="btn-custom btn-add">
                                                 <i class="bi bi-plus-circle"></i>
-                                                Tambah Wisata Sekarang
+                                                Tambah Kategori Sekarang
                                             </a>
                                         </div>
                                     </td>
@@ -768,102 +764,103 @@
             });
         }, 5000);
 
-        // Search Table
-        function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
-            const table = document.getElementById('wisataTable');
-            const rows = table.getElementsByTagName('tr');
+        // Confirm Toggle Status
+        function confirmToggle(button, kategoriNama, isActive) {
+            const action = isActive ? 'nonaktifkan' : 'aktifkan';
+            const actionCap = isActive ? 'Nonaktifkan' : 'Aktifkan';
 
-            let visibleCount = 0;
-
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                if (row.classList.contains('empty-row')) continue;
-
-                const cells = row.getElementsByTagName('td');
-                let found = false;
-
-                for (let j = 0; j < cells.length; j++) {
-                    const cell = cells[j];
-                    if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-
-            // Show "no results" message if needed
-            showNoResultsMessage(visibleCount);
-        }
-
-        // Filter by Category
-        function filterTable() {
-            const filter = document.getElementById('filterKategori').value.toLowerCase();
-            const table = document.getElementById('wisataTable');
-            const rows = table.getElementsByTagName('tr');
-
-            let visibleCount = 0;
-
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                if (row.classList.contains('empty-row')) continue;
-
-                const kategoriCell = row.getElementsByTagName('td')[2];
-
-                if (filter === '' || kategoriCell.textContent.toLowerCase().indexOf(filter) > -1) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-
-            // Show "no results" message if needed
-            showNoResultsMessage(visibleCount);
-        }
-
-        // Show no results message
-        function showNoResultsMessage(visibleCount) {
-            const table = document.getElementById('wisataTable');
-            let noResultsRow = document.getElementById('noResultsRow');
-
-            if (visibleCount === 0) {
-                if (!noResultsRow) {
-                    const tbody = table.querySelector('tbody');
-                    noResultsRow = document.createElement('tr');
-                    noResultsRow.id = 'noResultsRow';
-                    noResultsRow.innerHTML = `
-                        <td colspan="6">
-                            <div class="empty-state">
-                                <i class="bi bi-search"></i>
-                                <h4>Tidak Ada Hasil</h4>
-                                <p>Tidak ditemukan data yang sesuai dengan pencarian atau filter Anda</p>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(noResultsRow);
-                }
-                noResultsRow.style.display = '';
-            } else {
-                if (noResultsRow) {
-                    noResultsRow.style.display = 'none';
-                }
-            }
-        }
-
-        // Confirm Delete with SweetAlert2
-        function confirmDelete(button) {
             Swal.fire({
-                title: 'Hapus Data Wisata?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
+                title: `${actionCap} Kategori?`,
+                html: `Yakin ingin ${action} kategori <strong>"${kategoriNama}"</strong>?<br><br>
+                       <small class="text-muted">${isActive
+                           ? '⚠️ Kategori yang dinonaktifkan tidak akan muncul di:<br>• Form tambah/edit tempat wisata<br>• Halaman index wisata<br>• Detail wisata public<br>• API public'
+                           : '✅ Kategori yang diaktifkan akan muncul kembali di form input dan tampilan public.'}</small>`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#2196f3',
+                cancelButtonColor: '#9e9e9e',
+                confirmButtonText: `<i class="bi bi-arrow-repeat me-2"></i>Ya, ${actionCap}!`,
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                backdrop: true,
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('loadingOverlay').classList.add('active');
+                    button.closest('form').submit();
+                }
+            });
+        }
+
+        // Confirm Delete
+        function confirmDelete(button, kategoriNama, usageCount) {
+            if (usageCount > 0) {
+                Swal.fire({
+                    title: 'Tidak Dapat Menghapus!',
+                    html: `Kategori <strong>"${kategoriNama}"</strong> masih digunakan oleh <strong>${usageCount} tempat wisata</strong>.<br><br>
+                           <small class="text-muted">💡 Nonaktifkan kategori jika ingin menyembunyikannya dari form input.</small>`,
+                    icon: 'error',
+                    confirmButtonColor: '#2e7d32',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-4',
+                        confirmButton: 'rounded-pill px-4'
+                    }
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Hapus Kategori?',
+                html: `Yakin ingin menghapus kategori <strong>"${kategoriNama}"</strong>?<br><br>
+                       <small class="text-danger">⚠️ Aksi ini tidak dapat dibatalkan!</small>`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f44336',
+                cancelButtonColor: '#9e9e9e',
+                confirmButtonText: '<i class="bi bi-trash me-2"></i>Ya, Hapus!',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                backdrop: true,
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('loadingOverlay').classList.add('active');
+                    button.closest('form').submit();
+                }
+            });
+        }
+
+        // Confirm Delete
+        function confirmDelete(button, kategoriNama, usageCount) {
+            if (usageCount > 0) {
+                Swal.fire({
+                    title: 'Tidak Dapat Menghapus!',
+                    html: `Kategori <strong>"${kategoriNama}"</strong> masih digunakan oleh <strong>${usageCount} tempat wisata</strong>.<br><br>
+                           <small class="text-muted">💡 Nonaktifkan kategori jika ingin menyembunyikannya dari form input.</small>`,
+                    icon: 'error',
+                    confirmButtonColor: '#2e7d32',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-4',
+                        confirmButton: 'rounded-pill px-4'
+                    }
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: 'Hapus Kategori?',
+                html: `Yakin ingin menghapus kategori <strong>"${kategoriNama}"</strong>?<br><br>
+                       <small class="text-danger">⚠️ Aksi ini tidak dapat dibatalkan!</small>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#f44336',
@@ -889,14 +886,15 @@
         document.querySelectorAll('a:not([target="_blank"])').forEach(link => {
             link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
-                if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !this.classList
+                    .contains('btn-close')) {
                     document.getElementById('loadingOverlay').classList.add('active');
                 }
             });
         });
 
         // Handle form submissions
-        document.querySelectorAll('form:not(.delete-form)').forEach(form => {
+        document.querySelectorAll('form:not(.delete-form):not(.toggle-form)').forEach(form => {
             form.addEventListener('submit', function() {
                 document.getElementById('loadingOverlay').classList.add('active');
             });

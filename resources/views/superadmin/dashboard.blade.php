@@ -132,7 +132,7 @@
         }
 
         .submenu.show {
-            max-height: 200px;
+            max-height: 300px;
         }
 
         .submenu .menu-link {
@@ -482,11 +482,20 @@
         <div class="col-md-2 sidebar" id="sidebar">
             <ul class="sidebar-menu">
                 <li class="menu-item">
-                    <a href="{{ route('dashboard.superadmin') }}" class="menu-link active">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
-                    </a>
+                    @if (auth()->user()->role === 'Super Admin')
+                        <a href="{{ route('dashboard.superadmin') }}" class="menu-link active">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    @else
+                        <a href="{{ route('dashboard.admin') }}" class="menu-link active">
+                            <i class="bi bi-speedometer2"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    @endif
                 </li>
+
+                <!-- Tempat Wisata -->
                 <li class="menu-item">
                     <a href="#" class="menu-link menu-toggle" id="wisataMenu">
                         <i class="bi bi-geo-alt-fill"></i>
@@ -502,17 +511,35 @@
                         <li>
                             <a href="{{ route('kategori-wisata.index') }}" class="menu-link">
                                 <i class="bi bi-tags"></i>
-                                <span>Kategori Wisata</span>
+                                <span>Kategori</span>
                             </a>
                         </li>
                     </ul>
                 </li>
+
+                <!-- Tempat Kuliner -->
                 <li class="menu-item">
-                    <a href="{{ route('kuliner.index') }}" class="menu-link">
+                    <a href="#" class="menu-link menu-toggle" id="kulinerMenu">
                         <i class="bi bi-cup-hot-fill"></i>
                         <span>Tempat Kuliner</span>
                     </a>
+                    <ul class="submenu" id="submenuKuliner">
+                        <li>
+                            <a href="{{ route('kuliner.index') }}" class="menu-link">
+                                <i class="bi bi-list-ul"></i>
+                                <span>Daftar Kuliner</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('kategori-kuliner.index') }}" class="menu-link">
+                                <i class="bi bi-tags"></i>
+                                <span>Kategori</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
+
+                <!-- Kelola Admin (Super Admin Only) -->
                 @if (auth()->user()->role === 'Super Admin')
                     <li class="menu-item">
                         <a href="{{ route('superadmin.admin.index') }}" class="menu-link">
@@ -609,10 +636,20 @@
             document.getElementById('sidebar').classList.toggle('show');
         }
 
-        // Submenu Toggle
+        // Submenu Toggle - Wisata
         document.getElementById("wisataMenu").addEventListener("click", function(e) {
             e.preventDefault();
             const submenu = document.getElementById("submenuWisata");
+            const toggle = this;
+
+            submenu.classList.toggle("show");
+            toggle.classList.toggle("active");
+        });
+
+        // Submenu Toggle - Kuliner
+        document.getElementById("kulinerMenu").addEventListener("click", function(e) {
+            e.preventDefault();
+            const submenu = document.getElementById("submenuKuliner");
             const toggle = this;
 
             submenu.classList.toggle("show");
@@ -645,7 +682,7 @@
 
         // Add Wisata Markers
         @foreach ($wisata as $w)
-            if ("{{ $w->latitude }}" && "{{ $w->longitude }}") {
+            @if ($w->latitude && $w->longitude)
                 var wisataIcon = L.icon({
                     iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
                     iconSize: [32, 32],
@@ -653,32 +690,32 @@
                     popupAnchor: [0, -32]
                 });
 
-                var marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
+                var markerWisata{{ $w->id_wisata }} = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
                     icon: wisataIcon
                 }).addTo(map);
 
-                marker.on('click', function() {
+                markerWisata{{ $w->id_wisata }}.on('click', function() {
                     showDetail("wisata-{{ $w->id_wisata }}", {
                         nama: @json($w->nama_wisata),
-                        link: @json(route('wisata.show', $w->id_wisata)),
-                        jam: `{!! collect($w->jamOperasional)->map(function ($jam) {
-                                return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                        link: "{{ route('wisata.show', $w->id_wisata) }}",
+                        jam: `{!! $w->jamOperasionalAdmin->map(function ($jam) {
+                                return $jam->libur
                                     ? "<li><b>{$jam->hari}:</b> Libur</li>"
                                     : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
                             })->implode('') !!}`,
-                        foto: `{!! collect($w->foto)->map(function ($f) {
+                        foto: `{!! $w->foto->map(function ($f) {
                                 return "<div class='col-md-6 mb-2'><img src='" .
                                     asset('storage/' . $f->path_foto) .
                                     "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
                             })->implode('') !!}`
                     }, [{{ $w->latitude }}, {{ $w->longitude }}]);
                 });
-            }
+            @endif
         @endforeach
 
         // Add Kuliner Markers
         @foreach ($kuliner as $k)
-            if ("{{ $k->latitude }}" && "{{ $k->longitude }}") {
+            @if ($k->latitude && $k->longitude)
                 var kulinerIcon = L.icon({
                     iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
                     iconSize: [32, 32],
@@ -686,27 +723,27 @@
                     popupAnchor: [0, -32]
                 });
 
-                var marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
+                var markerKuliner{{ $k->id_kuliner }} = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
                     icon: kulinerIcon
                 }).addTo(map);
 
-                marker.on('click', function() {
+                markerKuliner{{ $k->id_kuliner }}.on('click', function() {
                     showDetail("kuliner-{{ $k->id_kuliner }}", {
                         nama: @json($k->nama_sentra),
                         link: "{{ route('kuliner.show', $k->id_kuliner) }}",
-                        jam: `{!! collect($k->jamOperasional)->map(function ($jam) {
-                                return is_null($jam->jam_buka) && is_null($jam->jam_tutup)
+                        jam: `{!! $k->jamOperasionalAdmin->map(function ($jam) {
+                                return $jam->libur
                                     ? "<li><b>{$jam->hari}:</b> Libur</li>"
                                     : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
                             })->implode('') !!}`,
-                        foto: `{!! collect($k->foto)->map(function ($f) {
+                        foto: `{!! $k->foto->map(function ($f) {
                                 return "<div class='col-md-6 mb-2'><img src='" .
                                     asset('storage/' . $f->path_foto) .
                                     "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
                             })->implode('') !!}`
                     }, [{{ $k->latitude }}, {{ $k->longitude }}]);
                 });
-            }
+            @endif
         @endforeach
 
         // Show Detail Panel

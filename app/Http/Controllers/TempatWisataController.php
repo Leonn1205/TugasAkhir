@@ -13,9 +13,28 @@ use Illuminate\Support\Facades\Storage;
 
 class TempatWisataController extends Controller
 {
+    protected $wisataService;
+    protected $wilayahService;
+
+    public function __construct(
+        TempatWisataService $wisataService,
+        WilayahKotabaruService $wilayahService
+    ) {
+        $this->wisataService = $wisataService;
+        $this->wilayahService = $wilayahService;
+    }
+
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk display
+     */
     public function index()
     {
-        $wisata = TempatWisata::with(['foto', 'jamOperasionalAdmin', 'kategori'])->get();
+        $wisata = TempatWisata::with([
+            'foto',
+            'jamOperasionalAdmin',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])->get();
+
         return view('wisata.index', compact('wisata'));
     }
 
@@ -26,7 +45,7 @@ class TempatWisataController extends Controller
         return view('wisata.create', compact('kategori', 'selectedKategori'));
     }
 
-    public function store(Request $request, WilayahKotabaruService $wilayah, TempatWisataService $wisataServices)
+    public function store(Request $request)
     {
         $validated = $request->validate([
             'nama_wisata'    => 'required|string|max:255',
@@ -38,21 +57,26 @@ class TempatWisataController extends Controller
             'deskripsi'      => 'required|string',
             'sejarah'        => 'required|string',
             'narasi'         => 'required|string',
+            'foto'           => 'required|array|min:1',
             'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
-            'hari'           => 'required|array',
+            'hari'           => 'required|array|size:7',
             'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'jam_buka'       => 'array',
-            'jam_tutup'      => 'array',
-            'libur'          => 'array',
+            'jam_buka'       => 'nullable|array',
+            'jam_tutup'      => 'nullable|array',
+            'libur'          => 'nullable|array',
         ]);
 
-        if (!$wilayah->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
+        // Validasi lokasi dalam wilayah Kotabaru
+        if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
         try {
-            $wisataServices->buatWisata($validated, $request);
+            $this->wisataService->store($validated, $request);
+
+            return redirect()->route('wisata.index')
+                ->with('success', 'Tempat wisata berhasil ditambahkan!');
         } catch (\Throwable $e) {
             Log::error('Error creating wisata: ' . $e->getMessage());
 
@@ -60,19 +84,24 @@ class TempatWisataController extends Controller
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data. Silakan coba lagi.']);
         }
-
-        return redirect()->route('wisata.index')
-            ->with('success', 'Tempat wisata berhasil ditambahkan!');
     }
 
+    /**
+     * Untuk edit, tetap gunakan kategori (semua) karena admin perlu lihat semua
+     */
     public function edit($id)
     {
-        $wisata = TempatWisata::with(['foto', 'jamOperasionalAdmin', 'kategori'])->findOrFail($id);
+        $wisata = TempatWisata::with([
+            'foto',
+            'jamOperasionalAdmin',
+            'kategori'  // ← TETAP: kategori (semua) untuk admin
+        ])->findOrFail($id);
+
         $kategori = KategoriWisata::aktif()->orderBy('nama_kategori', 'asc')->get();
         return view('wisata.edit', compact('wisata', 'kategori'));
     }
 
-    public function update(Request $request, $id, WilayahKotabaruService $wilayah, TempatWisataService $wisataServices)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
             'nama_wisata'    => 'required|string|max:255',
@@ -84,29 +113,26 @@ class TempatWisataController extends Controller
             'deskripsi'      => 'required|string',
             'sejarah'        => 'required|string',
             'narasi'         => 'required|string',
+            'foto'           => 'nullable|array',
             'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
-            'hari'           => 'required|array',
+            'hari'           => 'required|array|size:7',
             'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'jam_buka'       => 'array',
-            'jam_tutup'      => 'array',
-            'libur'          => 'array',
+            'jam_buka'       => 'nullable|array',
+            'jam_tutup'      => 'nullable|array',
+            'libur'          => 'nullable|array',
         ]);
 
-        if (!$wilayah->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
+        // Validasi lokasi dalam wilayah Kotabaru
+        if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
         }
 
-        $foto = $request->file('foto');
-        $jamOperasional = [
-            'hari'      => $request->input('hari', []),
-            'jam_buka'  => $request->input('jam_buka', []),
-            'jam_tutup' => $request->input('jam_tutup', []),
-            'libur'     => $request->input('libur', []),
-        ];
-
         try {
-            $wisataServices->updateWisata($id, $validated, $foto, $jamOperasional);
+            $this->wisataService->update($id, $validated, $request);
+
+            return redirect()->route('wisata.index')
+                ->with('success', 'Data berhasil diperbarui!');
         } catch (\Throwable $e) {
             Log::error('Error updating wisata: ' . $e->getMessage());
 
@@ -114,9 +140,6 @@ class TempatWisataController extends Controller
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data. Silakan coba lagi.']);
         }
-
-        return redirect()->route('wisata.index')
-            ->with('success', 'Data berhasil diperbarui!');
     }
 
     public function destroy($id)
@@ -141,24 +164,46 @@ class TempatWisataController extends Controller
         }
     }
 
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk public
+     */
     public function show($id)
     {
-        $wisata = TempatWisata::with(['foto', 'jamOperasionalUser', 'kategori'])
+        $wisata = TempatWisata::with([
+            'foto',
+            'jamOperasionalUser',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])
             ->aktif()
             ->findOrFail($id);
+
         return view('wisata.show', compact('wisata'));
     }
 
+    /**
+     * ✅ UPDATED: Gunakan kategoriAktif untuk API public
+     */
     public function api()
     {
-        return response()->json(
-            TempatWisata::with(['foto', 'jamOperasionalUser', 'kategori'])
-                ->aktif()
-                ->get()
-        );
+        $wisata = TempatWisata::with([
+            'foto',
+            'jamOperasionalUser',
+            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+        ])
+            ->aktif()
+            ->get()
+            ->map(function ($item) {
+                return array_merge($item->toArray(), [
+                    'open_status' => $item->getOpenStatus()
+                ]);
+            });
+
+        return response()->json($wisata);
     }
 
-    // Method untuk menghapus foto individual
+    /**
+     * Hapus foto individual
+     */
     public function deleteFoto($id)
     {
         try {
@@ -170,12 +215,7 @@ class TempatWisataController extends Controller
                 return back()->withErrors(['error' => 'Tidak dapat menghapus foto. Minimal harus ada 1 foto.']);
             }
 
-            // Hapus file dari storage
-            if (Storage::disk('public')->exists($foto->path_foto)) {
-                Storage::disk('public')->delete($foto->path_foto);
-            }
-
-            $foto->delete();
+            $this->wisataService->deleteFoto($id);
 
             return back()->with('success', 'Foto berhasil dihapus!');
         } catch (\Throwable $e) {
