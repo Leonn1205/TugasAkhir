@@ -9,13 +9,19 @@ class UserKulinerController extends Controller
 {
     public function index()
     {
-        $kuliner = TempatKuliner::all();
-        return view('user.kuliner', compact('kuliner'));
+        $kuliner = TempatKuliner::with(['foto', 'kategoriAktif'])
+            ->aktif()
+            ->get();
+
+        return view('user.kuliner-list', compact('kuliner'));
     }
 
     public function show($id)
     {
-        $kuliner = TempatKuliner::with(['foto','jamOperasional'])->findOrFail($id);
+        // Pakai jamOperasionalAdmin untuk tampilkan semua hari (termasuk libur)
+        $kuliner = TempatKuliner::with(['foto', 'jamOperasionalAdmin', 'kategoriAktif'])
+            ->findOrFail($id);
+
         return view('user.kuliner', compact('kuliner'));
     }
 }

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Daftar Tempat Wisata - Kotabaru Tourism</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
     <link
@@ -72,7 +73,6 @@
             animation: slideDown 0.4s ease;
         }
 
-        /* Alert Error */
         .alert-error-custom {
             background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
             border: none;
@@ -112,30 +112,12 @@
         .alert-success-custom .alert-content,
         .alert-error-custom .alert-content {
             flex: 1;
-            font-weight: 500;
-        }
-
-        .alert-success-custom .alert-content {
             color: #1b5e20;
+            font-weight: 500;
         }
 
         .alert-error-custom .alert-content {
             color: #c62828;
-        }
-
-        .alert-error-custom .alert-content ul {
-            margin: 0.5rem 0 0 0;
-            padding-left: 1.2rem;
-        }
-
-        .alert-error-custom .alert-content li {
-            margin-bottom: 0.25rem;
-        }
-
-        .alert-success-custom .btn-close,
-        .alert-error-custom .btn-close {
-            color: inherit;
-            opacity: 0.7;
         }
 
         /* Toolbar */
@@ -171,6 +153,7 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
 
         .btn-back {
@@ -253,7 +236,7 @@
             border: 2px solid #c8e6c9;
             border-radius: 12px;
             font-size: 14px;
-            min-width: 200px;
+            min-width: 180px;
             transition: all 0.3s ease;
         }
 
@@ -261,6 +244,39 @@
             border-color: #388e3c;
             box-shadow: 0 0 0 0.2rem rgba(56, 142, 60, 0.15);
             outline: none;
+        }
+
+        /* Filter Status Buttons */
+        .filter-status {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover {
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            border-color: #2e7d32;
         }
 
         /* Table Container */
@@ -314,7 +330,22 @@
             color: #333;
         }
 
-        /* Badge Styling */
+        /* Row Status - Inactive */
+        .table-custom tbody tr.inactive-row {
+            background: #ffebee;
+            opacity: 0.7;
+        }
+
+        .table-custom tbody tr.inactive-row:hover {
+            background: #ffcdd2;
+            opacity: 0.85;
+        }
+
+        .table-custom tbody tr.inactive-row td {
+            color: #999;
+        }
+
+        /* Badge Category */
         .badge-category {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
@@ -326,7 +357,6 @@
             display: inline-block;
         }
 
-        /* Badge untuk kategori nonaktif (hanya untuk admin view) */
         .badge-category-inactive {
             background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
             color: white;
@@ -341,24 +371,71 @@
             opacity: 0.7;
         }
 
+        /* Toggle Status Switch */
+        .status-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .status-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
         /* Action Buttons */
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
         }
 
         .btn-action {
-            padding: 8px 16px;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 500;
             border: none;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
+            text-decoration: none;
         }
 
         .btn-detail {
@@ -370,6 +447,7 @@
             background: #1976d2;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            color: white;
         }
 
         .btn-edit {
@@ -381,6 +459,7 @@
             background: #f57c00;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+            color: white;
         }
 
         .btn-delete {
@@ -417,6 +496,13 @@
         }
 
         /* Stats Card */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
         .stat-card {
             background: white;
             padding: 1.5rem;
@@ -426,7 +512,6 @@
             align-items: center;
             gap: 1rem;
             transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
         }
 
         .stat-card:hover {
@@ -442,15 +527,37 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        }
+
+        .stat-icon.active {
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+        }
+
+        .stat-icon.inactive {
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
         }
 
         .stat-info h3 {
             font-size: 32px;
             font-weight: 700;
-            color: #1b5e20;
             margin: 0;
+        }
+
+        .stat-info.total h3 {
+            color: #1b5e20;
+        }
+
+        .stat-info.active h3 {
+            color: #1565c0;
+        }
+
+        .stat-info.inactive h3 {
+            color: #c62828;
         }
 
         .stat-info p {
@@ -459,46 +566,6 @@
             margin: 0;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header-section h1 {
-                font-size: 28px;
-            }
-
-            .toolbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .toolbar-left,
-            .toolbar-right {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .btn-custom {
-                width: 100%;
-                justify-content: center;
-            }
-
-            .search-filter-bar {
-                flex-direction: column;
-            }
-
-            .filter-select {
-                width: 100%;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-
-            .btn-action {
-                width: 100%;
-                justify-content: center;
-            }
         }
 
         /* Loading Overlay */
@@ -539,6 +606,54 @@
         @keyframes spin {
             to {
                 transform: rotate(360deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-section h1 {
+                font-size: 28px;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .toolbar-left,
+            .toolbar-right {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .filter-status {
+                justify-content: center;
+            }
+
+            .action-buttons {
+                gap: 4px;
+            }
+
+            .btn-action {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -609,7 +724,7 @@
                     <i class="bi bi-exclamation-triangle-fill"></i>
                     <div class="alert-content">
                         <strong>Terjadi Kesalahan!</strong>
-                        <ul>
+                        <ul style="margin: 0.5rem 0 0 0; padding-left: 1.2rem;">
                             @foreach ($errors->all() as $error)
                                 <li>{{ $error }}</li>
                             @endforeach
@@ -619,14 +734,34 @@
                 </div>
             @endif
 
-            <!-- Stats Card -->
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-geo-alt-fill"></i>
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+                    <div class="stat-info total">
+                        <h3>{{ $wisata->count() }}</h3>
+                        <p>Total Wisata</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>{{ $wisata->count() }}</h3>
-                    <p>Total Tempat Wisata</p>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-info active">
+                        <h3>{{ $wisata->where('status', true)->count() }}</h3>
+                        <p>Aktif</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon inactive">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <div class="stat-info inactive">
+                        <h3>{{ $wisata->where('status', false)->count() }}</h3>
+                        <p>Tidak Aktif</p>
+                    </div>
                 </div>
             </div>
 
@@ -639,7 +774,6 @@
                 </div>
                 <select class="filter-select" id="filterKategori" onchange="filterTable()">
                     <option value="">Semua Kategori</option>
-                    {{-- ✅ CHANGED: Hanya tampilkan kategori AKTIF di filter --}}
                     @php
                         $allKategori = $wisata
                             ->pluck('kategoriAktif')
@@ -651,6 +785,20 @@
                         <option value="{{ $kat->nama_kategori }}">{{ $kat->nama_kategori }}</option>
                     @endforeach
                 </select>
+                <div class="filter-status">
+                    <button class="filter-btn active" onclick="filterStatus('all')">
+                        <i class="bi bi-list-ul"></i>
+                        Semua
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('active')">
+                        <i class="bi bi-check-circle"></i>
+                        Aktif
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('inactive')">
+                        <i class="bi bi-x-circle"></i>
+                        Tidak Aktif
+                    </button>
+                </div>
             </div>
 
             <!-- Table -->
@@ -660,22 +808,25 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%;">No</th>
-                                <th style="width: 25%;">Nama Wisata</th>
-                                <th style="width: 20%;">Kategori</th>
-                                <th style="width: 12%;">Latitude</th>
-                                <th style="width: 12%;">Longitude</th>
-                                <th style="width: 26%;" class="text-center">Aksi</th>
+                                <th style="width: 20%;">Nama Wisata</th>
+                                <th style="width: 18%;">Kategori</th>
+                                <th style="width: 10%;">Latitude</th>
+                                <th style="width: 10%;">Longitude</th>
+                                <th style="width: 10%;" class="text-center">Status</th>
+                                <th style="width: 27%;" class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse($wisata as $index => $w)
-                                <tr>
+                                <tr class="{{ $w->status ? '' : 'inactive-row' }}"
+                                    data-status="{{ $w->status ? 'active' : 'inactive' }}">
                                     <td class="text-center"><strong>{{ $index + 1 }}</strong></td>
                                     <td>
-                                        <strong style="color: #1b5e20;">{{ $w->nama_wisata }}</strong>
+                                        <strong style="color: {{ $w->status ? '#1b5e20' : '#999' }};">
+                                            {{ $w->nama_wisata }}
+                                        </strong>
                                     </td>
                                     <td>
-                                        {{-- ✅ CHANGED: Tampilkan kategori aktif dan nonaktif dengan badge berbeda --}}
                                         @php
                                             $kategoriAktif = $w->kategoriAktif;
                                             $kategoriNonaktif = $w->kategori->whereNotIn(
@@ -684,13 +835,11 @@
                                             );
                                         @endphp
 
-                                        {{-- Kategori Aktif --}}
                                         @forelse($kategoriAktif as $k)
                                             <span class="badge-category">{{ $k->nama_kategori }}</span>
                                         @empty
                                         @endforelse
 
-                                        {{-- Kategori Nonaktif (dengan styling berbeda) --}}
                                         @foreach ($kategoriNonaktif as $k)
                                             <span class="badge-category-inactive"
                                                 title="Kategori ini sudah dinonaktifkan">
@@ -699,13 +848,24 @@
                                             </span>
                                         @endforeach
 
-                                        {{-- Jika tidak ada kategori sama sekali --}}
                                         @if ($kategoriAktif->isEmpty() && $kategoriNonaktif->isEmpty())
                                             <span class="text-muted small">Tidak ada kategori</span>
                                         @endif
                                     </td>
                                     <td>{{ number_format($w->latitude, 6) }}</td>
                                     <td>{{ number_format($w->longitude, 6) }}</td>
+                                    <td class="text-center">
+                                        <form action="{{ route('wisata.toggle-status', $w->id_wisata) }}"
+                                            method="POST" class="toggle-status-form" style="display:inline;">
+                                            @csrf
+                                            <label class="status-switch"
+                                                title="Klik untuk {{ $w->status ? 'menonaktifkan' : 'mengaktifkan' }}">
+                                                <input type="checkbox" {{ $w->status ? 'checked' : '' }}
+                                                    onchange="toggleStatus(this, '{{ $w->nama_wisata }}', {{ $w->status ? 'true' : 'false' }})">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </form>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
                                             <a href="{{ route('wisata.show', $w->id_wisata) }}"
@@ -718,12 +878,12 @@
                                                 <i class="bi bi-pencil-fill"></i>
                                                 Edit
                                             </a>
-                                            <form action="{{ route('wisata.destroy', $w->id_wisata) }}" method="POST"
-                                                style="display:inline;" class="delete-form">
+                                            <form action="{{ route('wisata.destroy', $w->id_wisata) }}"
+                                                method="POST" style="display:inline;" class="delete-form">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn-action btn-delete"
-                                                    onclick="confirmDelete(this)">
+                                                    onclick="confirmDelete(this, '{{ $w->nama_wisata }}')">
                                                     <i class="bi bi-trash-fill"></i>
                                                     Hapus
                                                 </button>
@@ -733,7 +893,7 @@
                                 </tr>
                             @empty
                                 <tr class="empty-row">
-                                    <td colspan="6">
+                                    <td colspan="7">
                                         <div class="empty-state">
                                             <i class="bi bi-inbox"></i>
                                             <h4>Belum Ada Data Wisata</h4>
@@ -758,20 +918,27 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Auto-hide alerts
+        // Auto-hide success alert
         setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert-success-custom, .alert-error-custom');
-            alerts.forEach(alert => {
+            const alert = document.querySelector('.alert-success-custom, .alert-error-custom');
+            if (alert) {
                 alert.style.transition = 'opacity 0.5s ease';
                 alert.style.opacity = '0';
                 setTimeout(() => alert.remove(), 500);
-            });
+            }
         }, 5000);
 
-        // Search Table
+        // Search & Filter
+        let currentFilter = 'all';
+        let currentKategori = '';
+
         function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
+            filterTable();
+        }
+
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const kategoriFilter = document.getElementById('filterKategori').value.toLowerCase();
             const table = document.getElementById('wisataTable');
             const rows = table.getElementsByTagName('tr');
 
@@ -782,17 +949,45 @@
                 if (row.classList.contains('empty-row')) continue;
 
                 const cells = row.getElementsByTagName('td');
-                let found = false;
+                const rowStatus = row.getAttribute('data-status');
 
-                for (let j = 0; j < cells.length; j++) {
-                    const cell = cells[j];
-                    if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
+                let matchSearch = false;
+                let matchKategori = false;
+                let matchStatus = false;
+
+                // Search filter
+                if (searchInput === '') {
+                    matchSearch = true;
+                } else {
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().indexOf(searchInput) > -1) {
+                            matchSearch = true;
+                            break;
+                        }
                     }
                 }
 
-                if (found) {
+                // Kategori filter
+                if (kategoriFilter === '') {
+                    matchKategori = true;
+                } else {
+                    const kategoriCell = cells[2]; // kolom kategori
+                    if (kategoriCell && kategoriCell.textContent.toLowerCase().indexOf(kategoriFilter) > -1) {
+                        matchKategori = true;
+                    }
+                }
+
+                // Status filter
+                if (currentFilter === 'all') {
+                    matchStatus = true;
+                } else if (currentFilter === 'active' && rowStatus === 'active') {
+                    matchStatus = true;
+                } else if (currentFilter === 'inactive' && rowStatus === 'inactive') {
+                    matchStatus = true;
+                }
+
+                // Show/hide row
+                if (matchSearch && matchKategori && matchStatus) {
                     row.style.display = '';
                     visibleCount++;
                 } else {
@@ -800,37 +995,9 @@
                 }
             }
 
-            // Show "no results" message if needed
             showNoResultsMessage(visibleCount);
         }
 
-        // Filter by Category
-        function filterTable() {
-            const filter = document.getElementById('filterKategori').value.toLowerCase();
-            const table = document.getElementById('wisataTable');
-            const rows = table.getElementsByTagName('tr');
-
-            let visibleCount = 0;
-
-            for (let i = 1; i < rows.length; i++) {
-                const row = rows[i];
-                if (row.classList.contains('empty-row')) continue;
-
-                const kategoriCell = row.getElementsByTagName('td')[2];
-
-                if (filter === '' || kategoriCell.textContent.toLowerCase().indexOf(filter) > -1) {
-                    row.style.display = '';
-                    visibleCount++;
-                } else {
-                    row.style.display = 'none';
-                }
-            }
-
-            // Show "no results" message if needed
-            showNoResultsMessage(visibleCount);
-        }
-
-        // Show no results message
         function showNoResultsMessage(visibleCount) {
             const table = document.getElementById('wisataTable');
             let noResultsRow = document.getElementById('noResultsRow');
@@ -841,7 +1008,7 @@
                     noResultsRow = document.createElement('tr');
                     noResultsRow.id = 'noResultsRow';
                     noResultsRow.innerHTML = `
-                        <td colspan="6">
+                        <td colspan="7">
                             <div class="empty-state">
                                 <i class="bi bi-search"></i>
                                 <h4>Tidak Ada Hasil</h4>
@@ -859,11 +1026,62 @@
             }
         }
 
+        // Filter by Status
+        function filterStatus(status) {
+            currentFilter = status;
+
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.filter-btn').classList.add('active');
+
+            // Apply filter
+            filterTable();
+        }
+
+        // Toggle Status with Confirmation
+        function toggleStatus(checkbox, wisataName, currentStatus) {
+            const newStatus = !currentStatus;
+            const statusText = newStatus ? 'mengaktifkan' : 'menonaktifkan';
+            const iconClass = newStatus ? 'success' : 'warning';
+
+            Swal.fire({
+                title: newStatus ? 'Aktifkan Tempat Wisata?' : 'Nonaktifkan Tempat Wisata?',
+                html: `Yakin ingin ${statusText} <strong>"${wisataName}"</strong>?<br><br>
+                       <small class="text-muted">${newStatus ?
+                           '✅ Tempat wisata akan tampil di aplikasi publik' :
+                           '⚠️ Tempat wisata akan disembunyikan dari aplikasi publik'
+                       }</small>`,
+                icon: iconClass,
+                showCancelButton: true,
+                confirmButtonColor: newStatus ? '#2e7d32' : '#ff9800',
+                cancelButtonColor: '#9e9e9e',
+                confirmButtonText: `<i class="bi bi-check-circle me-2"></i>Ya, ${statusText.charAt(0).toUpperCase() + statusText.slice(1)}!`,
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                backdrop: true,
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('loadingOverlay').classList.add('active');
+                    checkbox.closest('form').submit();
+                } else {
+                    // Revert checkbox if cancelled
+                    checkbox.checked = currentStatus;
+                }
+            });
+        }
+
         // Confirm Delete with SweetAlert2
-        function confirmDelete(button) {
+        function confirmDelete(button, wisataName) {
             Swal.fire({
                 title: 'Hapus Data Wisata?',
-                text: "Data yang dihapus tidak dapat dikembalikan!",
+                html: `Yakin ingin menghapus <strong>"${wisataName}"</strong>?<br><br>
+                       <small class="text-muted">⚠️ Data yang dihapus tidak dapat dikembalikan!</small><br>
+                       <small class="text-muted">📸 Semua foto terkait juga akan dihapus.</small>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#f44336',
@@ -889,16 +1107,10 @@
         document.querySelectorAll('a:not([target="_blank"])').forEach(link => {
             link.addEventListener('click', function(e) {
                 const href = this.getAttribute('href');
-                if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !this.classList
+                    .contains('btn-close')) {
                     document.getElementById('loadingOverlay').classList.add('active');
                 }
-            });
-        });
-
-        // Handle form submissions
-        document.querySelectorAll('form:not(.delete-form)').forEach(form => {
-            form.addEventListener('submit', function() {
-                document.getElementById('loadingOverlay').classList.add('active');
             });
         });
     </script>

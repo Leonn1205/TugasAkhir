@@ -24,15 +24,12 @@ class TempatWisataController extends Controller
         $this->wilayahService = $wilayahService;
     }
 
-    /**
-     * ✅ UPDATED: Gunakan kategoriAktif untuk display
-     */
     public function index()
     {
         $wisata = TempatWisata::with([
             'foto',
             'jamOperasionalAdmin',
-            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+            'kategoriAktif'
         ])->get();
 
         return view('wisata.index', compact('wisata'));
@@ -66,10 +63,25 @@ class TempatWisataController extends Controller
             'libur'          => 'nullable|array',
         ]);
 
-        // Validasi lokasi dalam wilayah Kotabaru
+        // ✅ VALIDASI LOKASI
         if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
+        }
+
+        // ✅ VALIDASI JAM OPERASIONAL
+        $validationError = $this->validateJamOperasional(
+            $request->input('hari', []),
+            $request->input('jam_buka', []),
+            $request->input('jam_tutup', []),
+            $request->input('libur', [])
+        );
+
+        if ($validationError) {
+            return back()
+                ->withInput()
+                ->withErrors(['jam_operasional' => $validationError])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         try {
@@ -86,15 +98,12 @@ class TempatWisataController extends Controller
         }
     }
 
-    /**
-     * Untuk edit, tetap gunakan kategori (semua) karena admin perlu lihat semua
-     */
     public function edit($id)
     {
         $wisata = TempatWisata::with([
             'foto',
             'jamOperasionalAdmin',
-            'kategori'  // ← TETAP: kategori (semua) untuk admin
+            'kategori'
         ])->findOrFail($id);
 
         $kategori = KategoriWisata::aktif()->orderBy('nama_kategori', 'asc')->get();
@@ -122,10 +131,25 @@ class TempatWisataController extends Controller
             'libur'          => 'nullable|array',
         ]);
 
-        // Validasi lokasi dalam wilayah Kotabaru
+        // ✅ VALIDASI LOKASI
         if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
                 ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
+        }
+
+        // ✅ VALIDASI JAM OPERASIONAL
+        $validationError = $this->validateJamOperasional(
+            $request->input('hari', []),
+            $request->input('jam_buka', []),
+            $request->input('jam_tutup', []),
+            $request->input('libur', [])
+        );
+
+        if ($validationError) {
+            return back()
+                ->withInput()
+                ->withErrors(['jam_operasional' => $validationError])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         try {
@@ -147,7 +171,6 @@ class TempatWisataController extends Controller
         try {
             $wisata = TempatWisata::findOrFail($id);
 
-            // Hapus file foto dari storage
             foreach ($wisata->foto as $foto) {
                 if (Storage::disk('public')->exists($foto->path_foto)) {
                     Storage::disk('public')->delete($foto->path_foto);
@@ -164,15 +187,12 @@ class TempatWisataController extends Controller
         }
     }
 
-    /**
-     * ✅ UPDATED: Gunakan kategoriAktif untuk public
-     */
     public function show($id)
     {
         $wisata = TempatWisata::with([
             'foto',
             'jamOperasionalUser',
-            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+            'kategoriAktif'
         ])
             ->aktif()
             ->findOrFail($id);
@@ -180,15 +200,12 @@ class TempatWisataController extends Controller
         return view('wisata.show', compact('wisata'));
     }
 
-    /**
-     * ✅ UPDATED: Gunakan kategoriAktif untuk API public
-     */
     public function api()
     {
         $wisata = TempatWisata::with([
             'foto',
             'jamOperasionalUser',
-            'kategoriAktif'  // ← CHANGED: kategori → kategoriAktif
+            'kategoriAktif'
         ])
             ->aktif()
             ->get()
@@ -201,15 +218,11 @@ class TempatWisataController extends Controller
         return response()->json($wisata);
     }
 
-    /**
-     * Hapus foto individual
-     */
     public function deleteFoto($id)
     {
         try {
             $foto = FotoWisata::findOrFail($id);
 
-            // Pastikan minimal ada 1 foto tersisa
             $wisata = TempatWisata::findOrFail($foto->id_wisata);
             if ($wisata->foto()->count() <= 1) {
                 return back()->withErrors(['error' => 'Tidak dapat menghapus foto. Minimal harus ada 1 foto.']);
@@ -223,5 +236,87 @@ class TempatWisataController extends Controller
 
             return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus foto.']);
         }
+    }
+
+    public function toggleStatus($id)
+    {
+        try {
+            $wisata = TempatWisata::findOrFail($id);
+            $wisata->update(['status' => !$wisata->status]);
+
+            $statusText = $wisata->status ? 'diaktifkan' : 'dinonaktifkan';
+
+            return redirect()->route('wisata.index')
+                ->with('success', "Tempat wisata {$wisata->nama_wisata} berhasil {$statusText}!");
+        } catch (\Throwable $e) {
+            Log::error('Error toggling wisata status: ' . $e->getMessage());
+
+            return back()->withErrors(['error' => 'Terjadi kesalahan saat mengubah status.']);
+        }
+    }
+
+    // ============================================================================
+    // ✅ PRIVATE HELPER METHODS
+    // ============================================================================
+
+    /**
+     * Validasi jam operasional
+     *
+     * @return string|null Error message jika ada error, null jika valid
+     */
+    private function validateJamOperasional(array $hari, array $jamBuka, array $jamTutup, array $libur)
+    {
+        foreach ($hari as $index => $day) {
+            // Skip validasi jika hari libur
+            if (in_array($index, $libur)) {
+                continue;
+            }
+
+            $buka = $jamBuka[$index] ?? null;
+            $tutup = $jamTutup[$index] ?? null;
+
+            // Validasi jam tidak boleh kosong untuk hari operasional
+            if (empty($buka) || empty($tutup)) {
+                return "Jam buka dan tutup pada hari {$day} harus diisi!";
+            }
+
+            // Validasi format waktu HH:MM
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $buka)) {
+                return "Format jam buka pada hari {$day} tidak valid! Gunakan format HH:MM (contoh: 08:00)";
+            }
+
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $tutup)) {
+                return "Format jam tutup pada hari {$day} tidak valid! Gunakan format HH:MM (contoh: 17:00)";
+            }
+
+            // ✅ VALIDASI UTAMA: Jam tutup harus lebih besar dari jam buka
+            if ($tutup <= $buka) {
+                return "Jam tutup pada hari {$day} harus lebih besar dari jam buka! (Buka: {$buka}, Tutup: {$tutup})";
+            }
+        }
+
+        return null; // Valid
+    }
+
+    /**
+     * Get info file untuk session (saat validation error)
+     */
+    private function getFileInfo($files)
+    {
+        if (!$files) {
+            return [];
+        }
+
+        $fileInfo = [];
+        foreach ($files as $file) {
+            $sizeKB = round($file->getSize() / 1024, 2);
+            $fileInfo[] = [
+                'name' => $file->getClientOriginalName(),
+                'size' => $sizeKB > 1024
+                    ? round($sizeKB / 1024, 2) . ' MB'
+                    : $sizeKB . ' KB'
+            ];
+        }
+        return $fileInfo;
     }
 }

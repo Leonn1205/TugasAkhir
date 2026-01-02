@@ -34,6 +34,7 @@
             min-width: 350px;
             max-width: 500px;
             animation: slideInRight 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
 
         @keyframes slideInRight {
@@ -45,6 +46,37 @@
             to {
                 transform: translateX(0);
                 opacity: 1;
+            }
+        }
+
+        .alert-sticky {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 2rem;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
             }
         }
 
@@ -116,6 +148,98 @@
             margin-left: 4px;
         }
 
+        .kategori-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .kategori-item {
+            background: #f5f5f5;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .kategori-item:hover {
+            background: #e8f5e9;
+            border-color: #66bb6a;
+            transform: translateY(-2px);
+        }
+
+        .kategori-item input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .kategori-label {
+            display: block;
+            padding: 12px 40px 12px 16px;
+            font-weight: 500;
+            font-size: 14px;
+            color: #333;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .kategori-item input[type="checkbox"]:checked+.kategori-label {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+        }
+
+        .kategori-item input[type="checkbox"]:checked+.kategori-label::after {
+            content: '\F26E';
+            font-family: 'bootstrap-icons';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+            color: white;
+        }
+
+        /* ✅ EMPTY STATE jika tidak ada kategori aktif */
+        .empty-kategori {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: #fff3cd;
+            border: 2px dashed #ffc107;
+            border-radius: 12px;
+        }
+
+        .empty-kategori i {
+            font-size: 48px;
+            color: #ff9800;
+            margin-bottom: 1rem;
+        }
+
+        .empty-kategori h5 {
+            color: #856404;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-kategori p {
+            color: #856404;
+            font-size: 14px;
+        }
+
+        .counter-badge {
+            background: #ffd54f;
+            color: #1b5e20;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
         .form-control,
         .form-select {
             border: 2px solid #c8e6c9;
@@ -132,9 +256,15 @@
             outline: none;
         }
 
-        .form-control.is-invalid {
+        .form-control.is-invalid,
+        .form-select.is-invalid {
             border-color: #d32f2f;
             background-color: #ffebee;
+            padding-right: calc(1.5em + 0.75rem);
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23d32f2f'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23d32f2f' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
         }
 
         .invalid-feedback {
@@ -143,6 +273,22 @@
             font-size: 13px;
             margin-top: 6px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .invalid-feedback::before {
+            content: "⚠";
+            font-size: 14px;
+        }
+
+        .form-check-input.is-invalid {
+            border-color: #d32f2f;
+        }
+
+        .form-check-input.is-invalid~.form-check-label {
+            color: #d32f2f;
         }
 
         .form-check-input {
@@ -220,6 +366,11 @@
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
         }
 
+        .file-upload-wrapper.is-invalid {
+            border-color: #d32f2f;
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        }
+
         .btn-submit {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
@@ -256,6 +407,35 @@
             padding-top: 2rem;
             border-top: 2px solid #e8f5e9;
         }
+
+        .error-summary {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: none;
+            border-left: 5px solid #d32f2f;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .error-summary h5 {
+            color: #d32f2f;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-summary ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+
+        .error-summary li {
+            color: #b71c1c;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -269,7 +449,38 @@
 
     <div class="container">
         <div class="form-container">
-            <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data">
+            {{-- Error Summary untuk Koordinat di Luar Batas --}}
+            @if ($errors->has('lokasi'))
+                <div class="error-summary alert-sticky">
+                    <h5>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Peringatan Lokasi
+                    </h5>
+                    <p><strong>{{ $errors->first('lokasi') }}</strong></p>
+                    <p class="mb-0 mt-2">
+                        <i class="bi bi-info-circle"></i>
+                        Pastikan koordinat yang Anda masukkan berada dalam wilayah Kabupaten Kotabaru, Kalimantan
+                        Selatan.
+                    </p>
+                </div>
+            @endif
+
+            {{-- Error Summary Umum --}}
+            @if ($errors->any() && !$errors->has('lokasi'))
+                <div class="error-summary alert-sticky">
+                    <h5>
+                        <i class="bi bi-x-circle-fill"></i>
+                        Terdapat {{ $errors->count() }} Kesalahan dalam Pengisian Form
+                    </h5>
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data" id="kulinerForm">
                 @csrf
 
                 <!-- 1. IDENTITAS USAHA -->
@@ -360,8 +571,9 @@
                             <i class="bi bi-telephone"></i>
                             No. Telepon <span class="required">*</span>
                         </label>
-                        <input type="text" name="telepon" class="form-control @error('telepon') is-invalid @enderror"
-                            placeholder="081234567890" value="{{ old('telepon') }}" required>
+                        <input type="text" name="telepon"
+                            class="form-control @error('telepon') is-invalid @enderror" placeholder="081234567890"
+                            value="{{ old('telepon') }}" required>
                         @error('telepon')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -371,8 +583,9 @@
                             <i class="bi bi-envelope"></i>
                             Email <span class="required">*</span>
                         </label>
-                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                            placeholder="contoh@email.com" value="{{ old('email') }}" required>
+                        <input type="email" name="email"
+                            class="form-control @error('email') is-invalid @enderror" placeholder="contoh@email.com"
+                            value="{{ old('email') }}" required>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -405,9 +618,14 @@
                                 for="sertifikat_{{ $item }}">{{ $item }}</label>
                         </div>
                     @endforeach
-                    <input type="text" id="sertifikat_text" name="sertifikat_text" class="form-control mt-2"
-                        placeholder="Tulis sertifikat lainnya..." style="display:none; max-width:400px;"
+                    <input type="text" id="sertifikat_text" name="sertifikat_text"
+                        class="form-control mt-2 @error('sertifikat_text') is-invalid @enderror"
+                        placeholder="Tulis sertifikat lainnya..."
+                        style="display:{{ in_array('Lainnya', old('sertifikat_lain', [])) ? 'block' : 'none' }}; max-width:400px;"
                         value="{{ old('sertifikat_text') }}">
+                    @error('sertifikat_text')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="row">
@@ -472,7 +690,8 @@
                 <div class="alert-info-custom">
                     <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk Pengisian:</strong>
                     <ul>
-                        <li>Isi jam buka dan jam tutup</li>
+                        <li>Isi jam buka dan jam tutup untuk setiap hari</li>
+                        <li>Jam sibuk bersifat opsional</li>
                         <li>Centang "Libur" bila tempat tidak beroperasi hari itu</li>
                     </ul>
                 </div>
@@ -504,23 +723,51 @@
                                     <td><input type="time" name="jam_sibuk_selesai[{{ $i }}]"
                                             class="form-control" value="{{ old('jam_sibuk_selesai.' . $i) }}"></td>
                                     <td><input type="checkbox" name="libur[{{ $i }}]"
-                                            class="libur-checkbox"></td>
+                                            class="libur-checkbox"
+                                            {{ in_array($i, old('libur', [])) ? 'checked' : '' }}></td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
+                    @error('jam_operasional')
+                        <div class="alert-jam-operasional"
+                            style="
+        background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+        border: none;
+        border-left: 4px solid #c62828;
+        border-radius: 12px;
+        padding: 16px 20px;
+        margin-top: 1rem;
+        display: flex;
+        align-items: start;
+        gap: 12px;
+        box-shadow: 0 4px 15px rgba(198, 40, 40, 0.15);
+    ">
+                            <i class="bi bi-exclamation-triangle-fill"
+                                style="color: #c62828; font-size: 24px; margin-top: 2px;"></i>
+                            <div>
+                                <strong style="color: #b71c1c; display: block; margin-bottom: 4px; font-size: 15px;">
+                                    ⚠️ Error Jam Operasional
+                                </strong>
+                                <span style="color: #d32f2f; font-size: 14px; line-height: 1.5;">
+                                    {{ $message }}
+                                </span>
+                            </div>
+                        </div>
+                    @enderror
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('profil_pelanggan') text-danger @enderror">
                             <i class="bi bi-person-badge"></i>
                             Profil Pelanggan <span class="required">*</span>
                         </label><br>
                         @foreach (['Lokal', 'Wisatawan', 'Pelajar/Mahasiswa', 'Pekerja'] as $p)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="profil_pelanggan[]" value="{{ $p }}"
-                                    class="form-check-input" id="profil_{{ $p }}"
+                                    class="form-check-input @error('profil_pelanggan') is-invalid @enderror"
+                                    id="profil_{{ $p }}"
                                     {{ in_array($p, old('profil_pelanggan', [])) ? 'checked' : '' }}>
                                 <label class="form-check-label"
                                     for="profil_{{ $p }}">{{ $p }}</label>
@@ -532,14 +779,15 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('metode_pembayaran') text-danger @enderror">
                             <i class="bi bi-credit-card"></i>
                             Metode Pembayaran <span class="required">*</span>
                         </label><br>
                         @foreach (['Tunai', 'Qris / Transfer'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="metode_pembayaran[]" value="{{ $m }}"
-                                    class="form-check-input" id="metode_{{ $m }}"
+                                    class="form-check-input @error('metode_pembayaran') is-invalid @enderror"
+                                    id="metode_{{ $m }}"
                                     {{ in_array($m, old('metode_pembayaran', [])) ? 'checked' : '' }}>
                                 <label class="form-check-label"
                                     for="metode_{{ $m }}">{{ $m }}</label>
@@ -552,47 +800,65 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">
+                    <label class="form-label @error('pajak_retribusi') text-danger @enderror">
                         <i class="bi bi-cash-coin"></i>
                         Pajak / Retribusi <span class="required">*</span>
                     </label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Ya"
-                            id="pajak_ya" {{ old('pajak_retribusi') == 'Ya' ? 'checked' : '' }} required>
+                        <input class="form-check-input @error('pajak_retribusi') is-invalid @enderror" type="radio"
+                            name="pajak_retribusi" value="Ya" id="pajak_ya"
+                            {{ old('pajak_retribusi') == 'Ya' ? 'checked' : '' }} required>
                         <label class="form-check-label" for="pajak_ya">Ya</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Tidak"
-                            id="pajak_tidak" {{ old('pajak_retribusi') == 'Tidak' ? 'checked' : '' }}>
+                        <input class="form-check-input @error('pajak_retribusi') is-invalid @enderror" type="radio"
+                            name="pajak_retribusi" value="Tidak" id="pajak_tidak"
+                            {{ old('pajak_retribusi') == 'Tidak' ? 'checked' : '' }}>
                         <label class="form-check-label" for="pajak_tidak">Tidak</label>
                     </div>
+                    @error('pajak_retribusi')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
-
                 <div class="section-divider"></div>
 
                 <!-- 2. JENIS KULINER -->
                 <div class="section-title">
                     <i class="bi bi-card-list"></i>
-                    Jenis Kuliner
+                    Jenis Kuliner & Kategori
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">
+                    <label class="form-label @error('kategori') text-danger @enderror">
                         <i class="bi bi-tags"></i>
-                        Kategori <span class="required">*</span>
-                    </label><br>
-                    @foreach (['Tradisional/Domestik', 'Modern/Luar Negeri', 'Street Food', 'Lainnya'] as $kategori)
-                        <div class="form-check form-check-inline">
-                            <input type="checkbox" name="kategori[]" value="{{ $kategori }}"
-                                class="form-check-input kategori-check" id="kategori_{{ $kategori }}"
-                                {{ in_array($kategori, old('kategori', [])) ? 'checked' : '' }}>
-                            <label class="form-check-label"
-                                for="kategori_{{ $kategori }}">{{ $kategori }}</label>
+                        Kategori
+                        <span class="required">*</span>
+                        <span class="counter-badge" id="selectedCount">0 dipilih</span>
+                    </label>
+
+                    @if ($kategori->isEmpty())
+                        {{-- Empty state jika tidak ada kategori aktif --}}
+                        <div class="empty-kategori">
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                            <h5>Tidak Ada Kategori Aktif</h5>
+                            <p>Belum ada kategori kuliner yang aktif. Hubungi administrator untuk mengaktifkan kategori
+                                terlebih dahulu.</p>
                         </div>
-                    @endforeach
-                    <input type="text" id="kategori_lain" name="kategori_lain" class="form-control mt-2"
-                        placeholder="Tulis kategori lain..." style="display:none; max-width:400px;"
-                        value="{{ old('kategori_lain') }}">
+                    @else
+                        <div class="kategori-container">
+                            @foreach ($kategori as $kat)
+                                <div class="kategori-item">
+                                    <input type="checkbox" name="kategori[]" value="{{ $kat->id_kategori }}"
+                                        id="kategori_{{ $kat->id_kategori }}" class="kategori-checkbox"
+                                        {{ in_array($kat->id_kategori, old('kategori', [])) ? 'checked' : '' }}>
+                                    <label class="kategori-label" for="kategori_{{ $kat->id_kategori }}">
+                                        {{ $kat->nama_kategori }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+
                     @error('kategori')
                         <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
@@ -652,14 +918,15 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('menu_bersifat') text-danger @enderror">
                             <i class="bi bi-calendar-check"></i>
                             Menu Bersifat <span class="required">*</span>
                         </label><br>
                         @foreach (['Tetap', 'Musiman'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="menu_bersifat[]" value="{{ $m }}"
-                                    class="form-check-input" id="menu_{{ $m }}"
+                                    class="form-check-input @error('menu_bersifat') is-invalid @enderror"
+                                    id="menu_{{ $m }}"
                                     {{ in_array($m, old('menu_bersifat', [])) ? 'checked' : '' }}>
                                 <label class="form-check-label"
                                     for="menu_{{ $m }}">{{ $m }}</label>
@@ -715,7 +982,8 @@
                             Status Bangunan <span class="required">*</span>
                         </label>
                         <select name="status_bangunan"
-                            class="form-control @error('status_bangunan') is-invalid @enderror" required>
+                            class="form-control @error('status_bangunan') is-invalid @enderror"
+                            id="statusBangunanSelect" required>
                             <option value="">-- Pilih Status --</option>
                             <option value="Milik Sendiri"
                                 {{ old('status_bangunan') == 'Milik Sendiri' ? 'selected' : '' }}>Milik Sendiri
@@ -724,27 +992,33 @@
                             </option>
                             <option value="Pinjam Pakai"
                                 {{ old('status_bangunan') == 'Pinjam Pakai' ? 'selected' : '' }}>Pinjam Pakai</option>
-                            <option value="Lainnya..." {{ old('status_bangunan') == 'Lainnya...' ? 'selected' : '' }}>
-                                Lainnya...</option>
+                            <option value="Lainnya..."
+                                {{ old('status_bangunan') == 'Lainnya...' ? 'selected' : '' }}>Lainnya...</option>
                         </select>
-                        <input type="text" id="status_bangunan_lain" name="status_bangunan_lain"
-                            class="form-control mt-2" placeholder="Tulis status lain..." style="display:none;"
-                            value="{{ old('status_bangunan_lain') }}">
                         @error('status_bangunan')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                        <input type="text" id="status_bangunan_lain" name="status_bangunan_lain"
+                            class="form-control mt-2 @error('status_bangunan_lain') is-invalid @enderror"
+                            placeholder="Tulis status lain..."
+                            style="display:{{ old('status_bangunan') == 'Lainnya...' ? 'block' : 'none' }};"
+                            value="{{ old('status_bangunan_lain') }}">
+                        @error('status_bangunan_lain')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">
+                    <label class="form-label @error('fasilitas_pendukung') text-danger @enderror">
                         <i class="bi bi-wifi"></i>
                         Fasilitas Pendukung <span class="required">*</span>
                     </label><br>
                     @foreach (['Toilet', 'Wastafel', 'Parkir', 'Mushola', 'WiFi', 'Tempat Sampah'] as $f)
                         <div class="form-check form-check-inline">
                             <input type="checkbox" name="fasilitas_pendukung[]" value="{{ $f }}"
-                                class="form-check-input" id="fasilitas_{{ $f }}"
+                                class="form-check-input @error('fasilitas_pendukung') is-invalid @enderror"
+                                id="fasilitas_{{ $f }}"
                                 {{ in_array($f, old('fasilitas_pendukung', [])) ? 'checked' : '' }}>
                             <label class="form-check-label"
                                 for="fasilitas_{{ $f }}">{{ $f }}</label>
@@ -765,20 +1039,25 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('pelatihan_k3') text-danger @enderror">
                             <i class="bi bi-clipboard-check"></i>
                             Pelatihan K3 <span class="required">*</span>
                         </label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pelatihan_k3" value="Ya"
-                                id="k3_ya" {{ old('pelatihan_k3') == 'Ya' ? 'checked' : '' }} required>
+                            <input class="form-check-input @error('pelatihan_k3') is-invalid @enderror"
+                                type="radio" name="pelatihan_k3" value="Ya" id="k3_ya"
+                                {{ old('pelatihan_k3') == 'Ya' ? 'checked' : '' }} required>
                             <label class="form-check-label" for="k3_ya">Ya</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="pelatihan_k3" value="Tidak"
-                                id="k3_tidak" {{ old('pelatihan_k3') == 'Tidak' ? 'checked' : '' }}>
+                            <input class="form-check-input @error('pelatihan_k3') is-invalid @enderror"
+                                type="radio" name="pelatihan_k3" value="Tidak" id="k3_tidak"
+                                {{ old('pelatihan_k3') == 'Tidak' ? 'checked' : '' }}>
                             <label class="form-check-label" for="k3_tidak">Tidak</label>
                         </div>
+                        @error('pelatihan_k3')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
@@ -787,7 +1066,7 @@
                         </label>
                         <input type="number" name="jumlah_penjamah_makanan"
                             class="form-control @error('jumlah_penjamah_makanan') is-invalid @enderror"
-                            placeholder="3" value="{{ old('jumlah_penjamah_makanan') }}" required>
+                            placeholder="3" value="{{ old('jumlah_penjamah_makanan') }}" min="0" required>
                         @error('jumlah_penjamah_makanan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -795,14 +1074,15 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">
+                    <label class="form-label @error('apd_penjamah_makanan') text-danger @enderror">
                         <i class="bi bi-shield-fill-check"></i>
                         APD Penjamah Makanan <span class="required">*</span>
                     </label><br>
                     @foreach (['Masker', 'Hairnet', 'Celemek', 'Sarung Tangan'] as $apd)
                         <div class="form-check form-check-inline">
                             <input type="checkbox" name="apd_penjamah_makanan[]" value="{{ $apd }}"
-                                class="form-check-input" id="apd_{{ $apd }}"
+                                class="form-check-input @error('apd_penjamah_makanan') is-invalid @enderror"
+                                id="apd_{{ $apd }}"
                                 {{ in_array($apd, old('apd_penjamah_makanan', [])) ? 'checked' : '' }}>
                             <label class="form-check-label"
                                 for="apd_{{ $apd }}">{{ $apd }}</label>
@@ -815,22 +1095,26 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('prosedur_sanitasi_alat') text-danger @enderror">
                             <i class="bi bi-droplet"></i>
                             Sanitasi Alat Dapur <span class="required">*</span>
                         </label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="prosedur_sanitasi_alat"
-                                value="Tidak Melakukan" id="sanitasi_tidak"
+                            <input class="form-check-input @error('prosedur_sanitasi_alat') is-invalid @enderror"
+                                type="radio" name="prosedur_sanitasi_alat" value="Tidak Melakukan"
+                                id="sanitasi_tidak"
                                 {{ old('prosedur_sanitasi_alat') == 'Tidak Melakukan' ? 'checked' : '' }} required>
                             <label class="form-check-label" for="sanitasi_tidak">Tidak Melakukan</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="prosedur_sanitasi_alat"
-                                value="Melakukan" id="sanitasi_ya"
+                            <input class="form-check-input @error('prosedur_sanitasi_alat') is-invalid @enderror"
+                                type="radio" name="prosedur_sanitasi_alat" value="Melakukan" id="sanitasi_ya"
                                 {{ old('prosedur_sanitasi_alat') == 'Melakukan' ? 'checked' : '' }}>
                             <label class="form-check-label" for="sanitasi_ya">Melakukan</label>
                         </div>
+                        @error('prosedur_sanitasi_alat')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
@@ -840,7 +1124,7 @@
                         <input type="text" name="frekuensi_sanitasi_alat"
                             class="form-control @error('frekuensi_sanitasi_alat') is-invalid @enderror"
                             placeholder="2 kali sehari atau -" value="{{ old('frekuensi_sanitasi_alat') }}"
-                            required>
+                            maxlength="14" required>
                         @error('frekuensi_sanitasi_alat')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -849,22 +1133,27 @@
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('prosedur_sanitasi_bahan') text-danger @enderror">
                             <i class="bi bi-droplet"></i>
                             Sanitasi Bahan Makanan <span class="required">*</span>
                         </label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="prosedur_sanitasi_bahan"
-                                value="Tidak Melakukan" id="sanitasi_bahan_tidak"
+                            <input class="form-check-input @error('prosedur_sanitasi_bahan') is-invalid @enderror"
+                                type="radio" name="prosedur_sanitasi_bahan" value="Tidak Melakukan"
+                                id="sanitasi_bahan_tidak"
                                 {{ old('prosedur_sanitasi_bahan') == 'Tidak Melakukan' ? 'checked' : '' }} required>
                             <label class="form-check-label" for="sanitasi_bahan_tidak">Tidak Melakukan</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="prosedur_sanitasi_bahan"
-                                value="Melakukan" id="sanitasi_bahan_ya"
+                            <input class="form-check-input @error('prosedur_sanitasi_bahan') is-invalid @enderror"
+                                type="radio" name="prosedur_sanitasi_bahan" value="Melakukan"
+                                id="sanitasi_bahan_ya"
                                 {{ old('prosedur_sanitasi_bahan') == 'Melakukan' ? 'checked' : '' }}>
                             <label class="form-check-label" for="sanitasi_bahan_ya">Melakukan</label>
                         </div>
+                        @error('prosedur_sanitasi_bahan')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
@@ -874,7 +1163,7 @@
                         <input type="text" name="frekuensi_sanitasi_bahan"
                             class="form-control @error('frekuensi_sanitasi_bahan') is-invalid @enderror"
                             placeholder="2 kali sehari atau -" value="{{ old('frekuensi_sanitasi_bahan') }}"
-                            required>
+                            maxlength="14" required>
                         @error('frekuensi_sanitasi_bahan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -933,20 +1222,25 @@
                         @enderror
                     </div>
                     <div class="col-md-4 mb-3">
-                        <label class="form-label">
+                        <label class="form-label @error('fifo_fefo') text-danger @enderror">
                             <i class="bi bi-arrow-repeat"></i>
                             Prinsip FIFO / FEFO <span class="required">*</span>
                         </label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="fifo_fefo" value="Ya"
-                                id="fifo_ya" {{ old('fifo_fefo') == 'Ya' ? 'checked' : '' }} required>
+                            <input class="form-check-input @error('fifo_fefo') is-invalid @enderror" type="radio"
+                                name="fifo_fefo" value="Ya" id="fifo_ya"
+                                {{ old('fifo_fefo') == 'Ya' ? 'checked' : '' }} required>
                             <label class="form-check-label" for="fifo_ya">Ya</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="fifo_fefo" value="Tidak"
-                                id="fifo_tidak" {{ old('fifo_fefo') == 'Tidak' ? 'checked' : '' }}>
+                            <input class="form-check-input @error('fifo_fefo') is-invalid @enderror" type="radio"
+                                name="fifo_fefo" value="Tidak" id="fifo_tidak"
+                                {{ old('fifo_fefo') == 'Tidak' ? 'checked' : '' }}>
                             <label class="form-check-label" for="fifo_tidak">Tidak</label>
                         </div>
+                        @error('fifo_fefo')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
@@ -1004,143 +1298,160 @@
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-water"></i>
-                            Sumber Air Cuci <span class="required">*</span>
-                        </label>
-                        <select name="sumber_air_cuci"
-                            class="form-control @error('sumber_air_cuci') is-invalid @enderror" required>
-                            <option value="">-- Pilih Sumber --</option>
-                            <option value="PDAM" {{ old('sumber_air_cuci') == 'PDAM' ? 'selected' : '' }}>PDAM
-                            </option>
-                            <option value="Sumur" {{ old('sumber_air_cuci') == 'Sumur' ? 'selected' : '' }}>Sumur
-                            </option>
-                            <option value="Air Isi Ulang"
-                                {{ old('sumber_air_cuci') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
-                            </option>
-                        </select>
-                        @error('sumber_air_cuci')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-water"></i>
-                            Sumber Air Masak <span class="required">*</span>
-                        </label>
-                        <select name="sumber_air_masak"
-                            class="form-control @error('sumber_air_masak') is-invalid @enderror" required>
-                            <option value="">-- Pilih Sumber --</option>
-                            <option value="PDAM" {{ old('sumber_air_masak') == 'PDAM' ? 'selected' : '' }}>PDAM
-                            </option>
-                            <option value="Sumur" {{ old('sumber_air_masak') == 'Sumur' ? 'selected' : '' }}>Sumur
-                            </option>
-                            <option value="Air Isi Ulang"
-                                {{ old('sumber_air_masak') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
-                            </option>
-                        </select>
-                        @error('sumber_air_masak')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-cup-straw"></i>
-                            Sumber Air Minum <span class="required">*</span>
-                        </label>
-                        <select name="sumber_air_minum"
-                            class="form-control @error('sumber_air_minum') is-invalid @enderror" required>
-                            <option value="">-- Pilih Sumber --</option>
-                            <option value="PDAM" {{ old('sumber_air_minum') == 'PDAM' ? 'selected' : '' }}>PDAM
-                            </option>
-                            <option value="Sumur" {{ old('sumber_air_minum') == 'Sumur' ? 'selected' : '' }}>Sumur
-                            </option>
-                            <option value="Air Isi Ulang"
-                                {{ old('sumber_air_minum') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
-                            </option>
-                        </select>
-                        @error('sumber_air_minum')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="section-divider"></div>
-
-                <!-- 5. KOORDINAT -->
-                <div class="section-title">
-                    <i class="bi bi-geo-alt"></i>
-                    Koordinat Lokasi
-                </div>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-arrow-left-right"></i>
-                            Longitude <span class="required">*</span>
-                        </label>
-                        <input type="text" name="longitude"
-                            class="form-control @error('longitude') is-invalid @enderror" placeholder="116.8225"
-                            value="{{ old('longitude') }}" required>
-                        @error('longitude')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-arrow-up-down"></i>
-                            Latitude <span class="required">*</span>
-                        </label>
-                        <input type="text" name="latitude"
-                            class="form-control @error('latitude') is-invalid @enderror" placeholder="-3.3211"
-                            value="{{ old('latitude') }}" required>
-                        @error('latitude')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
-                    </div>
-                </div>
-
-                <div class="section-divider"></div>
-
-                <!-- 6. FOTO -->
-                <div class="section-title">
-                    <i class="bi bi-camera"></i>
-                    Foto Kuliner
-                </div>
-
-                <div class="mb-4">
-                    <div class="file-upload-wrapper">
-                        <input type="file" name="foto[]" multiple accept="image/*" id="fileInput">
-                        <div class="file-upload-icon">
-                            <i class="bi bi-cloud-upload"></i>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-water"></i>
+                                Sumber Air Cuci <span class="required">*</span>
+                            </label>
+                            <select name="sumber_air_cuci"
+                                class="form-control @error('sumber_air_cuci') is-invalid @enderror" required>
+                                <option value="">-- Pilih Sumber --</option>
+                                <option value="PDAM" {{ old('sumber_air_cuci') == 'PDAM' ? 'selected' : '' }}>PDAM
+                                </option>
+                                <option value="Sumur" {{ old('sumber_air_cuci') == 'Sumur' ? 'selected' : '' }}>
+                                    Sumur</option>
+                                <option value="Air Isi Ulang"
+                                    {{ old('sumber_air_cuci') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
+                                </option>
+                            </select>
+                            @error('sumber_air_cuci')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="file-upload-text">
-                            Klik untuk upload foto atau drag & drop
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-water"></i>
+                                Sumber Air Masak <span class="required">*</span>
+                            </label>
+                            <select name="sumber_air_masak"
+                                class="form-control @error('sumber_air_masak') is-invalid @enderror" required>
+                                <option value="">-- Pilih Sumber --</option>
+                                <option value="PDAM" {{ old('sumber_air_masak') == 'PDAM' ? 'selected' : '' }}>PDAM
+                                </option>
+                                <option value="Sumur" {{ old('sumber_air_masak') == 'Sumur' ? 'selected' : '' }}>
+                                    Sumur</option>
+                                <option value="Air Isi Ulang"
+                                    {{ old('sumber_air_masak') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
+                                </option>
+                            </select>
+                            @error('sumber_air_masak')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
-                        <div class="file-upload-hint">
-                            Format: JPG, PNG, JPEG | Maksimal: 2MB per file | Bisa multiple
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-cup-straw"></i>
+                                Sumber Air Minum <span class="required">*</span>
+                            </label>
+                            <select name="sumber_air_minum"
+                                class="form-control @error('sumber_air_minum') is-invalid @enderror" required>
+                                <option value="">-- Pilih Sumber --</option>
+                                <option value="PDAM" {{ old('sumber_air_minum') == 'PDAM' ? 'selected' : '' }}>PDAM
+                                </option>
+                                <option value="Sumur" {{ old('sumber_air_minum') == 'Sumur' ? 'selected' : '' }}>
+                                    Sumur</option>
+                                <option value="Air Isi Ulang"
+                                    {{ old('sumber_air_minum') == 'Air Isi Ulang' ? 'selected' : '' }}>Air Isi Ulang
+                                </option>
+                            </select>
+                            @error('sumber_air_minum')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
-                    @error('foto')
-                        <div class="invalid-feedback d-block">{{ $message }}</div>
-                    @enderror
-                    <div class="selected-files" id="selectedFiles"></div>
-                </div>
 
-                <!-- Action Buttons -->
-                <div class="button-group">
-                    <button type="submit" class="btn-submit">
-                        <i class="bi bi-check-circle-fill"></i>
-                        Simpan Data
-                    </button>
-                    <a href="{{ route('kuliner.index') }}" class="btn-cancel">
-                        <i class="bi bi-x-circle"></i>
-                        Batal
-                    </a>
-                </div>
+                    <div class="section-divider"></div>
+
+                    <!-- 5. KOORDINAT -->
+                    <div class="section-title">
+                        <i class="bi bi-geo-alt"></i>
+                        Koordinat Lokasi
+                    </div>
+
+                    @if ($errors->has('lokasi'))
+                        <div class="alert alert-danger mb-3">
+                            <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Peringatan:</strong>
+                            {{ $errors->first('lokasi') }}
+                        </div>
+                    @endif
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-arrow-left-right"></i>
+                                Longitude <span class="required">*</span>
+                            </label>
+                            <input type="text" name="longitude"
+                                class="form-control @error('longitude') is-invalid @enderror" placeholder="116.8225"
+                                value="{{ old('longitude') }}" step="any" required>
+                            <small class="form-text note">Format: 116.8225 (gunakan titik sebagai pemisah
+                                desimal)</small>
+                            @error('longitude')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                <i class="bi bi-arrow-up-down"></i>
+                                Latitude <span class="required">*</span>
+                            </label>
+                            <input type="text" name="latitude"
+                                class="form-control @error('latitude') is-invalid @enderror" placeholder="-3.3211"
+                                value="{{ old('latitude') }}" step="any" required>
+                            <small class="form-text note">Format: -3.3211 (gunakan titik sebagai pemisah
+                                desimal)</small>
+                            @error('latitude')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- 6. FOTO -->
+                    <div class="section-title">
+                        <i class="bi bi-camera"></i>
+                        Foto Kuliner
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="file-upload-wrapper @error('foto') is-invalid @enderror" id="fileUploadWrapper">
+                            <input type="file" name="foto[]" multiple accept="image/*" id="fileInput"
+                                style="display:none;" required>
+                            <div class="file-upload-icon">
+                                <i class="bi bi-cloud-upload" style="font-size: 48px; color: #2e7d32;"></i>
+                            </div>
+                            <div class="file-upload-text"
+                                style="font-size: 18px; font-weight: 600; color: #1b5e20; margin-top: 15px;">
+                                Klik untuk upload foto atau drag & drop
+                            </div>
+                            <div class="file-upload-hint" style="font-size: 14px; color: #666; margin-top: 10px;">
+                                Format: JPG, PNG, JPEG | Maksimal: 2MB per file | Minimal 1 foto <span
+                                    class="required">*</span>
+                            </div>
+                        </div>
+                        @error('foto')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        @error('foto.*')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
+                        <div class="selected-files" id="selectedFiles"></div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button type="submit" class="btn-submit">
+                            <i class="bi bi-check-circle-fill"></i>
+                            Simpan Data
+                        </button>
+                        <a href="{{ route('kuliner.index') }}" class="btn-cancel">
+                            <i class="bi bi-x-circle"></i>
+                            Batal
+                        </a>
+                    </div>
 
             </form>
         </div>
@@ -1149,221 +1460,366 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Sertifikat "Lainnya"
-            const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
-            const sertifikatText = document.getElementById("sertifikat_text");
 
-            // Check on page load (untuk old value saat error)
-            if (sertifikatText) {
-                const isOtherChecked = Array.from(sertifikatChecks).some(chk => chk.value === "Lainnya" && chk
-                    .checked);
-                sertifikatText.style.display = isOtherChecked ? "block" : "none";
-            }
+            const kategoriCheckboxes = document.querySelectorAll('.kategori-checkbox');
+            const selectedCountBadge = document.getElementById('selectedCount');
 
-            sertifikatChecks.forEach(c => {
-                c.addEventListener("change", () => {
-                    const isOtherChecked = Array.from(sertifikatChecks).some(chk => chk.value ===
-                        "Lainnya" && chk.checked);
-                    sertifikatText.style.display = isOtherChecked ? "block" : "none";
-                    if (!isOtherChecked) sertifikatText.value = "";
-                });
-            });
-
-            // Kategori "Lainnya"
-            const kategoriChecks = document.querySelectorAll(".kategori-check");
-            const kategoriLain = document.getElementById("kategori_lain");
-
-            // Check on page load (untuk old value saat error)
-            if (kategoriLain) {
-                const isOtherChecked = Array.from(kategoriChecks).some(chk => chk.value === "Lainnya" && chk
-                    .checked);
-                kategoriLain.style.display = isOtherChecked ? "block" : "none";
-            }
-
-            kategoriChecks.forEach(c => {
-                c.addEventListener("change", () => {
-                    const isOtherChecked = Array.from(kategoriChecks).some(chk => chk.value ===
-                        "Lainnya" && chk.checked);
-                    kategoriLain.style.display = isOtherChecked ? "block" : "none";
-                    if (!isOtherChecked) kategoriLain.value = "";
-                });
-            });
-
-            // Status Bangunan "Lainnya"
-            const statusSelect = document.querySelector('select[name="status_bangunan"]');
-            const statusLain = document.getElementById("status_bangunan_lain");
-
-            // Check on page load (untuk old value saat error)
-            if (statusSelect && statusLain) {
-                if (statusSelect.value === "Lainnya...") {
-                    statusLain.style.display = "block";
+            function updateKategoriCount() {
+                const checkedCount = document.querySelectorAll('.kategori-checkbox:checked').length;
+                if (selectedCountBadge) {
+                    selectedCountBadge.textContent = `${checkedCount} dipilih`;
                 }
             }
 
-            if (statusSelect) {
-                statusSelect.addEventListener("change", () => {
+            // Initial count
+            updateKategoriCount();
+
+            // Update on change
+            kategoriCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateKategoriCount);
+            });
+
+            // ============================================================================
+            // 1. SERTIFIKAT "LAINNYA" - FIXED VERSION
+            // ============================================================================
+            const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
+            const sertifikatText = document.getElementById("sertifikat_text");
+
+            // Fungsi untuk toggle visibility textbox
+            function toggleSertifikatText() {
+                const isOtherChecked = Array.from(sertifikatChecks).some(chk =>
+                    chk.value === "Lainnya" && chk.checked
+                );
+
+                if (sertifikatText) {
+                    sertifikatText.style.display = isOtherChecked ? "block" : "none";
+
+                    // Clear value jika di-uncheck
+                    if (!isOtherChecked) {
+                        sertifikatText.value = "";
+                    }
+                }
+            }
+
+            // Jalankan saat halaman load (untuk handle old() values)
+            toggleSertifikatText();
+
+            // Attach event listener ke semua checkbox
+            sertifikatChecks.forEach(checkbox => {
+                checkbox.addEventListener("change", toggleSertifikatText);
+            });
+
+            // ============================================================================
+            // 2. STATUS BANGUNAN "LAINNYA" - FIXED VERSION
+            // ============================================================================
+            const statusSelect = document.getElementById("statusBangunanSelect");
+            const statusLain = document.getElementById("status_bangunan_lain");
+
+            function toggleStatusLain() {
+                if (statusSelect && statusLain) {
                     if (statusSelect.value === "Lainnya...") {
                         statusLain.style.display = "block";
                     } else {
                         statusLain.style.display = "none";
                         statusLain.value = "";
                     }
-                });
+                }
             }
 
-            // Jam Operasional - Libur Checkbox
-            const rows = document.querySelectorAll("table tbody tr");
+            // Jalankan saat load
+            toggleStatusLain();
 
-            rows.forEach(row => {
+            // Event listener
+            if (statusSelect) {
+                statusSelect.addEventListener("change", toggleStatusLain);
+            }
+
+            // ============================================================================
+            // 3. JAM OPERASIONAL - LIBUR CHECKBOX (FIXED VERSION)
+            // ============================================================================
+            const operasionalRows = document.querySelectorAll("table tbody tr"); // ← GANTI NAMA
+
+            operasionalRows.forEach(row => {
                 const checkbox = row.querySelector('.libur-checkbox');
                 const timeInputs = row.querySelectorAll('input[type="time"]');
                 if (!checkbox) return;
 
-                const defaultValues = Array.from(timeInputs).map(input => input.value);
+                // Store default values
+                const defaultValues = Array.from(timeInputs).map(input => input.value || '');
 
-                // Check on page load (untuk old value saat error)
+                // Apply initial state for checked libur
                 if (checkbox.checked) {
                     timeInputs.forEach(input => {
-                        input.disabled = true;
+                        input.value = '00:00';
+                        input.readOnly = true;
+                        input.style.background = '#f5f5f5';
+                        input.style.cursor = 'not-allowed';
+                        input.style.pointerEvents = 'none';
                     });
                     row.style.opacity = '0.5';
                 }
 
+                // Handle checkbox change
                 checkbox.addEventListener("change", () => {
                     if (checkbox.checked) {
+                        // LIBUR: Set 00:00
                         timeInputs.forEach(input => {
-                            input.value = "";
-                            input.disabled = true;
+                            input.value = '00:00';
+                            input.readOnly = true;
+                            input.style.background = '#f5f5f5';
+                            input.style.cursor = 'not-allowed';
+                            input.style.pointerEvents = 'none';
                         });
                         row.style.opacity = '0.5';
                     } else {
+                        // BUKA: Reset ke jam normal
                         timeInputs.forEach((input, idx) => {
-                            input.disabled = false;
-                            // Restore default values hanya jika kosong
-                            if (!input.value) {
-                                input.value = defaultValues[idx] || "";
-                            }
+                            input.readOnly = false;
+                            input.style.background = '';
+                            input.style.cursor = '';
+                            input.style.pointerEvents = '';
+
+                            // Restore default atau set default values
+                            if (idx === 0) input.value = defaultValues[idx] ||
+                            '08:00'; // jam_buka
+                            else if (idx === 1) input.value = defaultValues[idx] ||
+                            '21:00'; // jam_tutup
+                            else input.value = defaultValues[idx] ||
+                            ''; // jam sibuk (opsional)
                         });
                         row.style.opacity = '1';
                     }
                 });
             });
 
-            // File Upload Handler
-            const fileInput = document.getElementById('fileInput');
-            const selectedFilesContainer = document.getElementById('selectedFiles');
-            const uploadWrapper = document.querySelector('.file-upload-wrapper');
-            let selectedFiles = [];
+            // ============================================================================
+            // 4. VALIDASI SEBELUM SUBMIT FORM
+            // ============================================================================
+            const form = document.getElementById('kulinerForm');
 
-            fileInput.addEventListener('change', function(e) {
-                handleFiles(e.target.files);
-            });
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const tableRows = document.querySelectorAll(
+                    '.table-operasional tbody tr'); // ← GANTI NAMA
+                    let hasInvalidTime = false;
+                    let errorMessage = '';
 
-            uploadWrapper.addEventListener('dragover', function(e) {
-                e.preventDefault();
-                uploadWrapper.style.borderColor = '#1b5e20';
-                uploadWrapper.style.background = 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)';
-            });
+                    tableRows.forEach((row, index) => {
+                        const liburCheckbox = row.querySelector('.libur-checkbox');
 
-            uploadWrapper.addEventListener('dragleave', function(e) {
-                e.preventDefault();
-                uploadWrapper.style.borderColor = '#2e7d32';
-                uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
-            });
+                        // Skip jika hari libur
+                        if (liburCheckbox && liburCheckbox.checked) {
+                            return;
+                        }
 
-            uploadWrapper.addEventListener('drop', function(e) {
-                e.preventDefault();
-                uploadWrapper.style.borderColor = '#2e7d32';
-                uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
-                handleFiles(e.dataTransfer.files);
-            });
+                        const jamBuka = row.querySelector('input[name="jam_buka[' + index + ']"]')
+                            ?.value;
+                        const jamTutup = row.querySelector('input[name="jam_tutup[' + index + ']"]')
+                            ?.value;
+                        const jamSibukMulai = row.querySelector('input[name="jam_sibuk_mulai[' +
+                            index + ']"]')?.value;
+                        const jamSibukSelesai = row.querySelector('input[name="jam_sibuk_selesai[' +
+                            index + ']"]')?.value;
+                        const hari = row.querySelector('input[name="hari[' + index + ']"]')?.value;
 
-            function handleFiles(files) {
-                const filesArray = Array.from(files);
-                let hasError = false;
+                        // Validasi jam kosong
+                        if (!jamBuka || !jamTutup) {
+                            hasInvalidTime = true;
+                            errorMessage = `Jam buka dan tutup pada hari ${hari} harus diisi!`;
+                            return;
+                        }
 
-                filesArray.forEach(file => {
-                    if (!file.type.match('image.*')) {
-                        alert('❌ ' + file.name + ' bukan file gambar!');
-                        hasError = true;
-                        return;
+                        // Validasi jam tutup harus > jam buka
+                        if (jamTutup <= jamBuka) {
+                            hasInvalidTime = true;
+                            errorMessage =
+                                `Jam tutup pada hari ${hari} harus lebih besar dari jam buka!\n\nBuka: ${jamBuka}\nTutup: ${jamTutup}`;
+                            return;
+                        }
+
+                        // Validasi jam sibuk mulai (harus antara jam buka dan tutup)
+                        if (jamSibukMulai && (jamSibukMulai < jamBuka || jamSibukMulai >=
+                            jamTutup)) {
+                            hasInvalidTime = true;
+                            errorMessage =
+                                `Jam sibuk mulai pada hari ${hari} harus antara jam buka (${jamBuka}) dan tutup (${jamTutup})!`;
+                            return;
+                        }
+
+                        // Validasi jam sibuk selesai
+                        if (jamSibukSelesai) {
+                            if (jamSibukSelesai <= jamBuka || jamSibukSelesai > jamTutup) {
+                                hasInvalidTime = true;
+                                errorMessage =
+                                    `Jam sibuk selesai pada hari ${hari} harus antara jam buka (${jamBuka}) dan tutup (${jamTutup})!`;
+                                return;
+                            }
+
+                            if (jamSibukMulai && jamSibukSelesai <= jamSibukMulai) {
+                                hasInvalidTime = true;
+                                errorMessage =
+                                    `Jam sibuk selesai pada hari ${hari} harus lebih besar dari jam sibuk mulai!`;
+                                return;
+                            }
+                        }
+
+                        // Validasi jika salah satu jam sibuk diisi, yang lain juga harus diisi
+                        if ((jamSibukMulai && !jamSibukSelesai) || (!jamSibukMulai &&
+                                jamSibukSelesai)) {
+                            hasInvalidTime = true;
+                            errorMessage =
+                                `Jam sibuk mulai dan selesai pada hari ${hari} harus diisi keduanya atau kosong keduanya!`;
+                            return;
+                        }
+                    });
+
+                    if (hasInvalidTime) {
+                        e.preventDefault();
+                        alert('⚠️ ' + errorMessage);
+
+                        // Scroll ke section jam operasional
+                        document.querySelector('.table-operasional').scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'center'
+                        });
+                        return false;
                     }
-
-                    if (file.size > 2 * 1024 * 1024) {
-                        alert('❌ ' + file.name + ' terlalu besar! Maksimal 2MB per file.');
-                        hasError = true;
-                        return;
-                    }
-
-                    selectedFiles.push(file);
                 });
+            }
 
-                if (!hasError) {
-                    displayFiles();
-                    updateFileInput();
+            // Scroll to first error on page load
+            const firstError = document.querySelector('.is-invalid, .error-summary');
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        });
+
+        // ============================================================================
+        // 5. FILE UPLOAD HANDLER (DI LUAR DOMContentLoaded)
+        // ============================================================================
+        const fileInput = document.getElementById('fileInput');
+        const selectedFilesContainer = document.getElementById('selectedFiles');
+        const uploadWrapper = document.getElementById('fileUploadWrapper');
+        let selectedFiles = [];
+
+        uploadWrapper.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        uploadWrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#1b5e20';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)';
+        });
+
+        uploadWrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#2e7d32';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
+        });
+
+        uploadWrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#2e7d32';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const filesArray = Array.from(files);
+            let hasError = false;
+
+            filesArray.forEach(file => {
+                if (!file.type.match('image.*')) {
+                    alert('❌ ' + file.name + ' bukan file gambar!');
+                    hasError = true;
+                    return;
                 }
-            }
 
-            function displayFiles() {
-                selectedFilesContainer.innerHTML = '';
-                selectedFilesContainer.style.display = selectedFiles.length > 0 ? 'grid' : 'none';
-                selectedFilesContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
-                selectedFilesContainer.style.gap = '15px';
-                selectedFilesContainer.style.marginTop = '1.5rem';
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('❌ ' + file.name + ' terlalu besar! Maksimal 2MB per file.');
+                    hasError = true;
+                    return;
+                }
 
-                selectedFiles.forEach((file, index) => {
-                    const fileItem = document.createElement('div');
-                    fileItem.style.cssText = `
-                        position: relative;
-                        border-radius: 12px;
-                        overflow: hidden;
-                        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-                        background: white;
-                        transition: all 0.3s ease;
-                    `;
+                selectedFiles.push(file);
+            });
 
-                    const reader = new FileReader();
-                    reader.onload = function(e) {
-                        fileItem.innerHTML = `
-                            <img src="${e.target.result}" alt="${file.name}" style="width:100%; height:150px; object-fit:cover; display:block;">
-                            <div style="position:absolute; bottom:40px; left:8px; background:rgba(46,125,50,0.9); color:white; padding:4px 8px; border-radius:8px; font-size:11px; font-weight:600;">
-                                ${formatFileSize(file.size)}
-                            </div>
-                            <button type="button" onclick="removeFile(${index})" style="position:absolute; top:8px; right:8px; background:rgba(211,47,47,0.95); color:white; border:none; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; transition:all 0.3s ease; z-index:3;">
-                                <i class="bi bi-x"></i>
-                            </button>
-                            <div style="padding:10px; font-size:12px; color:#333; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:#f8f9fa;" title="${file.name}">
-                                ${file.name}
-                            </div>
-                        `;
-                    };
-                    reader.readAsDataURL(file);
-                    selectedFilesContainer.appendChild(fileItem);
-                });
-            }
-
-            function updateFileInput() {
-                const dataTransfer = new DataTransfer();
-                selectedFiles.forEach(file => {
-                    dataTransfer.items.add(file);
-                });
-                fileInput.files = dataTransfer.files;
-            }
-
-            function formatFileSize(bytes) {
-                if (bytes === 0) return '0 Bytes';
-                const k = 1024;
-                const sizes = ['Bytes', 'KB', 'MB'];
-                const i = Math.floor(Math.log(bytes) / Math.log(k));
-                return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-            }
-
-            window.removeFile = function(index) {
-                selectedFiles.splice(index, 1);
+            if (!hasError) {
                 displayFiles();
                 updateFileInput();
-            };
-        });
+            }
+        }
+
+        function displayFiles() {
+            selectedFilesContainer.innerHTML = '';
+            selectedFilesContainer.style.display = selectedFiles.length > 0 ? 'grid' : 'none';
+            selectedFilesContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
+            selectedFilesContainer.style.gap = '15px';
+            selectedFilesContainer.style.marginTop = '1.5rem';
+
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = `
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: white;
+            transition: all 0.3s ease;
+        `;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileItem.innerHTML = `
+                <img src="${e.target.result}" alt="${file.name}" style="width:100%; height:150px; object-fit:cover; display:block;">
+                <div style="position:absolute; bottom:40px; left:8px; background:rgba(46,125,50,0.9); color:white; padding:4px 8px; border-radius:8px; font-size:11px; font-weight:600;">
+                    ${formatFileSize(file.size)}
+                </div>
+                <button type="button" onclick="removeFile(${index})" style="position:absolute; top:8px; right:8px; background:rgba(211,47,47,0.95); color:white; border:none; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; transition:all 0.3s ease; z-index:3;">
+                    <i class="bi bi-x"></i>
+                </button>
+                <div style="padding:10px; font-size:12px; color:#333; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:#f8f9fa;" title="${file.name}">
+                    ${file.name}
+                </div>
+            `;
+                };
+                reader.readAsDataURL(file);
+                selectedFilesContainer.appendChild(fileItem);
+            });
+        }
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            fileInput.files = dataTransfer.files;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+            updateFileInput();
+        };
     </script>
 </body>
 

@@ -839,48 +839,6 @@
             });
         }
 
-        // Confirm Delete
-        function confirmDelete(button, kategoriNama, usageCount) {
-            if (usageCount > 0) {
-                Swal.fire({
-                    title: 'Tidak Dapat Menghapus!',
-                    html: `Kategori <strong>"${kategoriNama}"</strong> masih digunakan oleh <strong>${usageCount} tempat wisata</strong>.<br><br>
-                           <small class="text-muted">💡 Nonaktifkan kategori jika ingin menyembunyikannya dari form input.</small>`,
-                    icon: 'error',
-                    confirmButtonColor: '#2e7d32',
-                    confirmButtonText: 'Mengerti',
-                    customClass: {
-                        popup: 'rounded-4',
-                        confirmButton: 'rounded-pill px-4'
-                    }
-                });
-                return;
-            }
-
-            Swal.fire({
-                title: 'Hapus Kategori?',
-                html: `Yakin ingin menghapus kategori <strong>"${kategoriNama}"</strong>?<br><br>
-                       <small class="text-danger">⚠️ Aksi ini tidak dapat dibatalkan!</small>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#f44336',
-                cancelButtonColor: '#9e9e9e',
-                confirmButtonText: '<i class="bi bi-trash me-2"></i>Ya, Hapus!',
-                cancelButtonText: 'Batal',
-                reverseButtons: true,
-                backdrop: true,
-                customClass: {
-                    popup: 'rounded-4',
-                    confirmButton: 'rounded-pill px-4',
-                    cancelButton: 'rounded-pill px-4'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('loadingOverlay').classList.add('active');
-                    button.closest('form').submit();
-                }
-            });
-        }
 
         // Show loading on page transition
         document.querySelectorAll('a:not([target="_blank"])').forEach(link => {

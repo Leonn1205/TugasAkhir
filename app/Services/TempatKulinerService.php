@@ -7,6 +7,9 @@ use App\Models\FotoKuliner;
 use App\Models\JamOperasionalKuliner;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\support\Facades\Log;
+
+
 
 class TempatKulinerService
 {
@@ -83,7 +86,7 @@ class TempatKulinerService
 
                 $kuliner = TempatKuliner::findOrFail($id);
 
-                // 1. Prepare dan update data utama
+                // 1. Update data utama
                 $dataUtama = $this->prepareMainData($data);
                 $kuliner->update($dataUtama);
 
@@ -100,32 +103,35 @@ class TempatKulinerService
                     }
                 }
 
-                // 3. Reset jam operasional (delete existing, then create new)
-                $kuliner->jamOperasionalAdmin()->delete();
-
+                // 3. ✅ UPDATE JAM OPERASIONAL (SAFE METHOD - SEPERTI YANG SAYA SARANKAN)
                 if (!empty($data['hari'])) {
                     foreach ($data['hari'] as $index => $hari) {
                         $isLibur = isset($data['libur'][$index]);
 
-                        JamOperasionalKuliner::create([
-                            'id_kuliner' => $kuliner->id_kuliner,
-                            'hari' => $hari,
-                            'jam_buka' => $isLibur ? null : ($data['jam_buka'][$index] ?? null),
-                            'jam_tutup' => $isLibur ? null : ($data['jam_tutup'][$index] ?? null),
-                            'jam_sibuk_mulai' => $isLibur ? null : ($data['jam_sibuk_mulai'][$index] ?? null),
-                            'jam_sibuk_selesai' => $isLibur ? null : ($data['jam_sibuk_selesai'][$index] ?? null),
-                            'libur' => $isLibur,
-                        ]);
+                        // updateOrCreate LEBIH AMAN dari delete + create
+                        JamOperasionalKuliner::updateOrCreate(
+                            [
+                                'id_kuliner' => $kuliner->id_kuliner,
+                                'hari' => $hari
+                            ],
+                            [
+                                'jam_buka' => $isLibur ? null : ($data['jam_buka'][$index] ?? null),
+                                'jam_tutup' => $isLibur ? null : ($data['jam_tutup'][$index] ?? null),
+                                'jam_sibuk_mulai' => $isLibur ? null : ($data['jam_sibuk_mulai'][$index] ?? null),
+                                'jam_sibuk_selesai' => $isLibur ? null : ($data['jam_sibuk_selesai'][$index] ?? null),
+                                'libur' => $isLibur,
+                            ]
+                        );
                     }
                 }
 
-                // 4. Sync kategori (many-to-many)
+                // 4. Sync kategori
                 $kuliner->kategori()->sync($data['kategori']);
 
                 return $kuliner;
             });
         } catch (\Throwable $e) {
-            // Rollback uploaded files if transaction fails
+            // Rollback uploaded files
             foreach ($uploadedFiles as $path) {
                 if (Storage::disk('public')->exists($path)) {
                     Storage::disk('public')->delete($path);
@@ -139,9 +145,9 @@ class TempatKulinerService
     /**
      * Hapus foto kuliner
      */
-    public function deleteFoto(int $idFoto): void
+    public function deleteFoto(int $idFotoKuliner): void
     {
-        $foto = FotoKuliner::findOrFail($idFoto);
+        $foto = FotoKuliner::findOrFail($idFotoKuliner);
 
         // Delete file from storage
         if (Storage::disk('public')->exists($foto->path_foto)) {

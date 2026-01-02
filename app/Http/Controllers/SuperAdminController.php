@@ -11,14 +11,15 @@ class SuperAdminController extends Controller
 {
     public function index()
     {
-        $wisata = TempatWisata::all();
-        $kuliner = TempatKuliner::all();
+        $wisata = TempatWisata::with(['kategori', 'jamOperasionalAdmin', 'foto'])->get();
+        $kuliner = TempatKuliner::with(['kategori', 'jamOperasionalAdmin', 'foto'])->get();
+
         return view('superadmin.dashboard', compact('wisata', 'kuliner'));
     }
 
     public function indexAdmin()
     {
-        $admins = \App\Models\User::where('role', 'Admin')->get();
+        $admins = User::where('role', 'Admin')->get();
         return view('superadmin.admin.index', compact('admins'));
     }
 
@@ -35,24 +36,25 @@ class SuperAdminController extends Controller
             'role' => 'required|in:Super Admin,Admin,User',
         ]);
 
-        \App\Models\User::create([
+        User::create([
             'username' => $request->username,
             'password' => bcrypt($request->password),
             'role' => $request->role,
         ]);
 
-        return redirect()->route('superadmin.admin.index')->with('success', 'Admin berhasil ditambahkan.');
+        return redirect()->route('superadmin.admin.index')
+            ->with('success', 'Admin berhasil ditambahkan.');
     }
 
-    public function editAdmin($id_user)
+    public function editAdmin($id)
     {
-        $admin = User::findOrFail($id_user);
+        $admin = User::findOrFail($id);
         return view('superadmin.admin.edit', compact('admin'));
     }
 
     public function updateAdmin(Request $request, $id)
     {
-        $admin = \App\Models\User::findOrFail($id);
+        $admin = User::findOrFail($id);
 
         $request->validate([
             'username' => 'required|unique:users,username,' . $admin->id,
@@ -62,19 +64,24 @@ class SuperAdminController extends Controller
 
         $admin->username = $request->username;
         $admin->role = $request->role;
+
         if ($request->filled('password')) {
             $admin->password = bcrypt($request->password);
         }
+
         $admin->save();
 
-        return redirect()->route('superadmin.admin.index')->with('success', 'Admin berhasil diperbarui.');
+        return redirect()->route('superadmin.admin.index')
+            ->with('success', 'Admin berhasil diperbarui.');
     }
 
-    public function destroyAdmin($id)
+    // ✅ FIXED: Changed from destroyAdmin to deleteAdmin (match with route)
+    public function deleteAdmin($id)
     {
-        $admin = \App\Models\User::where('role', 'Admin')->findOrFail($id);
+        $admin = User::where('role', 'Admin')->findOrFail($id);
         $admin->delete();
 
-        return redirect()->route('superadmin.admin.index')->with('success', 'Admin berhasil dihapus.');
+        return redirect()->route('superadmin.admin.index')
+            ->with('success', 'Admin berhasil dihapus.');
     }
 }

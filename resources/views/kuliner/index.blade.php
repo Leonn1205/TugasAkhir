@@ -206,6 +206,54 @@
             font-size: 18px;
         }
 
+        .filter-select {
+            padding: 12px 16px;
+            border: 2px solid #c8e6c9;
+            border-radius: 12px;
+            font-size: 14px;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+
+        .filter-select:focus {
+            border-color: #388e3c;
+            box-shadow: 0 0 0 0.2rem rgba(56, 142, 60, 0.15);
+            outline: none;
+        }
+
+        /* Filter Status */
+        .filter-status {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid #e0e0e0;
+            background: white;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-btn:hover {
+            border-color: #2e7d32;
+            color: #2e7d32;
+        }
+
+        .filter-btn.active {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            border-color: #2e7d32;
+        }
+
         /* Table Container */
         .table-container {
             background: white;
@@ -257,29 +305,138 @@
             color: #333;
         }
 
+        /* Row Status - Inactive */
+        .table-custom tbody tr.inactive-row {
+            background: #ffebee;
+            opacity: 0.7;
+        }
+
+        .table-custom tbody tr.inactive-row:hover {
+            background: #ffcdd2;
+            opacity: 0.85;
+        }
+
+        .table-custom tbody tr.inactive-row td {
+            color: #999;
+        }
+
+        /* Badge Category */
+        .badge-category {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+            display: inline-block;
+        }
+
+        .badge-category-inactive {
+            background: linear-gradient(135deg, #9e9e9e 0%, #757575 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin: 2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            opacity: 0.7;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.active {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            color: #2e7d32;
+        }
+
+        .status-badge.inactive {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            color: #d32f2f;
+        }
+
+        .status-badge i {
+            font-size: 10px;
+        }
+
+        /* Toggle Status Switch */
+        .status-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .status-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 26px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
         /* Action Buttons */
         .action-buttons {
             display: flex;
             gap: 6px;
             justify-content: center;
             flex-wrap: nowrap;
-            /* Ubah dari wrap ke nowrap */
-            white-space: nowrap;
         }
 
         .btn-action {
             padding: 8px 12px;
-            /* Kurangi padding dari 16px ke 12px */
             border-radius: 8px;
             font-size: 12px;
-            /* Kurangi font dari 13px ke 12px */
             font-weight: 500;
             border: none;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            /* Kurangi gap dari 6px ke 4px */
             text-decoration: none;
         }
 
@@ -341,6 +498,13 @@
         }
 
         /* Stats Card */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
         .stat-card {
             background: white;
             padding: 1.5rem;
@@ -350,7 +514,6 @@
             align-items: center;
             gap: 1rem;
             transition: all 0.3s ease;
-            margin-bottom: 1.5rem;
         }
 
         .stat-card:hover {
@@ -366,15 +529,37 @@
             align-items: center;
             justify-content: center;
             font-size: 28px;
-            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
+        }
+
+        .stat-icon.total {
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+        }
+
+        .stat-icon.active {
+            background: linear-gradient(135deg, #1976d2 0%, #2196f3 100%);
+        }
+
+        .stat-icon.inactive {
+            background: linear-gradient(135deg, #d32f2f 0%, #f44336 100%);
         }
 
         .stat-info h3 {
             font-size: 32px;
             font-weight: 700;
-            color: #1b5e20;
             margin: 0;
+        }
+
+        .stat-info.total h3 {
+            color: #1b5e20;
+        }
+
+        .stat-info.active h3 {
+            color: #1565c0;
+        }
+
+        .stat-info.inactive h3 {
+            color: #c62828;
         }
 
         .stat-info p {
@@ -411,15 +596,25 @@
                 flex-direction: column;
             }
 
+            .filter-select {
+                width: 100%;
+            }
+
+            .filter-status {
+                justify-content: center;
+            }
+
             .action-buttons {
                 gap: 4px;
-                /* Lebih kompak di mobile */
             }
 
             .btn-action {
                 padding: 6px 10px;
-                /* Lebih kecil di mobile */
                 font-size: 11px;
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -490,13 +685,12 @@
             <!-- Toolbar -->
             <div class="toolbar">
                 <div class="toolbar-left">
-                    @php $role = auth()->user()->role; @endphp
-                    @if ($role === 'Super Admin')
+                    @if (auth()->user()->role === 'Super Admin')
                         <a href="{{ route('dashboard.superadmin') }}" class="btn-custom btn-back">
                             <i class="bi bi-arrow-left"></i>
                             Kembali ke Dashboard
                         </a>
-                    @elseif ($role === 'Admin')
+                    @else
                         <a href="{{ route('dashboard.admin') }}" class="btn-custom btn-back">
                             <i class="bi bi-arrow-left"></i>
                             Kembali ke Dashboard
@@ -526,23 +720,70 @@
                 </div>
             @endif
 
-            <!-- Stats Card -->
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="bi bi-shop"></i>
+            <!-- Stats Cards -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon total">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div class="stat-info total">
+                        <h3>{{ $kuliner->count() }}</h3>
+                        <p>Total Sentra Kuliner</p>
+                    </div>
                 </div>
-                <div class="stat-info">
-                    <h3>{{ $kuliner->count() }}</h3>
-                    <p>Total Sentra Kuliner</p>
+                <div class="stat-card">
+                    <div class="stat-icon active">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="stat-info active">
+                        <h3>{{ $kuliner->where('status', true)->count() }}</h3>
+                        <p>Aktif</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon inactive">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <div class="stat-info inactive">
+                        <h3>{{ $kuliner->where('status', false)->count() }}</h3>
+                        <p>Tidak Aktif</p>
+                    </div>
                 </div>
             </div>
 
-            <!-- Search Bar -->
+            <!-- Search & Filter Bar -->
             <div class="search-filter-bar">
                 <div class="search-box">
                     <i class="bi bi-search"></i>
-                    <input type="text" id="searchInput" placeholder="Cari nama sentra kuliner atau lokasi..."
-                        onkeyup="searchTable()">
+                    <input type="text" id="searchInput"
+                        placeholder="Cari nama sentra kuliner, kategori, atau lokasi..." onkeyup="searchTable()">
+                </div>
+                <select class="filter-select" id="filterKategori" onchange="filterTable()">
+                    <option value="">Semua Kategori</option>
+                    @php
+                        $allKategori = $kuliner
+                            ->pluck('kategoriAktif')
+                            ->flatten()
+                            ->unique('id_kategori')
+                            ->sortBy('nama_kategori');
+                    @endphp
+                    @foreach ($allKategori as $kat)
+                        <option value="{{ $kat->nama_kategori }}">{{ $kat->nama_kategori }}</option>
+                    @endforeach
+                </select>
+                <div class="filter-status">
+                    <button class="filter-btn active" onclick="filterStatus('all')">
+                        <i class="bi bi-list-ul"></i>
+                        Semua
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('active')">
+                        <i class="bi bi-check-circle"></i>
+                        Aktif
+                    </button>
+                    <button class="filter-btn" onclick="filterStatus('inactive')">
+                        <i class="bi bi-x-circle"></i>
+                        Tidak Aktif
+                    </button>
                 </div>
             </div>
 
@@ -553,23 +794,66 @@
                         <thead>
                             <tr>
                                 <th style="width: 5%;">No</th>
-                                <th style="width: 22%;">Nama Sentra</th>
-                                <th style="width: 25%;">Lokasi</th>
-                                <th style="width: 12%;">Latitude</th>
-                                <th style="width: 12%;">Longitude</th>
-                                <th style="width: 24%;" class="text-center">Aksi</th>
+                                <th style="width: 18%;">Nama Sentra</th>
+                                <th style="width: 18%;">Kategori</th>
+                                <th style="width: 15%;">Lokasi</th>
+                                <th style="width: 9%;">Latitude</th>
+                                <th style="width: 9%;">Longitude</th>
+                                <th style="width: 8%;" class="text-center">Status</th>
+                                <th style="width: 18%;" class="text-center">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @forelse ($kuliner as $index => $k)
-                                <tr>
+                                <tr class="{{ $k->status ? '' : 'inactive-row' }}"
+                                    data-status="{{ $k->status ? 'active' : 'inactive' }}">
                                     <td class="text-center"><strong>{{ $index + 1 }}</strong></td>
                                     <td>
-                                        <strong style="color: #1b5e20;">{{ $k->nama_sentra }}</strong>
+                                        <strong style="color: {{ $k->status ? '#1b5e20' : '#999' }};">
+                                            {{ $k->nama_sentra }}
+                                        </strong>
                                     </td>
-                                    <td>{{ $k->alamat_lengkap }}</td>
-                                    <td>{{ $k->latitude }}</td>
-                                    <td>{{ $k->longitude }}</td>
+                                    <td>
+                                        @php
+                                            $kategoriAktif = $k->kategoriAktif;
+                                            $kategoriNonaktif = $k->kategori->whereNotIn(
+                                                'id_kategori',
+                                                $kategoriAktif->pluck('id_kategori'),
+                                            );
+                                        @endphp
+
+                                        @forelse($kategoriAktif as $kat)
+                                            <span class="badge-category">{{ $kat->nama_kategori }}</span>
+                                        @empty
+                                        @endforelse
+
+                                        @foreach ($kategoriNonaktif as $kat)
+                                            <span class="badge-category-inactive"
+                                                title="Kategori ini sudah dinonaktifkan">
+                                                <i class="bi bi-dash-circle"></i>
+                                                {{ $kat->nama_kategori }}
+                                            </span>
+                                        @endforeach
+
+                                        @if ($kategoriAktif->isEmpty() && $kategoriNonaktif->isEmpty())
+                                            <span class="text-muted small">Tidak ada kategori</span>
+                                        @endif
+                                    </td>
+                                    <td>{{ Str::limit($k->alamat_lengkap, 30) }}</td>
+                                    <td>{{ number_format($k->latitude, 6) }}</td>
+                                    <td>{{ number_format($k->longitude, 6) }}</td>
+                                    <td class="text-center">
+                                        <form action="{{ route('kuliner.toggle-status', $k->id_kuliner) }}"
+                                            method="POST" class="toggle-status-form" style="display:inline;">
+                                            @csrf
+                                            <label class="status-switch"
+                                                title="Klik untuk {{ $k->status ? 'menonaktifkan' : 'mengaktifkan' }}">
+                                                <input type="checkbox" {{ $k->status ? 'checked' : '' }}
+                                                    onchange="toggleStatus(this, '{{ $k->nama_sentra }}', {{ $k->status ? 'true' : 'false' }})">
+                                                <span class="slider"></span>
+                                            </label>
+                                        </form>
+                                    </td>
                                     <td>
                                         <div class="action-buttons">
                                             <a href="{{ route('kuliner.show', $k->id_kuliner) }}"
@@ -597,7 +881,7 @@
                                 </tr>
                             @empty
                                 <tr class="empty-row">
-                                    <td colspan="6">
+                                    <td colspan="8">
                                         <div class="empty-state">
                                             <i class="bi bi-cup-straw"></i>
                                             <h4>Belum Ada Data Kuliner</h4>
@@ -632,37 +916,160 @@
             }
         }, 5000);
 
-        // Search Table
+        // Search & Filter
+        let currentFilter = 'all';
+        let currentKategori = '';
+
         function searchTable() {
-            const input = document.getElementById('searchInput');
-            const filter = input.value.toLowerCase();
+            filterTable();
+        }
+
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const kategoriFilter = document.getElementById('filterKategori').value.toLowerCase();
             const table = document.getElementById('kulinerTable');
             const rows = table.getElementsByTagName('tr');
+
+            let visibleCount = 0;
 
             for (let i = 1; i < rows.length; i++) {
                 const row = rows[i];
                 if (row.classList.contains('empty-row')) continue;
 
                 const cells = row.getElementsByTagName('td');
-                let found = false;
+                const rowStatus = row.getAttribute('data-status');
 
-                for (let j = 0; j < cells.length; j++) {
-                    const cell = cells[j];
-                    if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
-                        found = true;
-                        break;
+                let matchSearch = false;
+                let matchKategori = false;
+                let matchStatus = false;
+
+                // Search filter
+                if (searchInput === '') {
+                    matchSearch = true;
+                } else {
+                    for (let j = 0; j < cells.length; j++) {
+                        if (cells[j].textContent.toLowerCase().indexOf(searchInput) > -1) {
+                            matchSearch = true;
+                            break;
+                        }
                     }
                 }
 
-                row.style.display = found ? '' : 'none';
+                // Kategori filter
+                if (kategoriFilter === '') {
+                    matchKategori = true;
+                } else {
+                    const kategoriCell = cells[2]; // kolom kategori
+                    if (kategoriCell && kategoriCell.textContent.toLowerCase().indexOf(kategoriFilter) > -1) {
+                        matchKategori = true;
+                    }
+                }
+
+                // Status filter
+                if (currentFilter === 'all') {
+                    matchStatus = true;
+                } else if (currentFilter === 'active' && rowStatus === 'active') {
+                    matchStatus = true;
+                } else if (currentFilter === 'inactive' && rowStatus === 'inactive') {
+                    matchStatus = true;
+                }
+
+                // Show/hide row
+                if (matchSearch && matchKategori && matchStatus) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
             }
+
+            showNoResultsMessage(visibleCount);
+        }
+
+        function showNoResultsMessage(visibleCount) {
+            const table = document.getElementById('kulinerTable');
+            let noResultsRow = document.getElementById('noResultsRow');
+
+            if (visibleCount === 0) {
+                if (!noResultsRow) {
+                    const tbody = table.querySelector('tbody');
+                    noResultsRow = document.createElement('tr');
+                    noResultsRow.id = 'noResultsRow';
+                    noResultsRow.innerHTML = `
+                        <td colspan="8">
+                            <div class="empty-state">
+                                <i class="bi bi-search"></i>
+                                <h4>Tidak Ada Hasil</h4>
+                                <p>Tidak ditemukan data yang sesuai dengan pencarian atau filter Anda</p>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(noResultsRow);
+                }
+                noResultsRow.style.display = '';
+            } else {
+                if (noResultsRow) {
+                    noResultsRow.style.display = 'none';
+                }
+            }
+        }
+
+        // Filter by Status
+        function filterStatus(status) {
+            currentFilter = status;
+
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.filter-btn').classList.add('active');
+
+            // Apply filter
+            filterTable();
+        }
+
+        // Toggle Status with Confirmation
+        function toggleStatus(checkbox, sentraName, currentStatus) {
+            const newStatus = !currentStatus;
+            const statusText = newStatus ? 'mengaktifkan' : 'menonaktifkan';
+            const iconClass = newStatus ? 'success' : 'warning';
+
+            Swal.fire({
+                title: newStatus ? 'Aktifkan Tempat Kuliner?' : 'Nonaktifkan Tempat Kuliner?',
+                html: `Yakin ingin ${statusText} <strong>"${sentraName}"</strong>?<br><br>
+                       <small class="text-muted">${newStatus ?
+                           '✅ Tempat kuliner akan tampil di aplikasi publik' :
+                           '⚠️ Tempat kuliner akan disembunyikan dari aplikasi publik'
+                       }</small>`,
+                icon: iconClass,
+                showCancelButton: true,
+                confirmButtonColor: newStatus ? '#2e7d32' : '#ff9800',
+                cancelButtonColor: '#9e9e9e',
+                confirmButtonText: `<i class="bi bi-check-circle me-2"></i>Ya, ${statusText.charAt(0).toUpperCase() + statusText.slice(1)}!`,
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                backdrop: true,
+                customClass: {
+                    popup: 'rounded-4',
+                    confirmButton: 'rounded-pill px-4',
+                    cancelButton: 'rounded-pill px-4'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('loadingOverlay').classList.add('active');
+                    checkbox.closest('form').submit();
+                } else {
+                    // Revert checkbox if cancelled
+                    checkbox.checked = currentStatus;
+                }
+            });
         }
 
         // Confirm Delete with SweetAlert2
         function confirmDelete(button, sentraName) {
             Swal.fire({
                 title: 'Hapus Data Kuliner?',
-                html: `Yakin ingin menghapus <strong>"${sentraName}"</strong>?<br><br><small class="text-muted">Data yang dihapus tidak dapat dikembalikan!</small>`,
+                html: `Yakin ingin menghapus <strong>"${sentraName}"</strong>?<br><br>
+                       <small class="text-muted">⚠️ Data yang dihapus tidak dapat dikembalikan!</small><br>
+                       <small class="text-muted">📸 Semua foto terkait juga akan dihapus.</small>`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#f44336',
@@ -687,7 +1094,9 @@
         // Show loading on page transition
         document.querySelectorAll('a:not([target="_blank"])').forEach(link => {
             link.addEventListener('click', function(e) {
-                if (!this.getAttribute('href').startsWith('#') && !this.classList.contains('btn-close')) {
+                const href = this.getAttribute('href');
+                if (href && !href.startsWith('#') && !href.startsWith('javascript:') && !this.classList
+                    .contains('btn-close')) {
                     document.getElementById('loadingOverlay').classList.add('active');
                 }
             });

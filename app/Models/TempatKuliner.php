@@ -11,6 +11,11 @@ class TempatKuliner extends Model
 
     protected $table = 'tempat_kuliner';
     protected $primaryKey = 'id_kuliner';
+    public function getRouteKeyName()
+    {
+        return 'id_kuliner';
+    }
+    
     protected $fillable = [
         // 1. Identitas Usaha
         'nama_sentra',

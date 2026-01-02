@@ -450,6 +450,12 @@
                 padding: 1.5rem;
             }
         }
+
+        /* Custom Grey Marker */
+        .custom-marker-grey {
+            background: transparent !important;
+            border: none !important;
+        }
     </style>
 </head>
 
@@ -601,11 +607,12 @@
                             <i class="bi bi-geo-alt-fill"></i>
                         </div>
                         <div class="stat-info">
-                            <div class="stat-value">{{ $wisata->count() }}</div>
-                            <div class="stat-label">Lokasi Wisata</div>
+                            <div class="stat-value">{{ $wisata->where('status', true)->count() }}</div>
+                            <div class="stat-label">Lokasi Wisata Aktif</div>
                             <div class="stat-trend">
                                 <i class="bi bi-graph-up-arrow"></i>
-                                Total destinasi wisata
+                                {{ $wisata->count() }} total ({{ $wisata->where('status', false)->count() }} tidak
+                                aktif)
                             </div>
                         </div>
                     </div>
@@ -615,11 +622,12 @@
                             <i class="bi bi-cup-hot-fill"></i>
                         </div>
                         <div class="stat-info">
-                            <div class="stat-value">{{ $kuliner->count() }}</div>
-                            <div class="stat-label">Lokasi Kuliner</div>
+                            <div class="stat-value">{{ $kuliner->where('status', true)->count() }}</div>
+                            <div class="stat-label">Lokasi Kuliner Aktif</div>
                             <div class="stat-trend">
                                 <i class="bi bi-graph-up-arrow"></i>
-                                Total sentra kuliner
+                                {{ $kuliner->count() }} total ({{ $kuliner->where('status', false)->count() }} tidak
+                                aktif)
                             </div>
                         </div>
                     </div>
@@ -680,69 +688,180 @@
 
         let currentMarkerId = null;
 
+        // Map Legend
+        var legend = L.control({
+            position: 'bottomright'
+        });
+
+        legend.onAdd = function(map) {
+            var div = L.DomUtil.create('div', 'map-legend');
+            div.innerHTML = `
+        <div style="background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); font-size: 13px;">
+            <div style="font-weight: 600; margin-bottom: 10px; color: #1b5e20; border-bottom: 2px solid #e8f5e9; padding-bottom: 8px;">
+                <i class="bi bi-info-circle"></i> Legenda Peta
+            </div>
+            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <img src="https://maps.google.com/mapfiles/ms/icons/blue-dot.png" width="20" style="vertical-align: middle;">
+                <span>Wisata Aktif</span>
+            </div>
+            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="12" r="8" fill="#999999" stroke="#666666" stroke-width="1.5"/>
+                </svg>
+                <span style="color: #999;">Wisata Tidak Aktif</span>
+            </div>
+            <div style="margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+                <img src="https://maps.google.com/mapfiles/ms/icons/red-dot.png" width="20" style="vertical-align: middle;">
+                <span>Kuliner Aktif</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="12" r="8" fill="#999999" stroke="#666666" stroke-width="1.5"/>
+                </svg>
+                <span style="color: #999;">Kuliner Tidak Aktif</span>
+            </div>
+        </div>
+    `;
+            return div;
+        };
+
+        legend.addTo(map);
+
         // Add Wisata Markers
         @foreach ($wisata as $w)
             @if ($w->latitude && $w->longitude)
-                var wisataIcon = L.icon({
-                    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 32],
-                    popupAnchor: [0, -32]
-                });
+                @php
+                    $isActive = $w->status;
+                @endphp
+
+                @if ($isActive)
+                    // Icon untuk wisata aktif
+                    var wisataIcon{{ $w->id_wisata }} = L.icon({
+                        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -32]
+                    });
+                @else
+                    // Custom grey icon untuk wisata tidak aktif
+                    var wisataIcon{{ $w->id_wisata }} = L.divIcon({
+                        className: 'custom-marker-grey',
+                        html: `<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <ellipse cx="16" cy="28" rx="3" ry="1.5" fill="rgba(0,0,0,0.2)"/>
+                        <circle cx="16" cy="12" r="8" fill="#999999" stroke="#666666" stroke-width="1.5"/>
+                        <circle cx="16" cy="12" r="3" fill="#ffffff" opacity="0.5"/>
+                        <path d="M 16 20 Q 16 28 16 28" stroke="#666666" stroke-width="1.5" fill="none"/>
+                    </g>
+                </svg>`,
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 28],
+                        popupAnchor: [0, -28]
+                    });
+                @endif
 
                 var markerWisata{{ $w->id_wisata }} = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
-                    icon: wisataIcon
+                    icon: wisataIcon{{ $w->id_wisata }}
                 }).addTo(map);
 
-                markerWisata{{ $w->id_wisata }}.on('click', function() {
-                    showDetail("wisata-{{ $w->id_wisata }}", {
-                        nama: @json($w->nama_wisata),
-                        link: "{{ route('wisata.show', $w->id_wisata) }}",
-                        jam: `{!! $w->jamOperasionalAdmin->map(function ($jam) {
-                                return $jam->libur
-                                    ? "<li><b>{$jam->hari}:</b> Libur</li>"
-                                    : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
-                            })->implode('') !!}`,
-                        foto: `{!! $w->foto->map(function ($f) {
-                                return "<div class='col-md-6 mb-2'><img src='" .
-                                    asset('storage/' . $f->path_foto) .
-                                    "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
-                            })->implode('') !!}`
-                    }, [{{ $w->latitude }}, {{ $w->longitude }}]);
-                });
+                @if ($isActive)
+                    // Marker aktif - bisa diklik untuk detail
+                    markerWisata{{ $w->id_wisata }}.on('click', function() {
+                        showDetail("wisata-{{ $w->id_wisata }}", {
+                            nama: @json($w->nama_wisata),
+                            link: "{{ route('wisata.show', $w->id_wisata) }}",
+                            jam: `{!! $w->jamOperasionalAdmin->map(function ($jam) {
+                                    return $jam->libur
+                                        ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                        : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                                })->implode('') !!}`,
+                            foto: `{!! $w->foto->map(function ($f) {
+                                    return "<div class='col-md-6 mb-2'><img src='" .
+                                        asset('storage/' . $f->path_foto) .
+                                        "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
+                                })->implode('') !!}`
+                        }, [{{ $w->latitude }}, {{ $w->longitude }}]);
+                    });
+                @else
+                    // Marker tidak aktif - hanya popup sederhana
+                    markerWisata{{ $w->id_wisata }}.bindPopup(`
+                <div style="text-align: center; padding: 8px;">
+                    <b style="color: #333;">{{ $w->nama_wisata }}</b><br>
+                    <span style="color: #999; font-size: 12px; display: inline-block; margin-top: 5px;">
+                        <i class="bi bi-x-circle"></i> Status: Tidak Aktif
+                    </span>
+                </div>
+            `);
+                @endif
             @endif
         @endforeach
 
         // Add Kuliner Markers
         @foreach ($kuliner as $k)
             @if ($k->latitude && $k->longitude)
-                var kulinerIcon = L.icon({
-                    iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
-                    iconSize: [32, 32],
-                    iconAnchor: [16, 32],
-                    popupAnchor: [0, -32]
-                });
+                @php
+                    $isActive = $k->status;
+                @endphp
+
+                @if ($isActive)
+                    // Icon untuk kuliner aktif
+                    var kulinerIcon{{ $k->id_kuliner }} = L.icon({
+                        iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 32],
+                        popupAnchor: [0, -32]
+                    });
+                @else
+                    // Custom grey icon untuk kuliner tidak aktif
+                    var kulinerIcon{{ $k->id_kuliner }} = L.divIcon({
+                        className: 'custom-marker-grey',
+                        html: `<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+                    <g>
+                        <ellipse cx="16" cy="28" rx="3" ry="1.5" fill="rgba(0,0,0,0.2)"/>
+                        <circle cx="16" cy="12" r="8" fill="#999999" stroke="#666666" stroke-width="1.5"/>
+                        <circle cx="16" cy="12" r="3" fill="#ffffff" opacity="0.5"/>
+                        <path d="M 16 20 Q 16 28 16 28" stroke="#666666" stroke-width="1.5" fill="none"/>
+                    </g>
+                </svg>`,
+                        iconSize: [32, 32],
+                        iconAnchor: [16, 28],
+                        popupAnchor: [0, -28]
+                    });
+                @endif
 
                 var markerKuliner{{ $k->id_kuliner }} = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
-                    icon: kulinerIcon
+                    icon: kulinerIcon{{ $k->id_kuliner }}
                 }).addTo(map);
 
-                markerKuliner{{ $k->id_kuliner }}.on('click', function() {
-                    showDetail("kuliner-{{ $k->id_kuliner }}", {
-                        nama: @json($k->nama_sentra),
-                        link: "{{ route('kuliner.show', $k->id_kuliner) }}",
-                        jam: `{!! $k->jamOperasionalAdmin->map(function ($jam) {
-                                return $jam->libur
-                                    ? "<li><b>{$jam->hari}:</b> Libur</li>"
-                                    : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
-                            })->implode('') !!}`,
-                        foto: `{!! $k->foto->map(function ($f) {
-                                return "<div class='col-md-6 mb-2'><img src='" .
-                                    asset('storage/' . $f->path_foto) .
-                                    "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
-                            })->implode('') !!}`
-                    }, [{{ $k->latitude }}, {{ $k->longitude }}]);
-                });
+                @if ($isActive)
+                    // Marker aktif - bisa diklik untuk detail
+                    markerKuliner{{ $k->id_kuliner }}.on('click', function() {
+                        showDetail("kuliner-{{ $k->id_kuliner }}", {
+                            nama: @json($k->nama_sentra),
+                            link: "{{ route('kuliner.show', $k->id_kuliner) }}",
+                            jam: `{!! $k->jamOperasionalAdmin->map(function ($jam) {
+                                    return $jam->libur
+                                        ? "<li><b>{$jam->hari}:</b> Libur</li>"
+                                        : "<li><b>{$jam->hari}:</b> {$jam->jam_buka} - {$jam->jam_tutup}</li>";
+                                })->implode('') !!}`,
+                            foto: `{!! $k->foto->map(function ($f) {
+                                    return "<div class='col-md-6 mb-2'><img src='" .
+                                        asset('storage/' . $f->path_foto) .
+                                        "' class='img-fluid rounded' style='box-shadow: 0 2px 8px rgba(0,0,0,0.1);'></div>";
+                                })->implode('') !!}`
+                        }, [{{ $k->latitude }}, {{ $k->longitude }}]);
+                    });
+                @else
+                    // Marker tidak aktif - hanya popup sederhana
+                    markerKuliner{{ $k->id_kuliner }}.bindPopup(`
+                <div style="text-align: center; padding: 8px;">
+                    <b style="color: #333;">{{ $k->nama_sentra }}</b><br>
+                    <span style="color: #999; font-size: 12px; display: inline-block; margin-top: 5px;">
+                        <i class="bi bi-x-circle"></i> Status: Tidak Aktif
+                    </span>
+                </div>
+            `);
+                @endif
             @endif
         @endforeach
 

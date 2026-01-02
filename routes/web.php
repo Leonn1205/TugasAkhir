@@ -95,6 +95,10 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('wisata/foto/{id}', [TempatWisataController::class, 'deleteFoto'])
             ->name('wisata.foto.delete');
 
+        // Toggle status wisata
+        Route::post('wisata/{id}/toggle-status', [TempatWisataController::class, 'toggleStatus'])
+            ->name('wisata.toggle-status');
+
         // ============================================
         // TEMPAT KULINER MANAGEMENT
         // ============================================
@@ -109,8 +113,12 @@ Route::middleware(['auth'])->group(function () {
         ]);
 
         // Delete foto kuliner individual
-        Route::delete('kuliner/foto/{id}', [TempatKulinerController::class, 'deleteFoto'])
+        Route::delete('kuliner/foto/{id_foto_kuliner}', [TempatKulinerController::class, 'deleteFoto'])
             ->name('kuliner.foto.delete');
+
+        // Toggle status kuliner
+        Route::post('kuliner/{id}/toggle-status', [TempatKulinerController::class, 'toggleStatus'])
+            ->name('kuliner.toggle-status');
 
         // ============================================
         // KATEGORI WISATA MANAGEMENT
@@ -171,4 +179,3 @@ Route::middleware(['auth'])->group(function () {
             ->name('superadmin.admin.delete');
     });
 });
-

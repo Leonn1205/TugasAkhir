@@ -9,13 +9,19 @@ class UserWisataController extends Controller
 {
     public function index()
     {
-        $wisata = TempatWisata::all();
-        return view('user.wisata', compact('wisata'));
+        $wisata = TempatWisata::with(['foto', 'kategoriAktif'])
+            ->aktif()
+            ->get();
+
+        return view('user.wisata-list', compact('wisata'));
     }
 
     public function show($id)
     {
-        $wisata = TempatWisata::with(['foto','jamOperasional'])->findOrFail($id);
+        // Pakai jamOperasionalAdmin untuk tampilkan semua hari (termasuk libur)
+        $wisata = TempatWisata::with(['foto', 'jamOperasionalAdmin', 'kategoriAktif'])
+            ->findOrFail($id);
+
         return view('user.wisata', compact('wisata'));
     }
 }

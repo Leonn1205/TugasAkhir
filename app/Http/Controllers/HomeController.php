@@ -6,90 +6,82 @@ use Illuminate\Http\Request;
 use App\Models\TempatKuliner;
 use App\Models\TempatWisata;
 use App\Models\KategoriWisata;
+use App\Models\KategoriKuliner;
 
 class HomeController extends Controller
 {
     public function index(Request $request)
     {
         // ========== AUTH LOGIC ==========
-        // dd(auth()->check(), auth()->user());
-
         if (auth()->check()) {
             $role = auth()->user()->role;
 
-            if ($role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } elseif ($role === 'superadmin') {
-                return redirect()->route('superadmin.dashboard_user');
+            if ($role === 'Admin') {
+                return redirect()->route('dashboard.admin');
+            } elseif ($role === 'Super Admin') {
+                return redirect()->route('dashboard.superadmin');
             }
         }
 
         // ========== DROPDOWN DATA ==========
+        $kategoriWisataList = KategoriWisata::aktif()
+            ->orderBy('nama_kategori')
+            ->get();
 
-        // Wisata: kategori dari tabel master
-        $kategoriWisataList = KategoriWisata::all();
-
-        // Kuliner: kategori dari JSON kuliner (unique)
-        $kuliner = TempatKuliner::all();
-        $kategoriKulinerList = $kuliner
-            ->map(fn ($item) => json_decode($item->kategori, true) ?: [])
-            ->flatten()
-            ->unique()
-            ->values()
-            ->toArray();
+        $kategoriKulinerList = KategoriKuliner::aktif()
+            ->orderBy('nama_kategori')
+            ->get();
 
         // ========== FILTERING ==========
-
-        // Filter wisata\
-
         $filterWisata = $request->filter_wisata;
-        $wisata = ($filterWisata && $filterWisata !== 'semua')
-            ? TempatWisata::where('id_kategori', $filterWisata)->get()
-            : TempatWisata::all();
-
-        // Filter kuliner
         $filterKuliner = $request->filter_kuliner;
-        $kulinerFiltered = ($filterKuliner && $filterKuliner !== 'semua')
-            ? TempatKuliner::whereJsonContains('kategori', $filterKuliner)->get()
-            : TempatKuliner::all();
-
         $lat = $request->lat;
         $lng = $request->lng;
 
+        // Query Wisata
+        $wisataQuery = TempatWisata::aktif()
+            ->with([
+                'kategoriAktif:id_kategori,nama_kategori',
+                'foto' => fn($q) => $q->limit(1)
+            ]);
+
+        if ($filterWisata && $filterWisata !== 'semua') {
+            $wisataQuery->byKategori([$filterWisata]);
+        }
+
+        // Query Kuliner
+        $kulinerQuery = TempatKuliner::aktif()
+            ->with([
+                'kategoriAktif:id_kategori,nama_kategori',
+                'foto' => fn($q) => $q->limit(1)
+            ]);
+
+        if ($filterKuliner && $filterKuliner !== 'semua') {
+            $kulinerQuery->byKategori([$filterKuliner]);
+        }
+
+        // ========== GEOLOCATION FILTER ==========
         if ($lat && $lng) {
+            $wisata = $wisataQuery
+                ->nearby($lat, $lng, 10)
+                ->limit(20)
+                ->get();
 
-        $wisata = TempatWisata::selectRaw("
-            *,
-            (
-                6371 * acos(
-                    cos(radians(?)) *
-                    cos(radians(latitude)) *
-                    cos(radians(longitude) - radians(?)) +
-                    sin(radians(?)) *
-                    sin(radians(latitude))
-                )
-            ) AS jarak
-        ", [$lat, $lng, $lat])
-        ->orderBy('jarak')
-        ->limit(10)
-        ->get();
+            $kulinerFiltered = $kulinerQuery
+                ->nearby($lat, $lng, 10)
+                ->limit(20)
+                ->get();
+        } else {
+            $wisata = $wisataQuery
+                ->latest('created_at')
+                ->limit(20)
+                ->get();
 
-        $kulinerFiltered = TempatKuliner::selectRaw("
-            *,
-            (
-                6371 * acos(
-                    cos(radians(?)) *
-                    cos(radians(latitude)) *
-                    cos(radians(longitude) - radians(?)) +
-                    sin(radians(?)) *
-                    sin(radians(latitude))
-                )
-            ) AS jarak
-        ", [$lat, $lng, $lat])
-        ->orderBy('jarak')
-        ->limit(10)
-        ->get();
-    }
+            $kulinerFiltered = $kulinerQuery
+                ->latest('created_at')
+                ->limit(20)
+                ->get();
+        }
 
         return view('welcome', compact(
             'kategoriWisataList',

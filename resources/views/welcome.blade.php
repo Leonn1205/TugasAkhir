@@ -585,6 +585,187 @@
                 flex-direction: column;
             }
         }
+
+        /* Place Details Modal - Updated Style */
+        .place-details-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            animation: modalFadeIn 0.3s ease;
+            overflow: hidden;
+        }
+
+        .place-details-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .place-details-header {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+            background: #f0f0f0;
+        }
+
+        .place-details-header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .place-details-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            background: white;
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .place-details-close:hover {
+            background: #f44336;
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .place-details-content {
+            padding: 1.5rem;
+        }
+
+        .place-details-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1b5e20;
+            margin-bottom: 1rem;
+            text-align: left;
+        }
+
+        .place-details-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .place-tag {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 0.4rem 0.8rem;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .place-details-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .place-details-footer {
+            padding: 0 1.5rem 1.5rem;
+        }
+
+        .btn-view-details {
+            width: 100%;
+            background: #1976D2;
+            color: white;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .btn-view-details:hover {
+            background: #1565C0;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(25, 118, 210, 0.4);
+            color: white;
+        }
+
+        /* Responsive untuk Modal */
+        @media (max-width: 768px) {
+            .place-details-modal {
+                width: 95%;
+                max-width: none;
+            }
+
+            .place-details-header {
+                height: 180px;
+            }
+
+            .place-details-content {
+                padding: 1.2rem;
+            }
+
+            .place-details-title {
+                font-size: 20px;
+            }
+
+            .place-details-footer {
+                padding: 0 1.2rem 1.2rem;
+            }
+        }
     </style>
 </head>
 
@@ -786,7 +967,7 @@
                             <select id="kulinerFilter" onchange="filterKuliner()">
                                 <option value="semua">All Types</option>
                                 @foreach ($kategoriKulinerList as $k)
-                                    <option value="{{ $k }}">{{ $k }}</option>
+                                    <option value="{{ $k->id_kategori }}">{{ $k->nama_kategori }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -797,11 +978,22 @@
 
                         <div class="place-list">
                             <h6 class="fw-bold mb-3">Popular Places</h6>
-                            @foreach ($wisata->take(5) as $w)
+
+                            <!-- Wisata -->
+                            @foreach ($wisata->take(3) as $w)
                                 <div class="place-item"
-                                    onclick="focusOnPlace({{ $w->latitude }}, {{ $w->longitude }})">
-                                    <h6>{{ $w->nama_wisata }}</h6>
-                                    <small><i class="bi bi-geo-alt me-1"></i>Tourism Destination</small>
+                                    onclick="showPlaceDetails({{ $w->latitude }}, {{ $w->longitude }}, 'wisata', '{{ $w->id_wisata }}')">
+                                    <h6><i class="bi bi-geo-alt-fill text-primary me-2"></i>{{ $w->nama_wisata }}</h6>
+                                    <small><i class="bi bi-tag me-1"></i>Tourism Destination</small>
+                                </div>
+                            @endforeach
+
+                            <!-- Kuliner -->
+                            @foreach ($kulinerFiltered->take(2) as $k)
+                                <div class="place-item"
+                                    onclick="showPlaceDetails({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner', '{{ $k->id_kuliner }}')">
+                                    <h6><i class="bi bi-cup-hot-fill text-danger me-2"></i>{{ $k->nama_sentra }}</h6>
+                                    <small><i class="bi bi-tag me-1"></i>Culinary Spot</small>
                                 </div>
                             @endforeach
                         </div>
@@ -931,16 +1123,38 @@
                         popupAnchor: [0, -32]
                     });
 
+                    const kategoriIds = [
+                        @foreach ($w->kategoriAktif as $kat)
+                            '{{ $kat->id_kategori }}',
+                        @endforeach
+                    ];
+
                     const marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
                         icon: wisataIcon,
-                        kategori: '{{ $w->id_kategori }}'
+                        kategori: kategoriIds.join(','),
+                        nama: '{{ $w->nama_wisata }}',
+                        tipe: 'wisata',
+                        id: '{{ $w->id_wisata }}'
                     }).addTo(map);
 
                     marker.bindPopup(`
                         <div style="min-width: 200px;">
+                            @if ($w->foto->count() > 0)
+                                <img src="{{ asset('storage/' . $w->foto->first()->path_foto) }}"
+                                    style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                            @endif
                             <h6 class="fw-bold mb-2">{{ $w->nama_wisata }}</h6>
-                            <p class="mb-2 small">{{ $w->kategoriWisata->nama_kategori ?? 'Tourism' }}</p>
-                            <a href="{{ route('user.wisata.show', $w->id_wisata) }}" class="btn btn-sm btn-primary w-100">
+                            <p class="mb-2 small">
+                                <i class="bi bi-tag-fill me-1"></i>
+                                @if ($w->kategoriAktif->count() > 0)
+                                    {{ $w->kategoriAktif->pluck('nama_kategori')->join(', ') }}
+                                @else
+                                    Tourism
+                                @endif
+                            </p>
+                            <a href="{{ route('user.wisata.show', $w->id_wisata) }}"
+                            class="btn btn-sm btn-primary w-100"
+                            style="text-decoration: none; color: white;">
                                 View Details
                             </a>
                         </div>
@@ -962,20 +1176,38 @@
                         popupAnchor: [0, -32]
                     });
 
-                    @php
-                        $kategoriArray = json_decode($k->kategori, true) ?: [];
-                    @endphp
+                    const kategoriIds = [
+                        @foreach ($k->kategoriAktif as $kat)
+                            '{{ $kat->id_kategori }}',
+                        @endforeach
+                    ];
 
                     const marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
                         icon: kulinerIcon,
-                        kategori: '{{ implode(',', $kategoriArray) }}'
+                        kategori: kategoriIds.join(','),
+                        nama: '{{ $k->nama_sentra }}',
+                        tipe: 'kuliner',
+                        id: '{{ $k->id_kuliner }}'
                     }).addTo(map);
 
                     marker.bindPopup(`
                         <div style="min-width: 200px;">
+                            @if ($k->foto->count() > 0)
+                                <img src="{{ asset('storage/' . $k->foto->first()->path_foto) }}"
+                                    style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                            @endif
                             <h6 class="fw-bold mb-2">{{ $k->nama_sentra }}</h6>
-                            <p class="mb-2 small">Culinary Spot</p>
-                            <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}" class="btn btn-sm btn-danger w-100">
+                            <p class="mb-2 small">
+                                <i class="bi bi-cup-hot-fill me-1"></i>
+                                @if ($k->kategoriAktif->count() > 0)
+                                    {{ $k->kategoriAktif->pluck('nama_kategori')->join(', ') }}
+                                @else
+                                    Culinary
+                                @endif
+                            </p>
+                            <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}"
+                            class="btn btn-sm btn-danger w-100"
+                            style="text-decoration: none; color: white;">
                                 View Details
                             </a>
                         </div>
@@ -996,7 +1228,6 @@
             setTimeout(() => {
                 map.setView([lat, lng], 16);
 
-                // Find and open the popup
                 if (type === 'wisata') {
                     wisataMarkers.forEach(marker => {
                         const latLng = marker.getLatLng();
@@ -1020,59 +1251,453 @@
             map.setView([lat, lng], 16);
         }
 
+        // Show Place Details - Open marker popup on map
+        function showPlaceDetails(lat, lng, type, id) {
+            // Scroll to map section
+            const mapSection = document.getElementById('map');
+            mapSection.scrollIntoView({
+                behavior: 'smooth'
+            });
+
+            // Focus map and open popup after scroll
+            setTimeout(() => {
+                map.setView([lat, lng], 17);
+
+                // Find the marker and open its popup
+                const markers = type === 'wisata' ? wisataMarkers : kulinerMarkers;
+                markers.forEach(marker => {
+                    if (marker.options.id == id) {
+                        // Close other popups first
+                        map.closePopup();
+                        // Open this marker's popup
+                        marker.openPopup();
+                    }
+                });
+            }, 800);
+        }
+
+        // Create Basic Modal (fallback when API not available)
+        function createBasicModal(marker, type) {
+            const isWisata = type === 'wisata';
+            const data = {
+                nama: marker.options.nama,
+                id: marker.options.id,
+                tipe: type
+            };
+
+            const detailUrl = isWisata ?
+                `/wisata/${data.id}` :
+                `/kuliner/${data.id}`;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'place-details-overlay';
+            overlay.onclick = closePlaceModal;
+
+            const modal = document.createElement('div');
+            modal.className = 'place-details-modal';
+            modal.innerHTML = `
+        <div class="place-details-header" style="background: linear-gradient(135deg, ${isWisata ? '#2196F3' : '#f44336'}, ${isWisata ? '#1565C0' : '#d32f2f'}); display: flex; align-items: center; justify-content: center;">
+            <i class="bi ${isWisata ? 'bi-geo-alt-fill' : 'bi-cup-hot-fill'}" style="font-size: 60px; color: white;"></i>
+            <button class="place-details-close" onclick="closePlaceModal()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="place-details-content">
+            <h3 class="place-details-title">${data.nama}</h3>
+            <div class="place-details-tags">
+                ${isWisata
+                    ? '<span class="place-tag"><i class="bi bi-geo-alt-fill"></i>Tourism</span>'
+                    : '<span class="place-tag" style="background: #fff3e0; color: #e65100;"><i class="bi bi-cup-hot-fill"></i>Culinary</span>'
+                }
+            </div>
+            <p class="place-details-description">Click "View Details" to see full information about this place.</p>
+        </div>
+        <div class="place-details-footer">
+            <a href="${detailUrl}" class="btn-view-details">
+                <span>View Details</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Display Place Modal (with full data from API)
+        function displayPlaceModal(data, type) {
+            const isWisata = type === 'wisata';
+            const nama = isWisata ? data.nama_wisata : data.nama_sentra;
+            const idField = isWisata ? 'id_wisata' : 'id_kuliner';
+            const placeId = data[idField] || data.id;
+
+            let foto;
+            if (data.foto && data.foto.length > 0) {
+                const fotoPath = data.foto[0].path_foto;
+                foto = `/storage/${fotoPath}`;
+            } else {
+                foto = isWisata ? '/images/default-heritage.jpg' : '/images/default-culinary.jpg';
+            }
+
+            const detailUrl = isWisata ?
+                `/wisata/${data.id}` :
+                `/kuliner/${data.id}`;
+
+            let kategoriTags = '';
+            if (data.kategori_aktif && data.kategori_aktif.length > 0) {
+                kategoriTags = data.kategori_aktif.map(k =>
+                    `<span class="place-tag">${k.nama_kategori}</span>`
+                ).join('');
+            }
+
+            const deskripsi = data.deskripsi || data.description || '';
+            const shortDesc = deskripsi.length > 100 ? deskripsi.substring(0, 100) + '...' : deskripsi;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'place-details-overlay';
+            overlay.onclick = closePlaceModal;
+
+            const modal = document.createElement('div');
+            modal.className = 'place-details-modal';
+            modal.innerHTML = `
+        <div class="place-details-header">
+            <img src="${foto}" alt="${nama}" onerror="this.src='${isWisata ? '/images/default-heritage.jpg' : '/images/default-culinary.jpg'}'">
+            <button class="place-details-close" onclick="closePlaceModal()">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <div class="place-details-content">
+            <h3 class="place-details-title">${nama}</h3>
+            <div class="place-details-tags">
+                ${isWisata
+                    ? '<span class="place-tag"><i class="bi bi-geo-alt-fill"></i>Tourism</span>'
+                    : '<span class="place-tag" style="background: #fff3e0; color: #e65100;"><i class="bi bi-cup-hot-fill"></i>Culinary</span>'
+                }
+                ${kategoriTags}
+            </div>
+            ${shortDesc ? `<p class="place-details-description">${shortDesc}</p>` : ''}
+        </div>
+        <div class="place-details-footer">
+            <a href="${detailUrl}" class="btn-view-details">
+                <span>View Details</span>
+                <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+    `;
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(modal);
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Place Modal
+        function closePlaceModal() {
+            const overlay = document.querySelector('.place-details-overlay');
+            const modal = document.querySelector('.place-details-modal');
+
+            if (overlay) overlay.remove();
+            if (modal) modal.remove();
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closePlaceModal();
+            }
+        });
+
+        // Store active filters
+        let activeWisataFilter = 'semua';
+        let activeKulinerFilter = 'semua';
+
         // Filter Wisata
         function filterWisata() {
             const filter = document.getElementById('wisataFilter').value;
+            activeWisataFilter = filter;
+
+            let visibleCount = 0;
 
             wisataMarkers.forEach(marker => {
-                if (filter === 'semua' || marker.options.kategori === filter) {
+                const kategoriList = marker.options.kategori.split(',').filter(k => k !== '');
+
+                if (filter === 'semua') {
                     marker.addTo(map);
+                    visibleCount++;
+                } else if (kategoriList.includes(filter)) {
+                    marker.addTo(map);
+                    visibleCount++;
                 } else {
                     map.removeLayer(marker);
                 }
             });
+
+            showFilterNotification(`Showing ${visibleCount} tourism destination(s)`);
+            updatePlaceList('wisata', filter);
         }
 
         // Filter Kuliner
         function filterKuliner() {
             const filter = document.getElementById('kulinerFilter').value;
+            activeKulinerFilter = filter;
+
+            let visibleCount = 0;
 
             kulinerMarkers.forEach(marker => {
-                const kategoriList = marker.options.kategori.split(',');
-                if (filter === 'semua' || kategoriList.includes(filter)) {
+                const kategoriList = marker.options.kategori.split(',').filter(k => k !== '');
+
+                if (filter === 'semua') {
                     marker.addTo(map);
+                    visibleCount++;
+                } else if (kategoriList.includes(filter)) {
+                    marker.addTo(map);
+                    visibleCount++;
                 } else {
                     map.removeLayer(marker);
                 }
             });
+
+            showFilterNotification(`Showing ${visibleCount} culinary spot(s)`);
+            updatePlaceList('kuliner', filter);
         }
+
+        // Show filter notification
+        function showFilterNotification(message) {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(46, 125, 50, 0.4);
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            font-weight: 500;
+        `;
+            notification.innerHTML = `<i class="bi bi-check-circle me-2"></i>${message}`;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 2000);
+        }
+
+        // Update place list based on active filters
+        function updatePlaceList(type, filter) {
+            const placeList = document.querySelector('.place-list');
+            let html = '<h6 class="fw-bold mb-3">Filtered Places</h6>';
+            let count = 0;
+
+            if (type === 'wisata' || activeWisataFilter !== 'semua') {
+                wisataMarkers.forEach(marker => {
+                    if (map.hasLayer(marker) && count < 5) {
+                        const latLng = marker.getLatLng();
+                        const markerId = marker.options.id || '';
+                        html += `
+                        <div class="place-item" onclick="showPlaceDetails(${latLng.lat}, ${latLng.lng}, 'wisata', '${markerId}')">
+                            <h6><i class="bi bi-geo-alt-fill" style="color: #2196F3;"></i> ${marker.options.nama}</h6>
+                            <small><i class="bi bi-tag me-1"></i>Tourism Destination</small>
+                        </div>
+                    `;
+                        count++;
+                    }
+                });
+            }
+
+            if (type === 'kuliner' || activeKulinerFilter !== 'semua') {
+                kulinerMarkers.forEach(marker => {
+                    if (map.hasLayer(marker) && count < 5) {
+                        const latLng = marker.getLatLng();
+                        const markerId = marker.options.id || '';
+                        html += `
+                        <div class="place-item" onclick="showPlaceDetails(${latLng.lat}, ${latLng.lng}, 'kuliner', '${markerId}')">
+                            <h6><i class="bi bi-cup-hot-fill" style="color: #f44336;"></i> ${marker.options.nama}</h6>
+                            <small><i class="bi bi-tag me-1"></i>Culinary Spot</small>
+                        </div>
+                    `;
+                        count++;
+                    }
+                });
+            }
+
+            if (count === 0) {
+                html += `
+                <div class="text-center p-3">
+                    <i class="bi bi-search" style="font-size: 32px; color: #ccc;"></i>
+                    <p class="mt-2 mb-0 text-muted">No places match the filter</p>
+                </div>
+            `;
+            }
+
+            placeList.innerHTML = html;
+        }
+
+        // Reset all filters
+        function resetFilters() {
+            document.getElementById('wisataFilter').value = 'semua';
+            document.getElementById('kulinerFilter').value = 'semua';
+            activeWisataFilter = 'semua';
+            activeKulinerFilter = 'semua';
+
+            wisataMarkers.forEach(marker => marker.addTo(map));
+            kulinerMarkers.forEach(marker => marker.addTo(map));
+
+            showFilterNotification('All filters reset');
+            resetPlaceList();
+        }
+
+        // Reset place list to popular places
+        function resetPlaceList() {
+            const placeList = document.querySelector('.place-list');
+            let html = '<h6 class="fw-bold mb-3">Popular Places</h6>';
+
+            @foreach ($wisata->take(5) as $w)
+                html += `
+                <div class="place-item" onclick="showPlaceDetails({{ $w->latitude }}, {{ $w->longitude }}, 'wisata', '{{ $w->id_wisata }}')">
+                    <h6>{{ $w->nama_wisata }}</h6>
+                    <small><i class="bi bi-geo-alt me-1"></i>Tourism Destination</small>
+                </div>
+            `;
+            @endforeach
+
+            placeList.innerHTML = html;
+        }
+
+        // Store user location marker
+        let userLocationMarker = null;
+        let nearbyCircle = null;
 
         // Get Nearby Places
         function getNearby() {
             if (navigator.geolocation) {
+                const placeList = document.querySelector('.place-list');
+                placeList.innerHTML =
+                    '<div class="text-center p-3"><i class="bi bi-hourglass-split"></i> Getting your location...</div>';
+
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
+                        const userLat = position.coords.latitude;
+                        const userLng = position.coords.longitude;
 
-                        map.setView([lat, lng], 14);
+                        map.setView([userLat, userLng], 14);
 
-                        // Add user location marker
+                        if (userLocationMarker) {
+                            map.removeLayer(userLocationMarker);
+                        }
+                        if (nearbyCircle) {
+                            map.removeLayer(nearbyCircle);
+                        }
+
                         const userIcon = L.icon({
                             iconUrl: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png',
                             iconSize: [32, 32],
                             iconAnchor: [16, 32]
                         });
 
-                        L.marker([lat, lng], {
+                        userLocationMarker = L.marker([userLat, userLng], {
                                 icon: userIcon
                             })
                             .addTo(map)
-                            .bindPopup('Your Location')
+                            .bindPopup('<strong>Your Location</strong>')
                             .openPopup();
+
+                        nearbyCircle = L.circle([userLat, userLng], {
+                            color: '#2e7d32',
+                            fillColor: '#4caf50',
+                            fillOpacity: 0.1,
+                            radius: 5000
+                        }).addTo(map);
+
+                        let nearbyPlaces = [];
+
+                        wisataMarkers.forEach(marker => {
+                            const markerLatLng = marker.getLatLng();
+                            const distance = map.distance([userLat, userLng], [markerLatLng.lat, markerLatLng
+                                .lng
+                            ]);
+
+                            if (distance <= 5000) {
+                                nearbyPlaces.push({
+                                    nama: marker.options.nama,
+                                    lat: markerLatLng.lat,
+                                    lng: markerLatLng.lng,
+                                    distance: distance,
+                                    tipe: 'Tourism',
+                                    realType: 'wisata',
+                                    icon: 'bi-geo-alt-fill',
+                                    color: '#2196F3',
+                                    id: marker.options.id || ''
+                                });
+                            }
+                        });
+
+                        kulinerMarkers.forEach(marker => {
+                            const markerLatLng = marker.getLatLng();
+                            const distance = map.distance([userLat, userLng], [markerLatLng.lat, markerLatLng
+                                .lng
+                            ]);
+
+                            if (distance <= 5000) {
+                                nearbyPlaces.push({
+                                    nama: marker.options.nama,
+                                    lat: markerLatLng.lat,
+                                    lng: markerLatLng.lng,
+                                    distance: distance,
+                                    tipe: 'Culinary',
+                                    realType: 'kuliner',
+                                    icon: 'bi-cup-hot-fill',
+                                    color: '#f44336',
+                                    id: marker.options.id || ''
+                                });
+                            }
+                        });
+
+                        nearbyPlaces.sort((a, b) => a.distance - b.distance);
+
+                        if (nearbyPlaces.length === 0) {
+                            placeList.innerHTML = `
+                            <div class="text-center p-3">
+                                <i class="bi bi-info-circle" style="font-size: 32px; color: #ff9800;"></i>
+                                <p class="mt-2 mb-0">No places found within 5km radius</p>
+                            </div>
+                        `;
+                        } else {
+                            let html =
+                                '<h6 class="fw-bold mb-3"><i class="bi bi-compass me-2"></i>Nearby Places (Within 5 km)</h6>';
+
+                            nearbyPlaces.slice(0, 10).forEach(place => {
+                                const distanceKm = (place.distance / 1000).toFixed(2);
+                                html += `
+                                <div class="place-item" onclick="showPlaceDetails(${place.lat}, ${place.lng}, '${place.realType}', '${place.id}')">
+                                    <h6><i class="${place.icon}" style="color: ${place.color};"></i> ${place.nama}</h6>
+                                    <small>
+                                        <i class="bi bi-signpost-2 me-1"></i>${distanceKm} km away • ${place.tipe}
+                                    </small>
+                                </div>
+                            `;
+                            });
+
+                            if (nearbyPlaces.length > 10) {
+                                html +=
+                                    `<p class="text-center text-muted small mt-2">Showing 10 of ${nearbyPlaces.length} nearby places</p>`;
+                            }
+
+                            placeList.innerHTML = html;
+                        }
                     },
-                    function() {
-                        alert('Unable to get your location. Please enable location services.');
+                    function(error) {
+                        placeList.innerHTML = `
+                        <div class="text-center p-3">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 32px; color: #f44336;"></i>
+                            <p class="mt-2 mb-0">Unable to get your location. Please enable location services.</p>
+                        </div>
+                    `;
+                        console.error('Geolocation error:', error);
                     }
                 );
             } else {
@@ -1100,22 +1725,22 @@
                     .then(data => {
                         if (data.length === 0) {
                             searchResultsDiv.innerHTML = `
-                                <div class="search-result-item">
-                                    <strong>No results found</strong>
-                                </div>
-                            `;
+                            <div class="search-result-item">
+                                <strong>No results found</strong>
+                            </div>
+                        `;
                             return;
                         }
 
                         let html = '';
                         data.forEach(item => {
                             html += `
-                                <div class="search-result-item" onclick="searchResultClick(${item.latitude}, ${item.longitude}, '${item.tipe}')">
-                                    <strong>${item.nama}</strong>
-                                    <br>
-                                    <small class="text-muted">${item.tipe}</small>
-                                </div>
-                            `;
+                            <div class="search-result-item" onclick="searchResultClick(${item.latitude}, ${item.longitude}, '${item.tipe}')">
+                                <strong>${item.nama}</strong>
+                                <br>
+                                <small class="text-muted">${item.tipe}</small>
+                            </div>
+                        `;
                         });
                         searchResultsDiv.innerHTML = html;
                     })
@@ -1136,7 +1761,6 @@
         function performSearch() {
             const query = quickSearchInput.value.trim();
             if (query.length > 0) {
-                // Trigger the input event to show results
                 quickSearchInput.dispatchEvent(new Event('input'));
             }
         }
@@ -1156,30 +1780,20 @@
 
             let found = false;
 
-            // Search in wisata markers
             wisataMarkers.forEach(marker => {
-                const popup = marker.getPopup();
-                if (popup) {
-                    const content = popup.getContent().toLowerCase();
-                    if (content.includes(query)) {
-                        marker.openPopup();
-                        map.setView(marker.getLatLng(), 16);
-                        found = true;
-                    }
+                if (marker.options.nama.toLowerCase().includes(query)) {
+                    marker.openPopup();
+                    map.setView(marker.getLatLng(), 16);
+                    found = true;
                 }
             });
 
-            // If not found in wisata, search in kuliner
             if (!found) {
                 kulinerMarkers.forEach(marker => {
-                    const popup = marker.getPopup();
-                    if (popup) {
-                        const content = popup.getContent().toLowerCase();
-                        if (content.includes(query)) {
-                            marker.openPopup();
-                            map.setView(marker.getLatLng(), 16);
-                            found = true;
-                        }
+                    if (marker.options.nama.toLowerCase().includes(query)) {
+                        marker.openPopup();
+                        map.setView(marker.getLatLng(), 16);
+                        found = true;
                     }
                 });
             }
@@ -1200,7 +1814,6 @@
             });
         }, observerOptions);
 
-        // Observe destination cards
         document.querySelectorAll('.destination-card').forEach(card => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(30px)';
@@ -1208,7 +1821,6 @@
             observer.observe(card);
         });
 
-        // Observe stat items
         document.querySelectorAll('.stat-item').forEach(item => {
             item.style.opacity = '0';
             item.style.transform = 'translateY(30px)';

@@ -355,6 +355,217 @@
             accent-color: #d32f2f;
         }
 
+        /* Error Alert Jam Operasional */
+        .alert-jam-operasional {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: none;
+            border-left: 4px solid #c62828;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(198, 40, 40, 0.15);
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-jam-operasional i {
+            color: #c62828;
+            font-size: 24px;
+            margin-top: 2px;
+        }
+
+        .alert-jam-operasional strong {
+            color: #b71c1c;
+            display: block;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .alert-jam-operasional span {
+            color: #d32f2f;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Error Alert Lokasi (untuk validasi wilayah Kotabaru) */
+        .alert-lokasi-error {
+            background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+            border: none;
+            border-left: 4px solid #f57c00;
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(245, 124, 0, 0.15);
+            animation: slideDown 0.3s ease;
+        }
+
+        .alert-lokasi-error i {
+            color: #f57c00;
+            font-size: 24px;
+        }
+
+        .alert-lokasi-error .alert-content {
+            flex: 1;
+            color: #e65100;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Enhanced Invalid Feedback - untuk error field form */
+        .form-control.is-invalid,
+        .form-select.is-invalid {
+            border-color: #d32f2f !important;
+            background-color: #ffebee !important;
+            animation: shakeError 0.5s ease;
+        }
+
+        .form-control.is-invalid:focus,
+        .form-select.is-invalid:focus {
+            border-color: #c62828 !important;
+            box-shadow: 0 0 0 0.2rem rgba(211, 47, 47, 0.25) !important;
+        }
+
+        .invalid-feedback {
+            display: block;
+            color: #d32f2f;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 500;
+            padding: 8px 12px;
+            background: #ffebee;
+            border-radius: 8px;
+            border-left: 3px solid #d32f2f;
+        }
+
+        .invalid-feedback i {
+            margin-right: 6px;
+        }
+
+        /* Error untuk textarea khusus */
+        textarea.form-control.is-invalid {
+            border-color: #d32f2f !important;
+            background: linear-gradient(135deg, #ffebee 0%, #fff 100%) !important;
+        }
+
+        /* Error state untuk kategori checkbox */
+        .kategori-container.has-error {
+            border: 2px dashed #d32f2f;
+            border-radius: 12px;
+            padding: 12px;
+            background: #ffebee;
+            animation: pulseError 1s ease infinite;
+        }
+
+        /* Error state untuk file upload */
+        .file-upload-wrapper.has-error {
+            border-color: #d32f2f !important;
+            background: #ffebee !important;
+        }
+
+        /* Animation untuk error */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes shakeError {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
+
+        @keyframes pulseError {
+
+            0%,
+            100% {
+                border-color: #d32f2f;
+                background: #ffebee;
+            }
+
+            50% {
+                border-color: #f44336;
+                background: #ffcdd2;
+            }
+        }
+
+        /* Error badge untuk menunjukkan jumlah error */
+        .error-badge {
+            background: linear-gradient(135deg, #d32f2f 0%, #c62828 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+            animation: bounce 0.5s ease;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Highlight error section */
+        .section-has-error {
+            border: 2px solid #ffcdd2;
+            border-radius: 12px;
+            padding: 20px;
+            background: #ffebee;
+            margin: -20px;
+            margin-bottom: 20px;
+        }
+
+        /* Focus state untuk error fields */
+        .form-control.is-invalid:focus::placeholder,
+        .form-select.is-invalid:focus::placeholder,
+        textarea.is-invalid:focus::placeholder {
+            color: #d32f2f;
+            opacity: 0.6;
+        }
+
+        /* Error tooltip untuk hover */
+        .form-control.is-invalid:hover,
+        textarea.is-invalid:hover {
+            border-color: #b71c1c !important;
+            box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.1);
+        }
+
         /* Previous Files Info */
         .previous-files-info {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
@@ -698,8 +909,11 @@
                 </div>
 
                 @if ($errors->has('lokasi'))
-                    <div class="alert alert-danger">
-                        <i class="bi bi-geo-alt-fill"></i> {{ $errors->first('lokasi') }}
+                    <div class="alert-lokasi-error">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        <div class="alert-content">
+                            {{ $errors->first('lokasi') }}
+                        </div>
                     </div>
                 @endif
 
@@ -815,7 +1029,15 @@
                         </tbody>
                     </table>
                 </div>
-
+                @error('jam_operasional')
+                    <div class="alert-jam-operasional">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <div>
+                            <strong>⚠️ Error Jam Operasional</strong>
+                            <span>{{ $message }}</span>
+                        </div>
+                    </div>
+                @enderror
                 <div class="section-divider"></div>
 
                 <div class="section-title">
@@ -987,7 +1209,7 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
 
         form.addEventListener('submit', function(e) {
-            // Validasi kategori
+            // 1. Validasi kategori
             const kategoriChecked = document.querySelectorAll('.kategori-checkbox:checked').length;
             const hasKategori = document.querySelectorAll('.kategori-checkbox').length > 0;
 
@@ -997,7 +1219,51 @@
                 return false;
             }
 
-            // Validasi file
+            // 2. ✅ VALIDASI JAM OPERASIONAL (BARU!)
+            const rows = document.querySelectorAll('.table-operasional tbody tr');
+            let hasInvalidTime = false;
+            let errorMessage = '';
+
+            rows.forEach((row) => {
+                const liburCheckbox = row.querySelector('.libur-checkbox');
+
+                // Skip jika hari libur
+                if (liburCheckbox && liburCheckbox.checked) {
+                    return;
+                }
+
+                const jamBuka = row.querySelector('.jam-buka-input').value;
+                const jamTutup = row.querySelector('.jam-tutup-input').value;
+                const hari = row.querySelector('input[name="hari[]"]').value;
+
+                // Validasi jam kosong
+                if (!jamBuka || !jamTutup) {
+                    hasInvalidTime = true;
+                    errorMessage = `Jam buka dan tutup pada hari ${hari} harus diisi!`;
+                    return false;
+                }
+
+                // Validasi jam tutup harus > jam buka
+                if (jamTutup <= jamBuka) {
+                    hasInvalidTime = true;
+                    errorMessage =
+                        `Jam tutup pada hari ${hari} harus lebih besar dari jam buka!\n\nBuka: ${jamBuka}\nTutup: ${jamTutup}`;
+                    return false;
+                }
+            });
+
+            if (hasInvalidTime) {
+                e.preventDefault();
+                alert('❌ ' + errorMessage);
+                // Scroll ke section jam operasional
+                document.querySelector('.table-operasional').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                return false;
+            }
+
+            // 3. Validasi file upload
             const files = fileInput.files;
             if (files.length === 0) {
                 e.preventDefault();
@@ -1005,25 +1271,27 @@
                 return false;
             }
 
-            // Validasi file size
+            // 4. Validasi ukuran file
             let hasOversizedFile = false;
+            let oversizedFileName = '';
+
             for (let file of files) {
                 if (file.size > 2 * 1024 * 1024) {
                     hasOversizedFile = true;
+                    oversizedFileName = file.name;
                     break;
                 }
             }
 
             if (hasOversizedFile) {
                 e.preventDefault();
-                alert('❌ Ada file yang melebihi ukuran 2MB!');
+                alert(`❌ File "${oversizedFileName}" melebihi ukuran maksimal 2MB!`);
                 return false;
             }
 
-            // Show loading overlay
+            // ✅ Semua validasi lolos - Show loading overlay
             loadingOverlay.classList.add('active');
         });
-
         // Initialize libur state on page load (untuk old() values)
         document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.libur-checkbox').forEach((checkbox) => {

@@ -7,7 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
 
     <style>
         * {
@@ -495,10 +497,9 @@
         <div class="main-container">
 
             <!-- Hero Image -->
-            @if($kuliner->foto->count() > 0)
+            @if ($kuliner->foto->count() > 0)
                 <img src="{{ asset('storage/' . $kuliner->foto->first()->path_foto) }}"
-                     alt="{{ $kuliner->nama_sentra }}"
-                     class="hero-image">
+                    alt="{{ $kuliner->nama_sentra }}" class="hero-image">
             @else
                 <div class="hero-placeholder">
                     <i class="bi bi-cup-hot"></i>
@@ -510,14 +511,10 @@
 
                 <!-- Kategori Badges -->
                 <div class="category-badges">
-                    @php
-                        $kategori = json_decode($kuliner->kategori, true);
-                        $kategori = is_array($kategori) ? $kategori : [];
-                    @endphp
-                    @forelse ($kategori as $k)
+                    @forelse ($kuliner->kategoriAktif as $kat)
                         <span class="badge-category">
                             <i class="bi bi-tag-fill"></i>
-                            {{ $k }}
+                            {{ $kat->nama_kategori }}
                         </span>
                     @empty
                         <span class="badge-category">
@@ -635,10 +632,12 @@
                             </div>
                             <div class="info-value">
                                 @php
-                                    $sertifikat_lain = json_decode($kuliner->sertifikat_lain, true);
+                                    $sertifikat_lain = is_array($kuliner->sertifikat_lain)
+                                        ? $kuliner->sertifikat_lain
+                                        : json_decode($kuliner->sertifikat_lain, true);
                                     $sertifikat_lain = is_array($sertifikat_lain) ? $sertifikat_lain : [];
                                 @endphp
-                                {{ implode(', ', $sertifikat_lain) ?: '-' }}
+                                {{ !empty($sertifikat_lain) ? implode(', ', $sertifikat_lain) : '-' }}
                             </div>
                         </div>
                         <div class="info-item">
@@ -648,10 +647,12 @@
                             </div>
                             <div class="info-value">
                                 @php
-                                    $profil_pelanggan = json_decode($kuliner->profil_pelanggan, true);
+                                    $profil_pelanggan = is_array($kuliner->profil_pelanggan)
+                                        ? $kuliner->profil_pelanggan
+                                        : json_decode($kuliner->profil_pelanggan, true);
                                     $profil_pelanggan = is_array($profil_pelanggan) ? $profil_pelanggan : [];
                                 @endphp
-                                {{ implode(', ', $profil_pelanggan) ?: '-' }}
+                                {{ !empty($profil_pelanggan) ? implode(', ', $profil_pelanggan) : '-' }}
                             </div>
                         </div>
                         <div class="info-item">
@@ -661,10 +662,12 @@
                             </div>
                             <div class="info-value">
                                 @php
-                                    $metode_pembayaran = json_decode($kuliner->metode_pembayaran, true);
+                                    $metode_pembayaran = is_array($kuliner->metode_pembayaran)
+                                        ? $kuliner->metode_pembayaran
+                                        : json_decode($kuliner->metode_pembayaran, true);
                                     $metode_pembayaran = is_array($metode_pembayaran) ? $metode_pembayaran : [];
                                 @endphp
-                                {{ implode(', ', $metode_pembayaran) ?: '-' }}
+                                {{ !empty($metode_pembayaran) ? implode(', ', $metode_pembayaran) : '-' }}
                             </div>
                         </div>
                         <div class="info-item">
@@ -695,20 +698,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($kuliner->jamOperasional as $jam)
+                                @forelse ($kuliner->jamOperasionalAdmin as $jam)
                                     <tr>
                                         <td class="day-name">{{ $jam->hari }}</td>
-                                        <td>{{ $jam->jam_buka ?? '-' }}</td>
-                                        <td>{{ $jam->jam_tutup ?? '-' }}</td>
+                                        <td>{{ $jam->jam_buka ? $jam->jam_buka->format('H:i') : '-' }}</td>
+                                        <td>{{ $jam->jam_tutup ? $jam->jam_tutup->format('H:i') : '-' }}</td>
                                         <td>
-                                            @if($jam->jam_sibuk_mulai && $jam->jam_sibuk_selesai)
-                                                {{ $jam->jam_sibuk_mulai }} - {{ $jam->jam_sibuk_selesai }}
+                                            @if ($jam->jam_sibuk_mulai && $jam->jam_sibuk_selesai)
+                                                {{ $jam->jam_sibuk_mulai->format('H:i') }} -
+                                                {{ $jam->jam_sibuk_selesai->format('H:i') }}
                                             @else
                                                 -
                                             @endif
                                         </td>
                                         <td>
-                                            @if (!$jam->jam_buka || $jam->jam_buka == '-')
+                                            @if ($jam->libur)
                                                 <span class="status-badge status-closed">
                                                     <i class="bi bi-x-circle"></i> Libur
                                                 </span>
@@ -764,10 +768,12 @@
                             </div>
                             <div class="info-value">
                                 @php
-                                    $menu_bersifat = json_decode($kuliner->menu_bersifat, true);
+                                    $menu_bersifat = is_array($kuliner->menu_bersifat)
+                                        ? $kuliner->menu_bersifat
+                                        : json_decode($kuliner->menu_bersifat, true);
                                     $menu_bersifat = is_array($menu_bersifat) ? $menu_bersifat : [];
                                 @endphp
-                                {{ implode(', ', $menu_bersifat) ?: '-' }}
+                                {{ !empty($menu_bersifat) ? implode(', ', $menu_bersifat) : '-' }}
                             </div>
                         </div>
                     </div>
@@ -803,9 +809,10 @@
                                 @php
                                     $fasilitas = is_array($kuliner->fasilitas_pendukung)
                                         ? $kuliner->fasilitas_pendukung
-                                        : (json_decode($kuliner->fasilitas_pendukung, true) ?: []);
+                                        : json_decode($kuliner->fasilitas_pendukung, true);
+                                    $fasilitas = is_array($fasilitas) ? $fasilitas : [];
                                 @endphp
-                                {{ implode(', ', $fasilitas) ?: '-' }}
+                                {{ !empty($fasilitas) ? implode(', ', $fasilitas) : '-' }}
                             </div>
                         </div>
                     </div>
@@ -823,7 +830,7 @@
                                 <i class="bi bi-clipboard-check"></i>
                                 Pelatihan K3
                             </div>
-                            <div class="info-value">{{ $kuliner->pelatihan_k3_penjamah ? 'Ya' : 'Tidak' }}</div>
+                            <div class="info-value">{{ $kuliner->pelatihan_k3 ? 'Ya' : 'Tidak' }}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
@@ -839,10 +846,12 @@
                             </div>
                             <div class="info-value">
                                 @php
-                                    $apd = json_decode($kuliner->apd_penjamah_makanan, true);
+                                    $apd = is_array($kuliner->apd_penjamah_makanan)
+                                        ? $kuliner->apd_penjamah_makanan
+                                        : json_decode($kuliner->apd_penjamah_makanan, true);
                                     $apd = is_array($apd) ? $apd : [];
                                 @endphp
-                                {{ implode(', ', $apd) ?: '-' }}
+                                {{ !empty($apd) ? implode(', ', $apd) : '-' }}
                             </div>
                         </div>
                         <div class="info-item">
@@ -850,7 +859,8 @@
                                 <i class="bi bi-droplet-fill"></i>
                                 Prosedur Sanitasi Alat
                             </div>
-                            <div class="info-value">{{ $kuliner->prosedur_sanitasi_alat ? 'Melakukan' : 'Tidak Melakukan' }}</div>
+                            <div class="info-value">
+                                {{ $kuliner->prosedur_sanitasi_alat ? 'Melakukan' : 'Tidak Melakukan' }}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
@@ -864,7 +874,8 @@
                                 <i class="bi bi-droplet-half"></i>
                                 Prosedur Sanitasi Bahan
                             </div>
-                            <div class="info-value">{{ $kuliner->prosedur_sanitasi_bahan ? 'Melakukan' : 'Tidak Melakukan' }}</div>
+                            <div class="info-value">
+                                {{ $kuliner->prosedur_sanitasi_bahan ? 'Melakukan' : 'Tidak Melakukan' }}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
@@ -892,7 +903,7 @@
                                 <i class="bi bi-arrow-repeat"></i>
                                 Prinsip FIFO / FEFO
                             </div>
-                            <div class="info-value">{{ $kuliner->prinsip_fifo_fefo ? 'Ya' : 'Tidak' }}</div>
+                            <div class="info-value">{{ $kuliner->fifo_fefo ? 'Ya' : 'Tidak' }}</div>
                         </div>
                         <div class="info-item">
                             <div class="info-label">
@@ -969,12 +980,13 @@
                         <i class="bi bi-images"></i>
                         Galeri Foto ({{ $kuliner->foto->count() }})
                     </div>
-                    @if($kuliner->foto->count() > 0)
+                    @if ($kuliner->foto->count() > 0)
                         <div class="photo-gallery">
                             @foreach ($kuliner->foto as $index => $foto)
-                                <div class="photo-item" onclick="openLightbox('{{ asset('storage/' . $foto->path_foto) }}')">
+                                <div class="photo-item"
+                                    onclick="openLightbox('{{ asset('storage/' . $foto->path_foto) }}')">
                                     <img src="{{ asset('storage/' . $foto->path_foto) }}"
-                                         alt="Foto {{ $kuliner->nama_sentra }} {{ $index + 1 }}">
+                                        alt="Foto {{ $kuliner->nama_sentra }} {{ $index + 1 }}">
                                     <div class="photo-number">Foto {{ $index + 1 }}</div>
                                     <div class="photo-overlay">
                                         <small style="color: white; font-size: 12px;">
@@ -1003,7 +1015,7 @@
                         Edit Data
                     </a>
                     <a href="https://www.google.com/maps?q={{ $kuliner->latitude }},{{ $kuliner->longitude }}"
-                       target="_blank" class="btn-custom btn-map">
+                        target="_blank" class="btn-custom btn-map">
                         <i class="bi bi-pin-map-fill"></i>
                         Lihat di Google Maps
                     </a>
