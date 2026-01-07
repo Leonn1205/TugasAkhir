@@ -31,7 +31,7 @@ class SuperAdminController extends Controller
     public function storeAdmin(Request $request)
     {
         $request->validate([
-            'username' => 'required|unique:users',
+            'username' => 'required|unique:users,username',
             'password' => 'required|confirmed|min:6',
             'role' => 'required|in:Super Admin,Admin,User',
         ]);
@@ -46,18 +46,18 @@ class SuperAdminController extends Controller
             ->with('success', 'Admin berhasil ditambahkan.');
     }
 
-    public function editAdmin($id)
+    public function editAdmin($id_user)
     {
-        $admin = User::findOrFail($id);
+        $admin = User::findOrFail($id_user);
         return view('superadmin.admin.edit', compact('admin'));
     }
 
-    public function updateAdmin(Request $request, $id)
+    public function updateAdmin(Request $request, $id_user)
     {
-        $admin = User::findOrFail($id);
+        $admin = User::findOrFail($id_user);
 
         $request->validate([
-            'username' => 'required|unique:users,username,' . $admin->id,
+            'username' => 'required|unique:users,username,' . $id_user . ',id_user',
             'password' => 'nullable|confirmed|min:6',
             'role' => 'required|in:Admin,Super Admin',
         ]);
@@ -75,10 +75,9 @@ class SuperAdminController extends Controller
             ->with('success', 'Admin berhasil diperbarui.');
     }
 
-    // ✅ FIXED: Changed from destroyAdmin to deleteAdmin (match with route)
-    public function deleteAdmin($id)
+    public function deleteAdmin($id_user)
     {
-        $admin = User::where('role', 'Admin')->findOrFail($id);
+        $admin = User::where('role', 'Admin')->findOrFail($id_user);
         $admin->delete();
 
         return redirect()->route('superadmin.admin.index')

@@ -3,13 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Edit Tempat Kuliner - Kotabaru Tourism</title>
+    <title>Edit Tempat Kuliner - {{ $kuliner->nama_sentra }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 
     <style>
         * {
@@ -24,6 +22,42 @@
             background-size: cover;
             min-height: 100vh;
             padding: 20px 0;
+        }
+
+        .alert-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            min-width: 350px;
+            max-width: 500px;
+            animation: slideInRight 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .alert-sticky {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 2rem;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
         }
 
         .header-section {
@@ -135,12 +169,12 @@
             transition: all 0.3s ease;
         }
 
-        .kategori-item input[type="checkbox"]:checked+.kategori-label {
+        .kategori-item input[type="checkbox"]:checked + .kategori-label {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
         }
 
-        .kategori-item input[type="checkbox"]:checked+.kategori-label::after {
+        .kategori-item input[type="checkbox"]:checked + .kategori-label::after {
             content: '\F26E';
             font-family: 'bootstrap-icons';
             position: absolute;
@@ -161,8 +195,7 @@
             margin-left: 10px;
         }
 
-        .form-control,
-        .form-select {
+        .form-control, .form-select {
             border: 2px solid #c8e6c9;
             border-radius: 12px;
             padding: 12px 16px;
@@ -170,15 +203,13 @@
             transition: all 0.3s ease;
         }
 
-        .form-control:focus,
-        .form-select:focus {
+        .form-control:focus, .form-select:focus {
             border-color: #388e3c;
             box-shadow: 0 0 0 0.2rem rgba(56, 142, 60, 0.15);
             outline: none;
         }
 
-        .form-control.is-invalid,
-        .form-select.is-invalid {
+        .form-control.is-invalid, .form-select.is-invalid {
             border-color: #d32f2f;
             background-color: #ffebee;
         }
@@ -189,6 +220,14 @@
             font-size: 13px;
             margin-top: 6px;
             font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .invalid-feedback::before {
+            content: "⚠";
+            font-size: 14px;
         }
 
         .form-check-input {
@@ -243,6 +282,7 @@
             vertical-align: middle;
         }
 
+        /* Foto Section */
         .existing-photos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -254,7 +294,7 @@
             position: relative;
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             background: white;
         }
 
@@ -265,27 +305,26 @@
             display: block;
         }
 
-        .photo-delete-btn {
+        .photo-item .delete-btn {
             position: absolute;
             top: 8px;
             right: 8px;
-            background: rgba(211, 47, 47, 0.95);
+            background: rgba(211,47,47,0.95);
             color: white;
             border: none;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 16px;
             transition: all 0.3s ease;
             z-index: 3;
         }
 
-        .photo-delete-btn:hover {
-            background: rgba(198, 40, 40, 1);
+        .photo-item .delete-btn:hover {
+            background: rgba(211,47,47,1);
             transform: scale(1.1);
         }
 
@@ -351,18 +390,24 @@
             margin-bottom: 2rem;
         }
 
-        .alert-sticky {
-            position: sticky;
-            top: 20px;
-            z-index: 100;
-            margin-bottom: 2rem;
+        .error-summary h5 {
+            color: #d32f2f;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .form-text.note {
-            font-size: 12px;
-            color: #666;
-            font-style: italic;
-            margin-top: 5px;
+        .error-summary ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+
+        .error-summary li {
+            color: #b71c1c;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -371,23 +416,30 @@
     <div class="header-section">
         <div class="container">
             <h1><i class="bi bi-pencil-square me-2"></i>Edit Data Tempat Kuliner</h1>
-            <p>Perbarui informasi kuliner: <strong>{{ $kuliner->nama_sentra }}</strong></p>
+            <p>{{ $kuliner->nama_sentra }}</p>
         </div>
     </div>
 
     <div class="container">
         <div class="form-container">
-            {{-- Error Summary --}}
+            {{-- Error Summary untuk Koordinat --}}
             @if ($errors->has('lokasi'))
                 <div class="error-summary alert-sticky">
-                    <h5><i class="bi bi-exclamation-triangle-fill"></i> Peringatan Lokasi</h5>
+                    <h5>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Peringatan Lokasi
+                    </h5>
                     <p><strong>{{ $errors->first('lokasi') }}</strong></p>
                 </div>
             @endif
 
+            {{-- Error Summary Umum --}}
             @if ($errors->any() && !$errors->has('lokasi'))
                 <div class="error-summary alert-sticky">
-                    <h5><i class="bi bi-x-circle-fill"></i> Terdapat {{ $errors->count() }} Kesalahan</h5>
+                    <h5>
+                        <i class="bi bi-x-circle-fill"></i>
+                        Terdapat {{ $errors->count() }} Kesalahan dalam Pengisian Form
+                    </h5>
                     <ul>
                         @foreach ($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -396,23 +448,23 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('kuliner.update', $kuliner->id_kuliner) }}"
-                enctype="multipart/form-data" id="kulinerForm">
+            <form method="POST" action="{{ route('kuliner.update', $kuliner->id_kuliner) }}" enctype="multipart/form-data" id="kulinerForm">
                 @csrf
                 @method('PUT')
 
                 <!-- 1. IDENTITAS USAHA -->
                 <div class="section-title">
-                    <i class="bi bi-building"></i> Identitas Usaha
+                    <i class="bi bi-building"></i>
+                    Identitas Usaha
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-shop"></i> Nama Sentra / Usaha <span class="required">*</span>
+                            <i class="bi bi-shop"></i>
+                            Nama Sentra / Usaha <span class="required">*</span>
                         </label>
-                        <input type="text" name="nama_sentra"
-                            class="form-control @error('nama_sentra') is-invalid @enderror"
+                        <input type="text" name="nama_sentra" class="form-control @error('nama_sentra') is-invalid @enderror"
                             value="{{ old('nama_sentra', $kuliner->nama_sentra) }}" required>
                         @error('nama_sentra')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -420,12 +472,11 @@
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-calendar-event"></i> Tahun Berdiri <span class="required">*</span>
+                            <i class="bi bi-calendar-event"></i>
+                            Tahun Berdiri <span class="required">*</span>
                         </label>
-                        <input type="number" name="tahun_berdiri"
-                            class="form-control @error('tahun_berdiri') is-invalid @enderror"
-                            value="{{ old('tahun_berdiri', $kuliner->tahun_berdiri) }}" min="1900"
-                            max="{{ date('Y') }}" required>
+                        <input type="number" name="tahun_berdiri" class="form-control @error('tahun_berdiri') is-invalid @enderror"
+                            min="1900" max="{{ date('Y') }}" value="{{ old('tahun_berdiri', $kuliner->tahun_berdiri) }}" required>
                         @error('tahun_berdiri')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -435,10 +486,10 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-person"></i> Nama Pemilik <span class="required">*</span>
+                            <i class="bi bi-person"></i>
+                            Nama Pemilik <span class="required">*</span>
                         </label>
-                        <input type="text" name="nama_pemilik"
-                            class="form-control @error('nama_pemilik') is-invalid @enderror"
+                        <input type="text" name="nama_pemilik" class="form-control @error('nama_pemilik') is-invalid @enderror"
                             value="{{ old('nama_pemilik', $kuliner->nama_pemilik) }}" required>
                         @error('nama_pemilik')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -446,15 +497,13 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-briefcase"></i> Kepemilikan <span class="required">*</span>
+                            <i class="bi bi-briefcase"></i>
+                            Kepemilikan <span class="required">*</span>
                         </label>
-                        <select name="kepemilikan" class="form-control @error('kepemilikan') is-invalid @enderror"
-                            required>
+                        <select name="kepemilikan" class="form-control @error('kepemilikan') is-invalid @enderror" required>
                             <option value="">-- Pilih Kepemilikan --</option>
-                            @foreach (['Pribadi', 'Keluarga', 'Komunitas', 'Waralaba'] as $k)
-                                <option value="{{ $k }}"
-                                    {{ old('kepemilikan', $kuliner->kepemilikan) == $k ? 'selected' : '' }}>
-                                    {{ $k }}</option>
+                            @foreach(['Pribadi', 'Keluarga', 'Komunitas', 'Waralaba'] as $k)
+                                <option value="{{ $k }}" {{ old('kepemilikan', $kuliner->kepemilikan) == $k ? 'selected' : '' }}>{{ $k }}</option>
                             @endforeach
                         </select>
                         @error('kepemilikan')
@@ -465,10 +514,10 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        <i class="bi bi-geo-alt"></i> Alamat Lengkap <span class="required">*</span>
+                        <i class="bi bi-geo-alt"></i>
+                        Alamat Lengkap <span class="required">*</span>
                     </label>
-                    <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" rows="2"
-                        required>{{ old('alamat_lengkap', $kuliner->alamat_lengkap) }}</textarea>
+                    <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" rows="2" required>{{ old('alamat_lengkap', $kuliner->alamat_lengkap) }}</textarea>
                     @error('alamat_lengkap')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -477,7 +526,8 @@
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-telephone"></i> No. Telepon <span class="required">*</span>
+                            <i class="bi bi-telephone"></i>
+                            No. Telepon <span class="required">*</span>
                         </label>
                         <input type="text" name="telepon" class="form-control @error('telepon') is-invalid @enderror"
                             value="{{ old('telepon', $kuliner->telepon) }}" required>
@@ -487,7 +537,8 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-envelope"></i> Email <span class="required">*</span>
+                            <i class="bi bi-envelope"></i>
+                            Email <span class="required">*</span>
                         </label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
                             value="{{ old('email', $kuliner->email) }}" required>
@@ -497,10 +548,10 @@
                     </div>
                     <div class="col-md-4 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-file-text"></i> No. NIB <span class="required">*</span>
+                            <i class="bi bi-file-text"></i>
+                            No. NIB <span class="required">*</span>
                         </label>
-                        <input type="text" name="no_nib"
-                            class="form-control @error('no_nib') is-invalid @enderror"
+                        <input type="text" name="no_nib" class="form-control @error('no_nib') is-invalid @enderror"
                             value="{{ old('no_nib', $kuliner->no_nib) }}" maxlength="13" required>
                         @error('no_nib')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -510,77 +561,73 @@
 
                 <div class="mb-3">
                     <label class="form-label">
-                        <i class="bi bi-award"></i> Sertifikat (boleh lebih dari satu)
+                        <i class="bi bi-award"></i>
+                        Sertifikat (boleh lebih dari satu)
                     </label><br>
                     @php
                         $existingSertifikat = old('sertifikat_lain', $kuliner->sertifikat_lain ?? []);
-                        $sertifikatText = '';
-                        if (is_array($existingSertifikat)) {
-                            foreach ($existingSertifikat as $key => $val) {
-                                if (strpos($val, 'Lainnya:') === 0) {
-                                    $sertifikatText = trim(str_replace('Lainnya:', '', $val));
-                                    $existingSertifikat[$key] = 'Lainnya';
-                                }
-                            }
-                        }
+                        $sertifikatOptions = ['PIRT', 'BPOM', 'Halal', 'NIB', 'Lainnya'];
                     @endphp
-                    @foreach (['PIRT', 'BPOM', 'Halal', 'NIB', 'Lainnya'] as $item)
+                    @foreach($sertifikatOptions as $item)
                         <div class="form-check form-check-inline">
                             <input type="checkbox" name="sertifikat_lain[]" value="{{ $item }}"
                                 id="sertifikat_{{ $item }}" class="form-check-input sertifikat-check"
-                                {{ in_array($item, $existingSertifikat) ? 'checked' : '' }}>
-                            <label class="form-check-label"
-                                for="sertifikat_{{ $item }}">{{ $item }}</label>
+                                {{ in_array($item, $existingSertifikat) || collect($existingSertifikat)->contains(fn($s) => str_starts_with($s, 'Lainnya:')) && $item == 'Lainnya' ? 'checked' : '' }}>
+                            <label class="form-check-label" for="sertifikat_{{ $item }}">{{ $item }}</label>
                         </div>
                     @endforeach
-                    <input type="text" id="sertifikat_text" name="sertifikat_text" class="form-control mt-2"
-                        placeholder="Tulis sertifikat lainnya..."
-                        style="display:{{ in_array('Lainnya', $existingSertifikat) ? 'block' : 'none' }}; max-width:400px;"
-                        value="{{ old('sertifikat_text', $sertifikatText) }}">
+                    @php
+                        $lainnyaValue = collect($existingSertifikat)->first(fn($s) => str_starts_with($s, 'Lainnya:'));
+                        $lainnyaText = $lainnyaValue ? str_replace('Lainnya: ', '', $lainnyaValue) : old('sertifikat_text', '');
+                    @endphp
+                    <input type="text" id="sertifikat_text" name="sertifikat_text"
+                        class="form-control mt-2" placeholder="Tulis sertifikat lainnya..."
+                        style="display:{{ $lainnyaValue || in_array('Lainnya', $existingSertifikat) ? 'block' : 'none' }}; max-width:400px;"
+                        value="{{ $lainnyaText }}">
                 </div>
 
                 <div class="row">
                     <div class="col-md-3 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-people"></i> Jumlah Pegawai <span class="required">*</span>
+                            <i class="bi bi-people"></i>
+                            Jumlah Pegawai <span class="required">*</span>
                         </label>
-                        <input type="number" name="jumlah_pegawai"
-                            class="form-control @error('jumlah_pegawai') is-invalid @enderror"
-                            value="{{ old('jumlah_pegawai', $kuliner->jumlah_pegawai) }}" min="0" required>
+                        <input type="number" name="jumlah_pegawai" class="form-control @error('jumlah_pegawai') is-invalid @enderror"
+                            min="0" value="{{ old('jumlah_pegawai', $kuliner->jumlah_pegawai) }}" required>
                         @error('jumlah_pegawai')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-grid"></i> Jumlah Kursi <span class="required">*</span>
+                            <i class="bi bi-grid"></i>
+                            Jumlah Kursi <span class="required">*</span>
                         </label>
-                        <input type="number" name="jumlah_kursi"
-                            class="form-control @error('jumlah_kursi') is-invalid @enderror"
-                            value="{{ old('jumlah_kursi', $kuliner->jumlah_kursi) }}" min="0" required>
+                        <input type="number" name="jumlah_kursi" class="form-control @error('jumlah_kursi') is-invalid @enderror"
+                            min="0" value="{{ old('jumlah_kursi', $kuliner->jumlah_kursi) }}" required>
                         @error('jumlah_kursi')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-shop-window"></i> Jumlah Gerai <span class="required">*</span>
+                            <i class="bi bi-shop-window"></i>
+                            Jumlah Gerai <span class="required">*</span>
                         </label>
-                        <input type="number" name="jumlah_gerai"
-                            class="form-control @error('jumlah_gerai') is-invalid @enderror"
-                            value="{{ old('jumlah_gerai', $kuliner->jumlah_gerai) }}" min="0" required>
+                        <input type="number" name="jumlah_gerai" class="form-control @error('jumlah_gerai') is-invalid @enderror"
+                            min="0" value="{{ old('jumlah_gerai', $kuliner->jumlah_gerai) }}" required>
                         @error('jumlah_gerai')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-3 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-person-check"></i> Pelanggan/Hari <span class="required">*</span>
+                            <i class="bi bi-person-check"></i>
+                            Pelanggan/Hari <span class="required">*</span>
                         </label>
                         <input type="number" name="jumlah_pelanggan_per_hari"
                             class="form-control @error('jumlah_pelanggan_per_hari') is-invalid @enderror"
-                            value="{{ old('jumlah_pelanggan_per_hari', $kuliner->jumlah_pelanggan_per_hari) }}"
-                            min="0" required>
+                            min="0" value="{{ old('jumlah_pelanggan_per_hari', $kuliner->jumlah_pelanggan_per_hari) }}" required>
                         @error('jumlah_pelanggan_per_hari')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -591,12 +638,17 @@
 
                 <!-- JAM OPERASIONAL -->
                 <div class="section-title">
-                    <i class="bi bi-clock"></i> Jam Operasional
+                    <i class="bi bi-clock"></i>
+                    Jam Operasional
                 </div>
 
                 <div class="alert-info-custom">
-                    <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk:</strong> Isi jam buka/tutup, centang
-                    "Libur" jika tidak beroperasi
+                    <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk Pengisian:</strong>
+                    <ul>
+                        <li>Isi jam buka dan jam tutup untuk setiap hari</li>
+                        <li>Jam sibuk bersifat opsional</li>
+                        <li>Centang "Libur" bila tempat tidak beroperasi hari itu</li>
+                    </ul>
                 </div>
 
                 <div class="table-responsive">
@@ -612,135 +664,88 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] as $i => $day)
+                            @php
+                                $hariList = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+                                $jamOp = $kuliner->jamOperasionalAdmin->keyBy('hari');
+                            @endphp
+                            @foreach($hariList as $i => $day)
                                 @php
-                                    $jamOp = $kuliner->jamOperasionalAdmin->where('hari', $day)->first();
-
-                                    // ✅ PERBAIKAN: Handle format data dengan aman
-                                    $jamBuka = '08:00';
-                                    $jamTutup = '21:00';
-                                    $jamSibukMulai = '';
-                                    $jamSibukSelesai = '';
-                                    $isLibur = false;
-
-                                    if ($jamOp) {
-                                        $isLibur = $jamOp->libur ?? false;
-
-                                        // Handle jam_buka (support berbagai format)
-                                        if (!empty($jamOp->jam_buka)) {
-                                            if (is_object($jamOp->jam_buka)) {
-                                                // Jika Carbon object
-                                                $jamBuka = $jamOp->jam_buka->format('H:i');
-                                            } elseif (is_string($jamOp->jam_buka)) {
-                                                // Jika string (format H:i:s atau H:i)
-                                                $jamBuka = substr($jamOp->jam_buka, 0, 5);
-                                            }
-                                        }
-
-                                        // Handle jam_tutup
-                                        if (!empty($jamOp->jam_tutup)) {
-                                            if (is_object($jamOp->jam_tutup)) {
-                                                $jamTutup = $jamOp->jam_tutup->format('H:i');
-                                            } elseif (is_string($jamOp->jam_tutup)) {
-                                                $jamTutup = substr($jamOp->jam_tutup, 0, 5);
-                                            }
-                                        }
-
-                                        // Handle jam_sibuk_mulai
-                                        if (!empty($jamOp->jam_sibuk_mulai)) {
-                                            if (is_object($jamOp->jam_sibuk_mulai)) {
-                                                $jamSibukMulai = $jamOp->jam_sibuk_mulai->format('H:i');
-                                            } elseif (is_string($jamOp->jam_sibuk_mulai)) {
-                                                $jamSibukMulai = substr($jamOp->jam_sibuk_mulai, 0, 5);
-                                            }
-                                        }
-
-                                        // Handle jam_sibuk_selesai
-                                        if (!empty($jamOp->jam_sibuk_selesai)) {
-                                            if (is_object($jamOp->jam_sibuk_selesai)) {
-                                                $jamSibukSelesai = $jamOp->jam_sibuk_selesai->format('H:i');
-                                            } elseif (is_string($jamOp->jam_sibuk_selesai)) {
-                                                $jamSibukSelesai = substr($jamOp->jam_sibuk_selesai, 0, 5);
-                                            }
-                                        }
-                                    }
-
-                                    // Support old() untuk validation error
-                                    $jamBuka = old('jam_buka.' . $i, $jamBuka);
-                                    $jamTutup = old('jam_tutup.' . $i, $jamTutup);
-                                    $jamSibukMulai = old('jam_sibuk_mulai.' . $i, $jamSibukMulai);
-                                    $jamSibukSelesai = old('jam_sibuk_selesai.' . $i, $jamSibukSelesai);
-                                    $isLibur = old('libur.' . $i, $isLibur);
+                                    $jadwal = $jamOp->get($day);
                                 @endphp
                                 <tr>
-                                    <td><input type="text" name="hari[{{ $i }}]"
-                                            class="form-control text-center" value="{{ $day }}" readonly>
-                                    </td>
-                                    <td><input type="time" name="jam_buka[{{ $i }}]"
-                                            class="form-control" value="{{ $jamBuka }}"></td>
-                                    <td><input type="time" name="jam_tutup[{{ $i }}]"
-                                            class="form-control" value="{{ $jamTutup }}"></td>
-                                    <td><input type="time" name="jam_sibuk_mulai[{{ $i }}]"
-                                            class="form-control" value="{{ $jamSibukMulai }}"></td>
-                                    <td><input type="time" name="jam_sibuk_selesai[{{ $i }}]"
-                                            class="form-control" value="{{ $jamSibukSelesai }}"></td>
-                                    <td><input type="checkbox" name="libur[{{ $i }}]"
-                                            class="libur-checkbox" {{ $isLibur ? 'checked' : '' }}></td>
+                                    <td><input type="text" name="hari[{{ $i }}]" class="form-control text-center" value="{{ $day }}" readonly></td>
+                                    <td><input type="time" name="jam_buka[{{ $i }}]" class="form-control"
+                                        value="{{ old('jam_buka.'.$i, $jadwal ? $jadwal->jam_buka?->format('H:i') : '08:00') }}"></td>
+                                    <td><input type="time" name="jam_tutup[{{ $i }}]" class="form-control"
+                                        value="{{ old('jam_tutup.'.$i, $jadwal ? $jadwal->jam_tutup?->format('H:i') : '21:00') }}"></td>
+                                    <td><input type="time" name="jam_sibuk_mulai[{{ $i }}]" class="form-control"
+                                        value="{{ old('jam_sibuk_mulai.'.$i, $jadwal && $jadwal->jam_sibuk_mulai ? $jadwal->jam_sibuk_mulai->format('H:i') : '') }}"></td>
+                                    <td><input type="time" name="jam_sibuk_selesai[{{ $i }}]" class="form-control"
+                                        value="{{ old('jam_sibuk_selesai.'.$i, $jadwal && $jadwal->jam_sibuk_selesai ? $jadwal->jam_sibuk_selesai->format('H:i') : '') }}"></td>
+                                    <td><input type="checkbox" name="libur[{{ $i }}]" class="libur-checkbox"
+                                        {{ (in_array($i, old('libur', [])) || ($jadwal && $jadwal->libur)) ? 'checked' : '' }}></td>
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                     @error('jam_operasional')
-                        <div class="alert alert-danger mt-2"><i class="bi bi-exclamation-triangle-fill"></i>
-                            {{ $message }}</div>
+                        <div class="alert-jam-operasional" style="background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); border-left: 4px solid #c62828; border-radius: 12px; padding: 16px; margin-top: 1rem;">
+                            <i class="bi bi-exclamation-triangle-fill" style="color: #c62828;"></i>
+                            <strong>⚠️ Error Jam Operasional:</strong> {{ $message }}
+                        </div>
                     @enderror
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="bi bi-person-badge"></i> Profil Pelanggan <span
-                                class="required">*</span></label><br>
-                        @php $profilPelanggan = old('profil_pelanggan', $kuliner->profil_pelanggan ?? []); @endphp
-                        @foreach (['Lokal', 'Wisatawan', 'Pelajar/Mahasiswa', 'Pekerja'] as $p)
+                        <label class="form-label @error('profil_pelanggan') text-danger @enderror">
+                            <i class="bi bi-person-badge"></i>
+                            Profil Pelanggan <span class="required">*</span>
+                        </label><br>
+                        @foreach(['Lokal', 'Wisatawan', 'Pelajar/Mahasiswa', 'Pekerja'] as $p)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="profil_pelanggan[]" value="{{ $p }}"
                                     class="form-check-input" id="profil_{{ $p }}"
-                                    {{ in_array($p, $profilPelanggan) ? 'checked' : '' }}>
-                                <label class="form-check-label"
-                                    for="profil_{{ $p }}">{{ $p }}</label>
+                                    {{ in_array($p, old('profil_pelanggan', $kuliner->profil_pelanggan ?? [])) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="profil_{{ $p }}">{{ $p }}</label>
                             </div>
                         @endforeach
+                        @error('profil_pelanggan')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="bi bi-credit-card"></i> Metode Pembayaran <span
-                                class="required">*</span></label><br>
-                        @php $metodePembayaran = old('metode_pembayaran', $kuliner->metode_pembayaran ?? []); @endphp
-                        @foreach (['Tunai', 'Qris / Transfer'] as $m)
+                        <label class="form-label @error('metode_pembayaran') text-danger @enderror">
+                            <i class="bi bi-credit-card"></i>
+                            Metode Pembayaran <span class="required">*</span>
+                        </label><br>
+                        @foreach(['Tunai', 'Qris / Transfer'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="metode_pembayaran[]" value="{{ $m }}"
                                     class="form-check-input" id="metode_{{ $m }}"
-                                    {{ in_array($m, $metodePembayaran) ? 'checked' : '' }}>
-                                <label class="form-check-label"
-                                    for="metode_{{ $m }}">{{ $m }}</label>
+                                    {{ in_array($m, old('metode_pembayaran', $kuliner->metode_pembayaran ?? [])) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="metode_{{ $m }}">{{ $m }}</label>
                             </div>
                         @endforeach
+                        @error('metode_pembayaran')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label"><i class="bi bi-cash-coin"></i> Pajak / Retribusi <span
-                            class="required">*</span></label><br>
+                    <label class="form-label">
+                        <i class="bi bi-cash-coin"></i>
+                        Pajak / Retribusi <span class="required">*</span>
+                    </label><br>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Ya"
-                            id="pajak_ya"
-                            {{ old('pajak_retribusi', $kuliner->pajak_retribusi ? 'Ya' : 'Tidak') == 'Ya' ? 'checked' : '' }}
-                            required>
+                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Ya" id="pajak_ya"
+                            {{ old('pajak_retribusi', $kuliner->pajak_retribusi ? 'Ya' : 'Tidak') == 'Ya' ? 'checked' : '' }} required>
                         <label class="form-check-label" for="pajak_ya">Ya</label>
                     </div>
                     <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Tidak"
-                            id="pajak_tidak"
+                        <input class="form-check-input" type="radio" name="pajak_retribusi" value="Tidak" id="pajak_tidak"
                             {{ old('pajak_retribusi', $kuliner->pajak_retribusi ? 'Ya' : 'Tidak') == 'Tidak' ? 'checked' : '' }}>
                         <label class="form-check-label" for="pajak_tidak">Tidak</label>
                     </div>
@@ -748,29 +753,31 @@
 
                 <div class="section-divider"></div>
 
-                <!-- 2. JENIS KULINER & KATEGORI -->
+                <!-- KATEGORI & MENU -->
                 <div class="section-title">
-                    <i class="bi bi-card-list"></i> Jenis Kuliner & Kategori
+                    <i class="bi bi-card-list"></i>
+                    Jenis Kuliner & Kategori
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label @error('kategori') text-danger @enderror">
-                        <i class="bi bi-tags"></i> Kategori <span class="required">*</span>
+                        <i class="bi bi-tags"></i>
+                        Kategori <span class="required">*</span>
                         <span class="counter-badge" id="selectedCount">0 dipilih</span>
                     </label>
 
-                    @if ($kategori->isEmpty())
-                        <div class="alert alert-warning">
+                    @if($kategori->isEmpty())
+                        <div class="empty-kategori">
                             <i class="bi bi-exclamation-triangle-fill"></i>
-                            <strong>Tidak Ada Kategori Aktif</strong>
-                            <p class="mb-0">Belum ada kategori kuliner yang aktif.</p>
+                            <h5>Tidak Ada Kategori Aktif</h5>
+                            <p>Belum ada kategori kuliner yang aktif.</p>
                         </div>
                     @else
-                        @php
-                            $selectedKategori = old('kategori', $kuliner->kategori->pluck('id_kategori')->toArray());
-                        @endphp
                         <div class="kategori-container">
-                            @foreach ($kategori as $kat)
+                            @php
+                                $selectedKategori = old('kategori', $kuliner->kategori->pluck('id_kategori')->toArray());
+                            @endphp
+                            @foreach($kategori as $kat)
                                 <div class="kategori-item">
                                     <input type="checkbox" name="kategori[]" value="{{ $kat->id_kategori }}"
                                         id="kategori_{{ $kat->id_kategori }}" class="kategori-checkbox"
@@ -790,10 +797,10 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-star"></i> Menu Unggulan <span class="required">*</span>
+                            <i class="bi bi-star"></i>
+                            Menu Unggulan <span class="required">*</span>
                         </label>
-                        <input type="text" name="menu_unggulan"
-                            class="form-control @error('menu_unggulan') is-invalid @enderror"
+                        <input type="text" name="menu_unggulan" class="form-control @error('menu_unggulan') is-invalid @enderror"
                             value="{{ old('menu_unggulan', $kuliner->menu_unggulan) }}" required>
                         @error('menu_unggulan')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -802,10 +809,10 @@
 
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-basket"></i> Bahan Baku Utama <span class="required">*</span>
+                            <i class="bi bi-basket"></i>
+                            Bahan Baku Utama <span class="required">*</span>
                         </label>
-                        <input type="text" name="bahan_baku_utama"
-                            class="form-control @error('bahan_baku_utama') is-invalid @enderror"
+                        <input type="text" name="bahan_baku_utama" class="form-control @error('bahan_baku_utama') is-invalid @enderror"
                             value="{{ old('bahan_baku_utama', $kuliner->bahan_baku_utama) }}" required>
                         @error('bahan_baku_utama')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -816,15 +823,13 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-truck"></i> Sumber Bahan Baku <span class="required">*</span>
+                            <i class="bi bi-truck"></i>
+                            Sumber Bahan Baku <span class="required">*</span>
                         </label>
-                        <select name="sumber_bahan_baku"
-                            class="form-control @error('sumber_bahan_baku') is-invalid @enderror" required>
+                        <select name="sumber_bahan_baku" class="form-control @error('sumber_bahan_baku') is-invalid @enderror" required>
                             <option value="">-- Pilih Sumber --</option>
-                            @foreach (['Lokal', 'Domestik / Luar Kota', 'Import / Luar Negeri', 'Campuran'] as $s)
-                                <option value="{{ $s }}"
-                                    {{ old('sumber_bahan_baku', $kuliner->sumber_bahan_baku) == $s ? 'selected' : '' }}>
-                                    {{ $s }}</option>
+                            @foreach(['Lokal', 'Domestik / Luar Kota', 'Import / Luar Negeri', 'Campuran'] as $s)
+                                <option value="{{ $s }}" {{ old('sumber_bahan_baku', $kuliner->sumber_bahan_baku) == $s ? 'selected' : '' }}>{{ $s }}</option>
                             @endforeach
                         </select>
                         @error('sumber_bahan_baku')
@@ -833,40 +838,42 @@
                     </div>
 
                     <div class="col-md-6 mb-3">
-                        <label class="form-label"><i class="bi bi-calendar-check"></i> Menu Bersifat <span
-                                class="required">*</span></label><br>
-                        @php $menuBersifat = old('menu_bersifat', $kuliner->menu_bersifat ?? []); @endphp
-                        @foreach (['Tetap', 'Musiman'] as $m)
+                        <label class="form-label">
+                            <i class="bi bi-calendar-check"></i>
+                            Menu Bersifat <span class="required">*</span>
+                        </label><br>
+                        @foreach(['Tetap', 'Musiman'] as $m)
                             <div class="form-check form-check-inline">
                                 <input type="checkbox" name="menu_bersifat[]" value="{{ $m }}"
                                     class="form-check-input" id="menu_{{ $m }}"
-                                    {{ in_array($m, $menuBersifat) ? 'checked' : '' }}>
-                                <label class="form-check-label"
-                                    for="menu_{{ $m }}">{{ $m }}</label>
+                                    {{ in_array($m, old('menu_bersifat', $kuliner->menu_bersifat ?? [])) ? 'checked' : '' }}>
+                                <label class="form-check-label" for="menu_{{ $m }}">{{ $m }}</label>
                             </div>
                         @endforeach
+                        @error('menu_bersifat')
+                            <div class="invalid-feedback d-block">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
                 <div class="section-divider"></div>
 
-                <!-- 3. TEMPAT & FASILITAS -->
+                <!-- TEMPAT & FASILITAS -->
                 <div class="section-title">
-                    <i class="bi bi-shop"></i> Tempat & Fasilitas
+                    <i class="bi bi-shop"></i>
+                    Tempat & Fasilitas
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-building"></i> Bentuk Fisik <span class="required">*</span>
+                            <i class="bi bi-building"></i>
+                            Bentuk Fisik <span class="required">*</span>
                         </label>
-                        <select name="bentuk_fisik" class="form-control @error('bentuk_fisik') is-invalid @enderror"
-                            required>
+                        <select name="bentuk_fisik" class="form-control @error('bentuk_fisik') is-invalid @enderror" required>
                             <option value="">-- Pilih Bentuk Fisik --</option>
-                            @foreach (['Restoran', 'Warung', 'Kafe', 'Food Court', 'Jasa Boga (Katering)', 'Penyedia Makanan oleh Pedagang Keliling', 'Penyedia Makanan oleh Pedagang Tidak Keliling'] as $b)
-                                <option value="{{ $b }}"
-                                    {{ old('bentuk_fisik', $kuliner->bentuk_fisik) == $b ? 'selected' : '' }}>
-                                    {{ $b }}</option>
+                            @foreach(['Restoran', 'Warung', 'Kafe', 'Food Court', 'Jasa Boga (Katering)', 'Penyedia Makanan oleh Pedagang Keliling', 'Penyedia Makanan oleh Pedagang Tidak Keliling'] as $b)
+                                <option value="{{ $b }}" {{ old('bentuk_fisik', $kuliner->bentuk_fisik) == $b ? 'selected' : '' }}>{{ $b }}</option>
                             @endforeach
                         </select>
                         @error('bentuk_fisik')
@@ -875,23 +882,19 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-house-door"></i> Status Bangunan <span class="required">*</span>
+                            <i class="bi bi-house-door"></i>
+                            Status Bangunan <span class="required">*</span>
                         </label>
                         @php
-                            $statusBangunan = old('status_bangunan', $kuliner->status_bangunan);
-                            $statusBangunanLain = '';
-                            if (strpos($statusBangunan, 'Lainnya:') === 0) {
-                                $statusBangunanLain = trim(str_replace('Lainnya:', '', $statusBangunan));
-                                $statusBangunan = 'Lainnya...';
-                            }
+                            $currentStatus = old('status_bangunan', $kuliner->status_bangunan);
+                            $isLainnya = !in_array($currentStatus, ['Milik Sendiri', 'Sewa', 'Pinjam Pakai']);
+                            $displayStatus = $isLainnya ? 'Lainnya...' : $currentStatus;
+                            $lainnyaText = $isLainnya ? str_replace('Lainnya: ', '', $currentStatus) : '';
                         @endphp
-                        <select name="status_bangunan"
-                            class="form-control @error('status_bangunan') is-invalid @enderror"
-                            id="statusBangunanSelect" required>
+                        <select name="status_bangunan" class="form-control @error('status_bangunan') is-invalid @enderror" id="statusBangunanSelect" required>
                             <option value="">-- Pilih Status --</option>
-                            @foreach (['Milik Sendiri', 'Sewa', 'Pinjam Pakai', 'Lainnya...'] as $sb)
-                                <option value="{{ $sb }}" {{ $statusBangunan == $sb ? 'selected' : '' }}>
-                                    {{ $sb }}</option>
+                            @foreach(['Milik Sendiri', 'Sewa', 'Pinjam Pakai', 'Lainnya...'] as $st)
+                                <option value="{{ $st }}" {{ $displayStatus == $st ? 'selected' : '' }}>{{ $st }}</option>
                             @endforeach
                         </select>
                         @error('status_bangunan')
@@ -899,29 +902,32 @@
                         @enderror
                         <input type="text" id="status_bangunan_lain" name="status_bangunan_lain"
                             class="form-control mt-2" placeholder="Tulis status lain..."
-                            style="display:{{ $statusBangunan == 'Lainnya...' ? 'block' : 'none' }};"
-                            value="{{ old('status_bangunan_lain', $statusBangunanLain) }}">
+                            style="display:{{ $isLainnya ? 'block' : 'none' }};"
+                            value="{{ old('status_bangunan_lain', $lainnyaText) }}">
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label"><i class="bi bi-wifi"></i> Fasilitas Pendukung <span
-                            class="required">*</span></label><br>
-                    @php $fasilitasPendukung = old('fasilitas_pendukung', $kuliner->fasilitas_pendukung ?? []); @endphp
-                    @foreach (['Toilet', 'Wastafel', 'Parkir', 'Mushola', 'WiFi', 'Tempat Sampah'] as $f)
+                    <label class="form-label">
+                        <i class="bi bi-wifi"></i>
+                        Fasilitas Pendukung <span class="required">*</span>
+                    </label><br>
+                    @foreach(['Toilet', 'Wastafel', 'Parkir', 'Mushola', 'WiFi', 'Tempat Sampah'] as $f)
                         <div class="form-check form-check-inline">
                             <input type="checkbox" name="fasilitas_pendukung[]" value="{{ $f }}"
                                 class="form-check-input" id="fasilitas_{{ $f }}"
-                                {{ in_array($f, $fasilitasPendukung) ? 'checked' : '' }}>
-                            <label class="form-check-label"
-                                for="fasilitas_{{ $f }}">{{ $f }}</label>
+                                {{ in_array($f, old('fasilitas_pendukung', $kuliner->fasilitas_pendukung ?? [])) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="fasilitas_{{ $f }}">{{ $f }}</label>
                         </div>
                     @endforeach
+                    @error('fasilitas_pendukung')
+                        <div class="invalid-feedback d-block">{{ $message }}</div>
+                    @enderror
                 </div>
 
                 <div class="section-divider"></div>
 
-                <!-- 4. PRAKTIK K3 & SANITASI -->
+                <!-- K3 & SANITASI (dipersingkat untuk space) -->
                 <div class="section-title">
                     <i class="bi bi-shield-check"></i> Praktik K3 & Sanitasi
                 </div>
@@ -1204,32 +1210,31 @@
 
                 <div class="section-divider"></div>
 
-                <!-- 5. KOORDINAT LOKASI -->
+                <!-- KOORDINAT -->
                 <div class="section-title">
-                    <i class="bi bi-geo-alt"></i> Koordinat Lokasi
+                    <i class="bi bi-geo-alt"></i>
+                    Koordinat Lokasi
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-arrow-left-right"></i> Longitude <span class="required">*</span>
+                            <i class="bi bi-arrow-left-right"></i>
+                            Longitude <span class="required">*</span>
                         </label>
-                        <input type="text" name="longitude"
-                            class="form-control @error('longitude') is-invalid @enderror"
-                            value="{{ old('longitude', $kuliner->longitude) }}" step="any" required>
-                        <small class="form-text note">Format: 116.8225 (gunakan titik sebagai pemisah desimal)</small>
+                        <input type="text" name="longitude" class="form-control @error('longitude') is-invalid @enderror"
+                            value="{{ old('longitude', $kuliner->longitude) }}" required>
                         @error('longitude')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">
-                            <i class="bi bi-arrow-up-down"></i> Latitude <span class="required">*</span>
+                            <i class="bi bi-arrow-up-down"></i>
+                            Latitude <span class="required">*</span>
                         </label>
-                        <input type="text" name="latitude"
-                            class="form-control @error('latitude') is-invalid @enderror"
-                            value="{{ old('latitude', $kuliner->latitude) }}" step="any" required>
-                        <small class="form-text note">Format: -3.3211 (gunakan titik sebagai pemisah desimal)</small>
+                        <input type="text" name="latitude" class="form-control @error('latitude') is-invalid @enderror"
+                            value="{{ old('latitude', $kuliner->latitude) }}" required>
                         @error('latitude')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -1238,53 +1243,33 @@
 
                 <div class="section-divider"></div>
 
-                <!-- 6. FOTO KULINER -->
+                <!-- FOTO -->
                 <div class="section-title">
-                    <i class="bi bi-camera"></i> Foto Kuliner
+                    <i class="bi bi-camera"></i>
+                    Foto Kuliner
                 </div>
 
-                @if ($kuliner->foto->count() > 0)
-                    <div class="mb-3">
-                        <label class="form-label">
-                            <i class="bi bi-images"></i> Foto Yang Sudah Ada
-                            <span class="counter-badge">{{ $kuliner->foto->count() }} foto</span>
-                        </label>
-                        <div class="existing-photos">
-                            @foreach ($kuliner->foto as $foto)
-                                <div class="photo-item" id="photo_{{ $foto->id_foto_kuliner }}">
-                                    <img src="{{ $foto->url_foto }}" alt="Foto {{ $kuliner->nama_sentra }}">
-                                    <form action="{{ route('kuliner.foto.delete', $foto->id_foto_kuliner) }}"
-                                        method="POST" class="delete-photo-form" style="display:inline;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="photo-delete-btn"
-                                            onclick="return confirm('Yakin hapus foto ini?')">
-                                            <i class="bi bi-x"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            @endforeach
-                        </div>
-                        <small class="form-text note">
-                            <i class="bi bi-info-circle"></i> Klik tombol X untuk menghapus foto. Minimal harus ada 1
-                            foto tersisa.
-                        </small>
+                @if($kuliner->foto->count() > 0)
+                    <div class="existing-photos">
+                        @foreach($kuliner->foto as $foto)
+                            <div class="photo-item" id="photo-{{ $foto->id_foto_kuliner }}">
+                                <img src="{{ asset('storage/' . $foto->path_foto) }}" alt="Foto">
+                                <button type="button" class="delete-btn" onclick="deleteFoto({{ $foto->id_foto_kuliner }})">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        @endforeach
                     </div>
                 @endif
 
                 <div class="mb-4">
-                    <label class="form-label">
-                        <i class="bi bi-plus-circle"></i> Tambah Foto Baru (Opsional)
-                    </label>
                     <div class="file-upload-wrapper" id="fileUploadWrapper">
-                        <input type="file" name="foto[]" multiple accept="image/*" id="fileInput"
-                            style="display:none;">
+                        <input type="file" name="foto[]" multiple accept="image/*" id="fileInput" style="display:none;">
                         <div class="file-upload-icon">
                             <i class="bi bi-cloud-upload" style="font-size: 48px; color: #2e7d32;"></i>
                         </div>
-                        <div class="file-upload-text"
-                            style="font-size: 18px; font-weight: 600; color: #1b5e20; margin-top: 15px;">
-                            Klik untuk upload foto atau drag & drop
+                        <div class="file-upload-text" style="font-size: 18px; font-weight: 600; color: #1b5e20; margin-top: 15px;">
+                            Klik untuk tambah foto baru
                         </div>
                         <div class="file-upload-hint" style="font-size: 14px; color: #666; margin-top: 10px;">
                             Format: JPG, PNG, JPEG | Maksimal: 2MB per file
@@ -1295,11 +1280,13 @@
 
                 <!-- Action Buttons -->
                 <div class="button-group">
-                    <button type="submit" class="btn-submit" id="submitButton">
-                        <i class="bi bi-check-circle-fill"></i> Update Data
+                    <button type="submit" class="btn-submit">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Update Data
                     </button>
                     <a href="{{ route('kuliner.index') }}" class="btn-cancel">
-                        <i class="bi bi-x-circle"></i> Batal
+                        <i class="bi bi-x-circle"></i>
+                        Batal
                     </a>
                 </div>
 
@@ -1307,427 +1294,210 @@
         </div>
     </div>
 
+    <!-- Form untuk delete foto -->
+    <form id="deleteFotoForm" method="POST" style="display:none;">
+        @csrf
+        @method('DELETE')
+    </form>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        (function() {
-            'use strict';
+        // Delete Foto Function
+        function deleteFoto(idFoto) {
+            if (confirm('Yakin ingin menghapus foto ini?')) {
+                const form = document.getElementById('deleteFotoForm');
+                form.action = `/dashboard/kuliner/foto/${idFoto}`;
+                form.submit();
+            }
+        }
 
-            console.log('Script starting...');
+        document.addEventListener("DOMContentLoaded", () => {
+            // Counter Kategori
+            const kategoriCheckboxes = document.querySelectorAll('.kategori-checkbox');
+            const selectedCountBadge = document.getElementById('selectedCount');
 
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
+            function updateKategoriCount() {
+                const checkedCount = document.querySelectorAll('.kategori-checkbox:checked').length;
+                if (selectedCountBadge) {
+                    selectedCountBadge.textContent = `${checkedCount} dipilih`;
+                }
+            }
+            updateKategoriCount();
+            kategoriCheckboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', updateKategoriCount);
+            });
+
+            // Sertifikat Lainnya
+            const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
+            const sertifikatText = document.getElementById("sertifikat_text");
+
+            function toggleSertifikatText() {
+                const isOtherChecked = Array.from(sertifikatChecks).some(chk =>
+                    chk.value === "Lainnya" && chk.checked
+                );
+                if (sertifikatText) {
+                    sertifikatText.style.display = isOtherChecked ? "block" : "none";
+                    if (!isOtherChecked) sertifikatText.value = "";
+                }
+            }
+            toggleSertifikatText();
+            sertifikatChecks.forEach(checkbox => {
+                checkbox.addEventListener("change", toggleSertifikatText);
+            });
+
+            // Status Bangunan Lainnya
+            const statusSelect = document.getElementById("statusBangunanSelect");
+            const statusLain = document.getElementById("status_bangunan_lain");
+
+            function toggleStatusLain() {
+                if (statusSelect && statusLain) {
+                    if (statusSelect.value === "Lainnya...") {
+                        statusLain.style.display = "block";
+                    } else {
+                        statusLain.style.display = "none";
+                        statusLain.value = "";
+                    }
+                }
+            }
+            toggleStatusLain();
+            if (statusSelect) {
+                statusSelect.addEventListener("change", toggleStatusLain);
             }
 
-            function init() {
-                console.log('Initializing...');
+            // Jam Operasional - Libur Checkbox
+            const operasionalRows = document.querySelectorAll("table tbody tr");
 
-                // 1. KATEGORI COUNTER
-                try {
-                    const kategoriCheckboxes = document.querySelectorAll('.kategori-checkbox');
-                    const selectedCountBadge = document.getElementById('selectedCount');
+            operasionalRows.forEach(row => {
+                const checkbox = row.querySelector('.libur-checkbox');
+                const timeInputs = row.querySelectorAll('input[type="time"]');
+                if (!checkbox) return;
 
-                    function updateKategoriCount() {
-                        const checkedCount = document.querySelectorAll('.kategori-checkbox:checked').length;
-                        if (selectedCountBadge) {
-                            selectedCountBadge.textContent = checkedCount + ' dipilih';
-                        }
-                    }
+                const defaultValues = Array.from(timeInputs).map(input => input.value || '');
 
-                    if (kategoriCheckboxes.length > 0) {
-                        updateKategoriCount();
-                        kategoriCheckboxes.forEach(function(checkbox) {
-                            checkbox.addEventListener('change', updateKategoriCount);
-                        });
-                    }
-                    console.log('Kategori counter OK');
-                } catch (e) {
-                    console.error('Kategori error:', e);
-                }
-
-                // 2. SERTIFIKAT LAINNYA
-                try {
-                    const sertifikatChecks = document.querySelectorAll(".sertifikat-check");
-                    const sertifikatText = document.getElementById("sertifikat_text");
-
-                    function toggleSertifikatText() {
-                        let isOtherChecked = false;
-                        sertifikatChecks.forEach(function(chk) {
-                            if (chk.value === "Lainnya" && chk.checked) {
-                                isOtherChecked = true;
-                            }
-                        });
-
-                        if (sertifikatText) {
-                            sertifikatText.style.display = isOtherChecked ? "block" : "none";
-                            if (!isOtherChecked) {
-                                sertifikatText.value = "";
-                            }
-                        }
-                    }
-
-                    if (sertifikatChecks.length > 0) {
-                        toggleSertifikatText();
-                        sertifikatChecks.forEach(function(checkbox) {
-                            checkbox.addEventListener("change", toggleSertifikatText);
-                        });
-                    }
-                    console.log('Sertifikat toggle OK');
-                } catch (e) {
-                    console.error('Sertifikat error:', e);
-                }
-
-                // 3. STATUS BANGUNAN LAINNYA
-                try {
-                    const statusSelect = document.getElementById("statusBangunanSelect");
-                    const statusLain = document.getElementById("status_bangunan_lain");
-
-                    function toggleStatusLain() {
-                        if (statusSelect && statusLain) {
-                            statusLain.style.display = (statusSelect.value === "Lainnya...") ? "block" : "none";
-                            if (statusSelect.value !== "Lainnya...") {
-                                statusLain.value = "";
-                            }
-                        }
-                    }
-
-                    if (statusSelect) {
-                        toggleStatusLain();
-                        statusSelect.addEventListener("change", toggleStatusLain);
-                    }
-                    console.log('Status bangunan OK');
-                } catch (e) {
-                    console.error('Status error:', e);
-                }
-
-                // 4. JAM OPERASIONAL LIBUR
-                try {
-                    const operasionalRows = document.querySelectorAll("table.table-operasional tbody tr");
-                    console.log('Rows found:', operasionalRows.length);
-
-                    operasionalRows.forEach(function(row) {
-                        const checkbox = row.querySelector('.libur-checkbox');
-                        const timeInputs = row.querySelectorAll('input[type="time"]');
-
-                        if (!checkbox) return;
-
-                        let defaultValues = [];
-                        timeInputs.forEach(function(input) {
-                            defaultValues.push(input.value || '');
-                        });
-
-                        function updateRowState() {
-                            if (checkbox.checked) {
-                                timeInputs.forEach(function(input) {
-                                    input.value = '00:00';
-                                    input.disabled = true;
-                                    input.style.background = '#f5f5f5';
-                                });
-                                row.style.opacity = '0.5';
-                            } else {
-                                timeInputs.forEach(function(input, idx) {
-                                    input.disabled = false;
-                                    input.style.background = '';
-                                    if (input.value === '00:00') {
-                                        if (idx === 0) input.value = defaultValues[idx] || '08:00';
-                                        else if (idx === 1) input.value = defaultValues[idx] || '21:00';
-                                        else input.value = defaultValues[idx] || '';
-                                    }
-                                });
-                                row.style.opacity = '1';
-                            }
-                        }
-
-                        updateRowState();
-                        checkbox.addEventListener("change", updateRowState);
+                if (checkbox.checked) {
+                    timeInputs.forEach(input => {
+                        input.value = '00:00';
+                        input.readOnly = true;
+                        input.style.background = '#f5f5f5';
+                        input.style.cursor = 'not-allowed';
+                        input.style.pointerEvents = 'none';
                     });
-                    console.log('Jam operasional OK');
-                } catch (e) {
-                    console.error('Jam operasional error:', e);
+                    row.style.opacity = '0.5';
                 }
 
-                // 5. FORM SUBMIT VALIDATION
-                try {
-                    const form = document.getElementById('kulinerForm');
-                    const submitButton = document.getElementById('submitButton');
-
-                    if (!form) {
-                        console.error('Form not found!');
-                        return;
-                    }
-
-                    console.log('Form found:', form);
-                    console.log('Submit button found:', submitButton);
-
-                    // Fungsi validasi yang bisa dipanggil dari mana saja
-                    function validateForm() {
-                        console.log('🔍 Validating form...');
-
-                        const tableRows = document.querySelectorAll('.table-operasional tbody tr');
-                        let hasError = false;
-                        let errorMsg = '';
-
-                        tableRows.forEach(function(row, index) {
-                            if (hasError) return;
-
-                            const liburCheckbox = row.querySelector('.libur-checkbox');
-                            const jamBukaInput = row.querySelector('input[name="jam_buka[' + index + ']"]');
-                            const jamTutupInput = row.querySelector('input[name="jam_tutup[' + index + ']"]');
-                            const hariInput = row.querySelector('input[name="hari[' + index + ']"]');
-
-                            if (!jamBukaInput || !jamTutupInput || !hariInput) return;
-                            if (liburCheckbox && liburCheckbox.checked) return;
-                            if (jamBukaInput.disabled) return;
-
-                            const jamBuka = jamBukaInput.value;
-                            const jamTutup = jamTutupInput.value;
-                            const hari = hariInput.value;
-
-                            if (jamBuka === '00:00' && jamTutup === '00:00') return;
-
-                            if (!jamBuka || !jamTutup) {
-                                hasError = true;
-                                errorMsg = 'Jam buka dan tutup pada hari ' + hari + ' harus diisi!';
-                                return;
-                            }
-
-                            if (jamTutup <= jamBuka) {
-                                hasError = true;
-                                errorMsg = 'Jam tutup hari ' + hari + ' harus lebih besar dari jam buka!';
-                                return;
-                            }
+                checkbox.addEventListener("change", () => {
+                    if (checkbox.checked) {
+                        timeInputs.forEach(input => {
+                            input.value = '00:00';
+                            input.readOnly = true;
+                            input.style.background = '#f5f5f5';
+                            input.style.cursor = 'not-allowed';
+                            input.style.pointerEvents = 'none';
                         });
-
-                        return {
-                            valid: !hasError,
-                            error: errorMsg
-                        };
-                    }
-
-                    // Handler 1: Form submit event (backup)
-                    form.addEventListener('submit', function(e) {
-                        console.log('🚀 SUBMIT EVENT TRIGGERED');
-
-                        const validation = validateForm();
-
-                        if (!validation.valid) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            alert('⚠️ ' + validation.error);
-                            return false;
-                        }
-
-                        console.log('✅ Form validation passed');
-                        // Allow natural form submission
-                    }, false);
-
-                    // Handler 2: Button click event (primary)
-                    if (submitButton) {
-                        submitButton.addEventListener('click', function(e) {
-                            console.log('🔴 BUTTON CLICKED');
-
-                            // Prevent default untuk kontrol penuh
-                            e.preventDefault();
-
-                            const validation = validateForm();
-
-                            if (!validation.valid) {
-                                alert('⚠️ ' + validation.error);
-                                return false;
-                            }
-
-                            console.log('✅ Validation passed - submitting form...');
-
-                            // Submit form secara programmatic
-                            form.submit();
-                        }, false);
-                    }
-
-                    console.log('Form handler attached');
-                } catch (e) {
-                    console.error('Form error:', e);
-                }
-                try {
-                    const form = document.getElementById('kulinerForm');
-                    const submitButton = document.getElementById('submitButton');
-
-                    if (!form) {
-                        console.error('Form not found!');
-                        return;
-                    }
-
-                    console.log('Form found:', form);
-                    console.log('Submit button found:', submitButton);
-
-                    // Fungsi validasi yang bisa dipanggil dari mana saja
-                    function validateForm() {
-                        console.log('🔍 Validating form...');
-
-                        const tableRows = document.querySelectorAll('.table-operasional tbody tr');
-                        let hasError = false;
-                        let errorMsg = '';
-
-                        tableRows.forEach(function(row, index) {
-                            if (hasError) return;
-
-                            const liburCheckbox = row.querySelector('.libur-checkbox');
-                            const jamBukaInput = row.querySelector('input[name="jam_buka[' + index + ']"]');
-                            const jamTutupInput = row.querySelector('input[name="jam_tutup[' + index + ']"]');
-                            const hariInput = row.querySelector('input[name="hari[' + index + ']"]');
-
-                            if (!jamBukaInput || !jamTutupInput || !hariInput) return;
-                            if (liburCheckbox && liburCheckbox.checked) return;
-                            if (jamBukaInput.disabled) return;
-
-                            const jamBuka = jamBukaInput.value;
-                            const jamTutup = jamTutupInput.value;
-                            const hari = hariInput.value;
-
-                            if (jamBuka === '00:00' && jamTutup === '00:00') return;
-
-                            if (!jamBuka || !jamTutup) {
-                                hasError = true;
-                                errorMsg = 'Jam buka dan tutup pada hari ' + hari + ' harus diisi!';
-                                return;
-                            }
-
-                            if (jamTutup <= jamBuka) {
-                                hasError = true;
-                                errorMsg = 'Jam tutup hari ' + hari + ' harus lebih besar dari jam buka!';
-                                return;
-                            }
+                        row.style.opacity = '0.5';
+                    } else {
+                        timeInputs.forEach((input, idx) => {
+                            input.readOnly = false;
+                            input.style.background = '';
+                            input.style.cursor = '';
+                            input.style.pointerEvents = '';
+                            if (idx === 0) input.value = defaultValues[idx] || '08:00';
+                            else if (idx === 1) input.value = defaultValues[idx] || '21:00';
+                            else input.value = defaultValues[idx] || '';
                         });
-
-                        return {
-                            valid: !hasError,
-                            error: errorMsg
-                        };
+                        row.style.opacity = '1';
                     }
+                });
+            });
 
-                    // Handler 1: Form submit event (backup)
-                    form.addEventListener('submit', function(e) {
-                        console.log('🚀 SUBMIT EVENT TRIGGERED');
-
-                        const validation = validateForm();
-
-                        if (!validation.valid) {
-                            e.preventDefault();
-                            e.stopPropagation();
-                            alert('⚠️ ' + validation.error);
-                            return false;
-                        }
-
-                        console.log('✅ Form validation passed');
-                        // Allow natural form submission
-                    }, false);
-
-                    // Handler 2: Button click event (primary)
-                    if (submitButton) {
-                        submitButton.addEventListener('click', function(e) {
-                            console.log('🔴 BUTTON CLICKED');
-
-                            // Prevent default untuk kontrol penuh
-                            e.preventDefault();
-
-                            const validation = validateForm();
-
-                            if (!validation.valid) {
-                                alert('⚠️ ' + validation.error);
-                                return false;
-                            }
-
-                            console.log('✅ Validation passed - submitting form...');
-
-                            // Submit form secara programmatic
-                            form.submit();
-                        }, false);
-                    }
-
-                    console.log('Form handler attached');
-                } catch (e) {
-                    console.error('Form error:', e);
-                }
-
-                // 6. FILE UPLOAD
-                try {
-                    const fileInput = document.getElementById('fileInput');
-                    const selectedFilesContainer = document.getElementById('selectedFiles');
-                    const uploadWrapper = document.getElementById('fileUploadWrapper');
-                    let selectedFiles = [];
-
-                    if (!uploadWrapper || !fileInput) return;
-
-                    uploadWrapper.addEventListener('click', function() {
-                        fileInput.click();
-                    });
-
-                    fileInput.addEventListener('change', function(e) {
-                        handleFiles(e.target.files);
-                    });
-
-                    function handleFiles(files) {
-                        Array.from(files).forEach(function(file) {
-                            if (!file.type.match('image.*')) {
-                                alert(file.name + ' bukan gambar!');
-                                return;
-                            }
-                            if (file.size > 2097152) {
-                                alert(file.name + ' terlalu besar!');
-                                return;
-                            }
-                            selectedFiles.push(file);
-                        });
-                        displayFiles();
-                        updateFileInput();
-                    }
-
-                    function displayFiles() {
-                        if (!selectedFilesContainer) return;
-                        selectedFilesContainer.innerHTML = '';
-                        selectedFilesContainer.style.display = selectedFiles.length > 0 ? 'grid' : 'none';
-
-                        selectedFiles.forEach(function(file, index) {
-                            const div = document.createElement('div');
-                            div.style.cssText =
-                                'position:relative;border-radius:12px;overflow:hidden;background:white;';
-
-                            const reader = new FileReader();
-                            reader.onload = function(e) {
-                                div.innerHTML = '<img src="' + e.target.result +
-                                    '" style="width:100%;height:150px;object-fit:cover">' +
-                                    '<button type="button" onclick="window.removeFile(' + index +
-                                    ')" style="position:absolute;top:8px;right:8px;background:#d32f2f;color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer">×</button>';
-                            };
-                            reader.readAsDataURL(file);
-                            selectedFilesContainer.appendChild(div);
-                        });
-                    }
-
-                    function updateFileInput() {
-                        const dt = new DataTransfer();
-                        selectedFiles.forEach(function(file) {
-                            dt.items.add(file);
-                        });
-                        fileInput.files = dt.files;
-                    }
-
-                    window.removeFile = function(index) {
-                        selectedFiles.splice(index, 1);
-                        displayFiles();
-                        updateFileInput();
-                    };
-
-                    console.log('File upload OK');
-                } catch (e) {
-                    console.error('File upload error:', e);
-                }
-
-                console.log('ALL COMPLETE!');
-
+            // Scroll to first error
+            const firstError = document.querySelector('.is-invalid, .error-summary');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-        })();
+        });
+
+        // File Upload Handler (sama seperti create)
+        const fileInput = document.getElementById('fileInput');
+        const selectedFilesContainer = document.getElementById('selectedFiles');
+        const uploadWrapper = document.getElementById('fileUploadWrapper');
+        let selectedFiles = [];
+
+        uploadWrapper.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+        uploadWrapper.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#1b5e20';
+        });
+
+        uploadWrapper.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadWrapper.style.borderColor = '#2e7d32';
+        });
+
+        uploadWrapper.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#2e7d32';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const filesArray = Array.from(files);
+            filesArray.forEach(file => {
+                if (!file.type.match('image.*')) {
+                    alert('❌ ' + file.name + ' bukan file gambar!');
+                    return;
+                }
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('❌ ' + file.name + ' terlalu besar! Maksimal 2MB.');
+                    return;
+                }
+                selectedFiles.push(file);
+            });
+            displayFiles();
+            updateFileInput();
+        }
+
+        function displayFiles() {
+            selectedFilesContainer.innerHTML = '';
+            selectedFilesContainer.style.display = selectedFiles.length > 0 ? 'grid' : 'none';
+            selectedFilesContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
+            selectedFilesContainer.style.gap = '15px';
+            selectedFilesContainer.style.marginTop = '1.5rem';
+
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = 'position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1); background: white;';
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileItem.innerHTML = `
+                        <img src="${e.target.result}" alt="${file.name}" style="width:100%; height:150px; object-fit:cover;">
+                        <button type="button" onclick="removeFile(${index})" style="position:absolute; top:8px; right:8px; background:rgba(211,47,47,0.95); color:white; border:none; border-radius:50%; width:28px; height:28px; cursor:pointer;">
+                            <i class="bi bi-x"></i>
+                        </button>
+                        <div style="padding:10px; font-size:12px; text-align:center; background:#f8f9fa;">${file.name}</div>
+                    `;
+                };
+                reader.readAsDataURL(file);
+                selectedFilesContainer.appendChild(fileItem);
+            });
+        }
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+            updateFileInput();
+        };
     </script>
 </body>
-
 </html>

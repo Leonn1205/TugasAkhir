@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -31,13 +32,8 @@ class FotoWisata extends Model
             return $this->path_foto;
         }
 
-        // Cek apakah file ada
-        if (Storage::disk('public')->exists($this->path_foto)) {
-            return asset('storage/' . $this->path_foto);
-        }
-
         // Fallback placeholder
-        return asset('images/placeholder-wisata.jpg');
+        return asset('storage/' . $this->path_foto);
     }
 
     // ✅ Tetap pertahankan accessor lama untuk backward compatibility

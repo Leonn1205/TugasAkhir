@@ -42,7 +42,7 @@ class HomeController extends Controller
         $wisataQuery = TempatWisata::aktif()
             ->with([
                 'kategoriAktif:id_kategori,nama_kategori',
-                'foto' => fn($q) => $q->limit(1)
+                'foto'
             ]);
 
         if ($filterWisata && $filterWisata !== 'semua') {
@@ -53,7 +53,7 @@ class HomeController extends Controller
         $kulinerQuery = TempatKuliner::aktif()
             ->with([
                 'kategoriAktif:id_kategori,nama_kategori',
-                'foto' => fn($q) => $q->limit(1)
+                'foto' 
             ]);
 
         if ($filterKuliner && $filterKuliner !== 'semua') {

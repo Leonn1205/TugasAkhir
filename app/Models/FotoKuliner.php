@@ -10,7 +10,7 @@ class FotoKuliner extends Model
     use HasFactory;
 
     protected $table = 'foto_kuliner';
-    protected $primaryKey = 'id_foto_kuliner'; // ✅ PERBAIKI: sesuai migration
+    protected $primaryKey = 'id_foto_kuliner';
     protected $fillable = ['id_kuliner', 'path_foto'];
 
     protected $appends = ['url_foto'];
@@ -29,11 +29,7 @@ class FotoKuliner extends Model
             return $this->path_foto;
         }
 
-        if (Storage::disk('public')->exists($this->path_foto)) {
-            return asset('storage/' . $this->path_foto);
-        }
-
-        return asset('images/placeholder-kuliner.jpg');
+        return asset('storage/' . $this->path_foto);
     }
 
     // Backward compatibility

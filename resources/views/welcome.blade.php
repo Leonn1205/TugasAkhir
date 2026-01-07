@@ -816,27 +816,6 @@
         </div>
     </section>
 
-    <!-- Quick Search -->
-    <section class="quick-search">
-        <div class="container">
-            <div style="position: relative;">
-                <div class="search-box">
-                    <input type="text" id="quickSearch"
-                        placeholder="Search destinations, culinary, or activities...">
-                    <select id="categoryFilter">
-                        <option value="all">All Categories</option>
-                        <option value="wisata">Tourism</option>
-                        <option value="kuliner">Culinary</option>
-                    </select>
-                    <button onclick="performSearch()">
-                        <i class="bi bi-search me-2"></i>Search
-                    </button>
-                </div>
-                <div id="searchResults"></div>
-            </div>
-        </div>
-    </section>
-
     <!-- Destinations Section -->
     <section id="destinations">
         <div class="container">
@@ -850,14 +829,19 @@
                         <div class="destination-card"
                             onclick="showOnMap({{ $w->latitude }}, {{ $w->longitude }}, 'wisata')">
                             @if ($w->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $w->foto->first()->path_foto) }}"
-                                    alt="{{ $w->nama_wisata }}">
+                                {{-- TEST: Hardcode URL untuk debugging --}}
+                                @php
+                                    $fotoUrl = asset('storage/' . $w->foto->first()->path_foto);
+                                @endphp
+                                <img src="{{ $fotoUrl }}" alt="{{ $w->nama_wisata }}"
+                                    onerror="console.error('Failed to load:', this.src); this.src='https://placehold.co/800x600/2196F3/FFFFFF?text=Error'">
                             @else
-                                <img src="{{ asset('images/default-heritage.jpg') }}" alt="{{ $w->nama_wisata }}">
+                                <img src="https://placehold.co/800x600/2196F3/FFFFFF?text=No+Image"
+                                    alt="{{ $w->nama_wisata }}">
                             @endif
                             <div class="destination-badge">
-                                <i
-                                    class="bi bi-geo-alt-fill me-1"></i>{{ $w->kategoriWisata->nama_kategori ?? 'Tourism' }}
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                {{ $w->kategoriAktif->first()->nama_kategori ?? 'Tourism' }}
                             </div>
                             <div class="destination-overlay">
                                 <h3>{{ $w->nama_wisata }}</h3>
@@ -883,37 +867,43 @@
             <p class="section-subtitle">Taste the authentic flavors of Kotabaru's traditional and modern cuisine</p>
 
             <div class="row g-4 mb-4">
-                @foreach ($kulinerFiltered->take(6) as $k)
-                    <div class="col-md-4">
-                        <div class="destination-card"
-                            onclick="showOnMap({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner')">
-                            @if ($k->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $k->foto->first()->path_foto) }}"
-                                    alt="{{ $k->nama_sentra }}">
-                            @else
-                                <img src="{{ asset('images/default-culinary.jpg') }}" alt="{{ $k->nama_sentra }}">
-                            @endif
-                            <div class="destination-badge"
-                                style="background: rgba(212, 175, 55, 0.95); color: #3e2723;">
-                                <i class="bi bi-cup-hot-fill me-1"></i>Culinary
-                            </div>
-                            <div class="destination-overlay">
-                                <h3>{{ $k->nama_sentra }}</h3>
-                                <p><i class="bi bi-star-fill me-1"></i>Local Favorite</p>
+                @if ($kulinerFiltered && $kulinerFiltered->count() > 0)
+                    @foreach ($kulinerFiltered->take(6) as $k)
+                        <div class="col-md-4">
+                            <div class="destination-card"
+                                onclick="showOnMap({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner')">
+                                @if ($k->foto->count() > 0)
+                                    {{-- ✅ GUNAKAN url_foto dari accessor --}}
+                                    <img src="{{ $k->foto->first()->url_foto }}" alt="{{ $k->nama_sentra }}"
+                                        onerror="this.src='https://placehold.co/800x600/FF5722/FFFFFF?text=Culinary+Spot'">
+                                @else
+                                    <img src="https://placehold.co/800x600/FF5722/FFFFFF?text=No+Image"
+                                        alt="{{ $k->nama_sentra }}">
+                                @endif
+                                <div class="destination-badge"
+                                    style="background: rgba(212, 175, 55, 0.95); color: #3e2723;">
+                                    <i class="bi bi-cup-hot-fill me-1"></i>Culinary
+                                </div>
+                                <div class="destination-overlay">
+                                    <h3>{{ $k->nama_sentra }}</h3>
+                                    <p><i class="bi bi-star-fill me-1"></i>Local Favorite</p>
+                                </div>
                             </div>
                         </div>
+                    @endforeach
+                @else
+                    <div class="col-12 text-center">
+                        <p>Tidak ada data kuliner tersedia</p>
                     </div>
-                @endforeach
+                @endif
+            </div>
+
+            <div class="text-center">
+                <a href="#map" class="btn-hero btn-primary-hero">
+                    Explore More Culinary <i class="bi bi-arrow-right ms-2"></i>
+                </a>
             </div>
         </div>
-    </section>
-
-    <div class="text-center">
-        <a href="#map" class="btn-hero btn-primary-hero">
-            Explore More Culinary <i class="bi bi-arrow-right ms-2"></i>
-        </a>
-    </div>
-    </div>
     </section>
 
     <!-- Stats Section -->
@@ -965,7 +955,7 @@
                         <div class="filter-group">
                             <label><i class="bi bi-funnel me-2"></i>Filter Culinary</label>
                             <select id="kulinerFilter" onchange="filterKuliner()">
-                                <option value="semua">All Types</option>
+                                <option value="semua">All Categories</option>
                                 @foreach ($kategoriKulinerList as $k)
                                     <option value="{{ $k->id_kategori }}">{{ $k->nama_kategori }}</option>
                                 @endforeach
@@ -1112,6 +1102,11 @@
         let wisataMarkers = [];
         let kulinerMarkers = [];
 
+        // ============================================================================
+        // PERBAIKAN: Map Popup Images di welcome.blade.php
+        // Ganti bagian Add Tourism Markers dan Add Culinary Markers
+        // ============================================================================
+
         // Add Tourism Markers
         @foreach ($wisata as $w)
             @if ($w->latitude && $w->longitude)
@@ -1132,33 +1127,38 @@
                     const marker = L.marker([{{ $w->latitude }}, {{ $w->longitude }}], {
                         icon: wisataIcon,
                         kategori: kategoriIds.join(','),
-                        nama: '{{ $w->nama_wisata }}',
+                        nama: '{{ addslashes($w->nama_wisata) }}',
                         tipe: 'wisata',
                         id: '{{ $w->id_wisata }}'
                     }).addTo(map);
 
+                    // ✅ PERBAIKAN: Gunakan url_foto untuk popup
                     marker.bindPopup(`
-                        <div style="min-width: 200px;">
-                            @if ($w->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $w->foto->first()->path_foto) }}"
-                                    style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
-                            @endif
-                            <h6 class="fw-bold mb-2">{{ $w->nama_wisata }}</h6>
-                            <p class="mb-2 small">
-                                <i class="bi bi-tag-fill me-1"></i>
-                                @if ($w->kategoriAktif->count() > 0)
-                                    {{ $w->kategoriAktif->pluck('nama_kategori')->join(', ') }}
-                                @else
-                                    Tourism
-                                @endif
-                            </p>
-                            <a href="{{ route('user.wisata.show', $w->id_wisata) }}"
-                            class="btn btn-sm btn-primary w-100"
-                            style="text-decoration: none; color: white;">
-                                View Details
-                            </a>
-                        </div>
-                    `);
+                <div style="min-width: 200px;">
+                    @if ($w->foto->count() > 0)
+                        <img src="{{ $w->foto->first()->url_foto }}"
+                            style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
+                            onerror="this.src='https://placehold.co/800x600/2196F3/FFFFFF?text=No+Image'">
+                    @else
+                        <img src="https://placehold.co/800x600/2196F3/FFFFFF?text=No+Image"
+                            style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                    @endif
+                    <h6 class="fw-bold mb-2">{{ $w->nama_wisata }}</h6>
+                    <p class="mb-2 small">
+                        <i class="bi bi-tag-fill me-1"></i>
+                        @if ($w->kategoriAktif->count() > 0)
+                            {{ $w->kategoriAktif->pluck('nama_kategori')->join(', ') }}
+                        @else
+                            Tourism
+                        @endif
+                    </p>
+                    <a href="{{ route('user.wisata.show', $w->id_wisata) }}"
+                       class="btn btn-sm btn-primary w-100"
+                       style="text-decoration: none; color: white;">
+                        View Details
+                    </a>
+                </div>
+            `);
 
                     wisataMarkers.push(marker);
                 }
@@ -1185,33 +1185,38 @@
                     const marker = L.marker([{{ $k->latitude }}, {{ $k->longitude }}], {
                         icon: kulinerIcon,
                         kategori: kategoriIds.join(','),
-                        nama: '{{ $k->nama_sentra }}',
+                        nama: '{{ addslashes($k->nama_sentra) }}',
                         tipe: 'kuliner',
                         id: '{{ $k->id_kuliner }}'
                     }).addTo(map);
 
+                    // ✅ PERBAIKAN: Gunakan url_foto untuk popup
                     marker.bindPopup(`
-                        <div style="min-width: 200px;">
-                            @if ($k->foto->count() > 0)
-                                <img src="{{ asset('storage/' . $k->foto->first()->path_foto) }}"
-                                    style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
-                            @endif
-                            <h6 class="fw-bold mb-2">{{ $k->nama_sentra }}</h6>
-                            <p class="mb-2 small">
-                                <i class="bi bi-cup-hot-fill me-1"></i>
-                                @if ($k->kategoriAktif->count() > 0)
-                                    {{ $k->kategoriAktif->pluck('nama_kategori')->join(', ') }}
-                                @else
-                                    Culinary
-                                @endif
-                            </p>
-                            <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}"
-                            class="btn btn-sm btn-danger w-100"
-                            style="text-decoration: none; color: white;">
-                                View Details
-                            </a>
-                        </div>
-                    `);
+                <div style="min-width: 200px;">
+                    @if ($k->foto->count() > 0)
+                        <img src="{{ $k->foto->first()->url_foto }}"
+                            style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;"
+                            onerror="this.src='https://placehold.co/800x600/FF5722/FFFFFF?text=Culinary+Spot'">
+                    @else
+                        <img src="https://placehold.co/800x600/FF5722/FFFFFF?text=No+Image"
+                            style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px; margin-bottom: 10px;">
+                    @endif
+                    <h6 class="fw-bold mb-2">{{ $k->nama_sentra }}</h6>
+                    <p class="mb-2 small">
+                        <i class="bi bi-cup-hot-fill me-1"></i>
+                        @if ($k->kategoriAktif->count() > 0)
+                            {{ $k->kategoriAktif->pluck('nama_kategori')->join(', ') }}
+                        @else
+                            Culinary
+                        @endif
+                    </p>
+                    <a href="{{ route('user.kuliner.show', $k->id_kuliner) }}"
+                       class="btn btn-sm btn-danger w-100"
+                       style="text-decoration: none; color: white;">
+                        View Details
+                    </a>
+                </div>
+            `);
 
                     kulinerMarkers.push(marker);
                 }
@@ -1610,7 +1615,7 @@
                             color: '#2e7d32',
                             fillColor: '#4caf50',
                             fillOpacity: 0.1,
-                            radius: 5000
+                            radius: 500
                         }).addTo(map);
 
                         let nearbyPlaces = [];
@@ -1621,7 +1626,7 @@
                                 .lng
                             ]);
 
-                            if (distance <= 5000) {
+                            if (distance <= 500) {
                                 nearbyPlaces.push({
                                     nama: marker.options.nama,
                                     lat: markerLatLng.lat,
@@ -1642,7 +1647,7 @@
                                 .lng
                             ]);
 
-                            if (distance <= 5000) {
+                            if (distance <= 500) {
                                 nearbyPlaces.push({
                                     nama: marker.options.nama,
                                     lat: markerLatLng.lat,
@@ -1663,12 +1668,12 @@
                             placeList.innerHTML = `
                             <div class="text-center p-3">
                                 <i class="bi bi-info-circle" style="font-size: 32px; color: #ff9800;"></i>
-                                <p class="mt-2 mb-0">No places found within 5km radius</p>
+                                <p class="mt-2 mb-0">No places found within 2.5 km radius</p>
                             </div>
                         `;
                         } else {
                             let html =
-                                '<h6 class="fw-bold mb-3"><i class="bi bi-compass me-2"></i>Nearby Places (Within 5 km)</h6>';
+                                '<h6 class="fw-bold mb-3"><i class="bi bi-compass me-2"></i>Nearby Places (Within 0.5 km)</h6>';
 
                             nearbyPlaces.slice(0, 10).forEach(place => {
                                 const distanceKm = (place.distance / 1000).toFixed(2);
