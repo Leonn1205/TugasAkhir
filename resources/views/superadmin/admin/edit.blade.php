@@ -366,58 +366,6 @@
                     <div class="invalid-feedback">Role harus dipilih</div>
                 </div>
 
-                <div class="info-box">
-                    <i class="bi bi-info-circle-fill"></i>
-                    <div>
-                        <strong>Info Password:</strong> Biarkan kosong jika tidak ingin mengubah password. Isi hanya jika ingin mengganti password.
-                    </div>
-                </div>
-
-                <div class="mb-3 mt-3">
-                    <label for="password" class="form-label">
-                        <i class="bi bi-lock"></i>
-                        Password Baru
-                        <span class="optional">(Opsional)</span>
-                    </label>
-                    <div class="password-input-wrapper">
-                        <input
-                            type="password"
-                            name="password"
-                            id="password"
-                            class="form-control"
-                            placeholder="Masukkan password baru"
-                            autocomplete="new-password">
-                        <button type="button" class="password-toggle" onclick="togglePassword('password')">
-                            <i class="bi bi-eye" id="password-icon"></i>
-                        </button>
-                    </div>
-                    <div class="password-strength">
-                        <div class="password-strength-bar" id="strength-bar"></div>
-                    </div>
-                    <div class="password-hint">Minimal 8 karakter, kombinasi huruf dan angka disarankan</div>
-                </div>
-
-                <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">
-                        <i class="bi bi-lock-fill"></i>
-                        Konfirmasi Password Baru
-                        <span class="optional">(Opsional)</span>
-                    </label>
-                    <div class="password-input-wrapper">
-                        <input
-                            type="password"
-                            name="password_confirmation"
-                            id="password_confirmation"
-                            class="form-control"
-                            placeholder="Masukkan ulang password baru"
-                            autocomplete="new-password">
-                        <button type="button" class="password-toggle" onclick="togglePassword('password_confirmation')">
-                            <i class="bi bi-eye" id="password_confirmation-icon"></i>
-                        </button>
-                    </div>
-                    <div class="invalid-feedback" id="password-match-error">Password tidak cocok</div>
-                </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-submit">
                         <i class="bi bi-check-circle"></i>

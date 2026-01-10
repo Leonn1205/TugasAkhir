@@ -24,6 +24,10 @@ class KategoriWisataController extends Controller
         $validated = $request->validate([
             'nama_kategori' => 'required|string|max:100|unique:kategori_wisata,nama_kategori',
             'status' => 'nullable|boolean',
+        ], [
+            'nama_kategori.required' => 'Nama kategori wisata wajib diisi',
+            'nama_kategori.unique' => 'Nama kategori sudah digunakan. Silakan gunakan nama lain.',
+            'nama_kategori.max' => 'Nama kategori maksimal 100 karakter',
         ]);
 
         try {
@@ -40,62 +44,6 @@ class KategoriWisataController extends Controller
             return back()
                 ->withInput()
                 ->withErrors(['error' => 'Terjadi kesalahan saat menyimpan data.']);
-        }
-    }
-
-    public function edit($id)
-    {
-        $kategori = KategoriWisata::findOrFail($id);
-        return view('kategori_wisata.edit', compact('kategori'));
-    }
-
-    public function update(Request $request, $id)
-    {
-        $kategori = KategoriWisata::findOrFail($id);
-
-        $validated = $request->validate([
-            'nama_kategori' => 'required|string|max:100|unique:kategori_wisata,nama_kategori,' . $id . ',id_kategori',
-            'status' => 'nullable|boolean',
-        ]);
-
-        try {
-            $kategori->update([
-                'nama_kategori' => $validated['nama_kategori'],
-                'status' => $validated['status'] ?? $kategori->status,
-            ]);
-
-            return redirect()->route('kategori-wisata.index')
-                ->with('success', 'Kategori wisata berhasil diperbarui');
-        } catch (\Throwable $e) {
-            Log::error('Error updating kategori wisata: ' . $e->getMessage());
-
-            return back()
-                ->withInput()
-                ->withErrors(['error' => 'Terjadi kesalahan saat memperbarui data.']);
-        }
-    }
-
-    public function destroy($id)
-    {
-        try {
-            $kategori = KategoriWisata::findOrFail($id);
-
-            // Check if kategori is being used by any tempat wisata
-            if ($kategori->tempatWisata()->count() > 0) {
-                return back()->withErrors([
-                    'error' => 'Kategori tidak dapat dihapus karena masih digunakan oleh ' .
-                               $kategori->tempatWisata()->count() . ' tempat wisata.'
-                ]);
-            }
-
-            $kategori->delete();
-
-            return redirect()->route('kategori-wisata.index')
-                ->with('success', 'Kategori wisata berhasil dihapus');
-        } catch (\Throwable $e) {
-            Log::error('Error deleting kategori wisata: ' . $e->getMessage());
-
-            return back()->withErrors(['error' => 'Terjadi kesalahan saat menghapus data.']);
         }
     }
 

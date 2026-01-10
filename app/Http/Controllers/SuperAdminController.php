@@ -58,7 +58,6 @@ class SuperAdminController extends Controller
 
         $request->validate([
             'username' => 'required|unique:users,username,' . $id_user . ',id_user',
-            'password' => 'nullable|confirmed|min:6',
             'role' => 'required|in:Admin,Super Admin',
         ]);
 

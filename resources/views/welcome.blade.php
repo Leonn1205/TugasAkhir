@@ -475,28 +475,6 @@
             letter-spacing: 2px;
         }
 
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.5)),
-                url('{{ asset('images/cta-kotabaru.jpg') }}') center/cover;
-            color: white;
-            text-align: center;
-            padding: 150px 0;
-        }
-
-        .cta-section h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 52px;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-        }
-
-        .cta-section p {
-            font-size: 20px;
-            margin-bottom: 2.5rem;
-            opacity: 0.9;
-        }
-
         /* Footer */
         footer {
             background: #1a1a1a;
@@ -766,6 +744,317 @@
                 padding: 0 1.2rem 1.2rem;
             }
         }
+
+        < !-- Tambahkan CSS ini ke dalam <style>tag Anda,
+        SETELAH CSS yang sudah ada --><style>
+        /* ========================================
+   ENHANCED MOBILE RESPONSIVE FIXES
+   ======================================== */
+
+        /* Mobile: 320px - 480px (Small Phones) */
+        @media (max-width: 480px) {
+
+            /* Navbar */
+            .navbar-custom {
+                padding: 0.8rem 1rem !important;
+            }
+
+            .navbar-custom .navbar-brand {
+                font-size: 18px;
+                gap: 8px;
+            }
+
+            .navbar-custom .navbar-brand img {
+                height: 30px !important;
+            }
+
+            .navbar-toggler {
+                border: 2px solid white;
+                padding: 0.5rem;
+            }
+
+            .navbar-custom.scrolled .navbar-toggler {
+                border-color: #1b5e20;
+            }
+
+            .navbar-toggler-icon {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            }
+
+            .navbar-custom.scrolled .navbar-toggler-icon {
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(27, 94, 32, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+            }
+
+            .navbar-collapse {
+                background: rgba(27, 94, 32, 0.95);
+                margin-top: 1rem;
+                padding: 1rem;
+                border-radius: 10px;
+            }
+
+            .navbar-custom.scrolled .navbar-collapse {
+                background: #f8f5f0;
+            }
+
+            /* Hero Section */
+            .hero-content h1 {
+                font-size: 32px !important;
+                margin-bottom: 1rem;
+            }
+
+            .hero-content p {
+                font-size: 15px !important;
+                margin-bottom: 1.5rem;
+            }
+
+            .hero-content {
+                padding: 0 1rem;
+            }
+
+            .btn-hero {
+                padding: 0.8rem 1.8rem;
+                font-size: 14px;
+                width: 100%;
+                text-align: center;
+            }
+
+            .hero-buttons {
+                gap: 1rem;
+                width: 100%;
+            }
+
+            /* Section Titles */
+            .section-title {
+                font-size: 28px !important;
+                padding: 0 1rem;
+            }
+
+            .section-subtitle {
+                font-size: 14px !important;
+                padding: 0 1rem;
+                margin-bottom: 2rem !important;
+            }
+
+            /* Search Box */
+            .search-box {
+                padding: 0.8rem;
+                border-radius: 20px;
+                margin: 0 1rem;
+            }
+
+            .search-box input,
+            .search-box select {
+                padding: 0.8rem 1rem;
+                font-size: 14px;
+                border-radius: 10px;
+                margin-bottom: 0.5rem;
+            }
+
+            .search-box button {
+                padding: 0.8rem 1.5rem;
+                font-size: 14px;
+                width: 100%;
+            }
+
+            /* Destination Cards */
+            .destination-card {
+                height: 280px !important;
+                margin-bottom: 1rem;
+            }
+
+            .destination-overlay h3 {
+                font-size: 20px !important;
+            }
+
+            .destination-overlay p {
+                font-size: 12px !important;
+            }
+
+            .destination-overlay {
+                padding: 1.2rem;
+            }
+
+            .destination-badge {
+                top: 10px;
+                right: 10px;
+                padding: 0.4rem 0.8rem;
+                font-size: 10px;
+            }
+
+            /* Map Section */
+            #interactiveMap {
+                height: 400px !important;
+                margin-bottom: 1rem;
+            }
+
+            .map-controls {
+                height: auto !important;
+                max-height: 500px;
+                padding: 1.2rem;
+            }
+
+            .filter-group label {
+                font-size: 14px;
+            }
+
+            .filter-group select,
+            .filter-group input {
+                padding: 0.6rem;
+                font-size: 13px;
+            }
+
+            .place-item {
+                padding: 0.8rem;
+            }
+
+            .place-item h6 {
+                font-size: 14px;
+            }
+
+            .place-item small {
+                font-size: 11px;
+            }
+
+            /* Stats Section */
+            .stat-item {
+                padding: 1.5rem 1rem;
+            }
+
+            .stat-item i {
+                font-size: 36px !important;
+            }
+
+            .stat-item h2 {
+                font-size: 38px !important;
+            }
+
+            .stat-item p {
+                font-size: 14px !important;
+            }
+
+            /* Footer */
+            footer {
+                padding: 2rem 0 1rem;
+            }
+
+            footer h5 {
+                font-size: 16px;
+                margin-top: 1rem;
+            }
+
+            footer .col-md-4,
+            footer .col-md-2,
+            footer .col-md-3 {
+                margin-bottom: 1.5rem;
+            }
+
+            /* Modal */
+            .place-details-modal {
+                width: 95% !important;
+                max-width: 360px;
+            }
+
+            .place-details-header {
+                height: 160px !important;
+            }
+
+            .place-details-title {
+                font-size: 18px !important;
+            }
+
+            .place-tag {
+                font-size: 11px;
+                padding: 0.3rem 0.6rem;
+            }
+
+            /* Scroll Indicator */
+            .scroll-indicator {
+                display: none;
+            }
+
+            /* Container Padding */
+            section {
+                padding: 60px 0 !important;
+            }
+
+            .container-fluid.px-5 {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+            }
+        }
+
+        /* Tablet: 481px - 768px */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 48px;
+            }
+
+            .hero-content p {
+                font-size: 18px;
+            }
+
+            .destination-card {
+                height: 320px;
+            }
+
+            #interactiveMap {
+                height: 500px;
+            }
+
+            .section-title {
+                font-size: 36px;
+            }
+
+            .btn-hero {
+                padding: 0.9rem 2rem;
+            }
+        }
+
+        /* Landscape Phones */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .hero-section {
+                height: auto;
+                min-height: 100vh;
+                padding: 100px 0 50px;
+            }
+
+            .hero-content h1 {
+                font-size: 36px;
+            }
+
+            .scroll-indicator {
+                display: none;
+            }
+        }
+
+        /* Fix Row Gaps on Mobile */
+        @media (max-width: 768px) {
+            .row.g-4 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1rem;
+            }
+        }
+
+        /* Ensure Images Don't Overflow */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        /* Touch-Friendly Buttons */
+        @media (max-width: 768px) {
+
+            .btn-explore,
+            .btn-hero,
+            .btn-view-details {
+                min-height: 44px;
+                /* Apple's recommended touch target */
+            }
+
+            .place-item {
+                min-height: 60px;
+            }
+        }
     </style>
 </head>
 
@@ -839,9 +1128,11 @@
                                 <img src="https://placehold.co/800x600/2196F3/FFFFFF?text=No+Image"
                                     alt="{{ $w->nama_wisata }}">
                             @endif
-                            <div class="destination-badge">
-                                <i class="bi bi-geo-alt-fill me-1"></i>
-                                {{ $w->kategoriAktif->first()->nama_kategori ?? 'Tourism' }}
+                            <div class="destination-badge"
+                                style="background: rgba(33, 150, 243, 0.95); color: #ffffff;">
+                                <i class="bi bi-geo-alt-fill me-1"></i>Tourism
+
+
                             </div>
                             <div class="destination-overlay">
                                 <h3>{{ $w->nama_wisata }}</h3>
@@ -881,7 +1172,7 @@
                                         alt="{{ $k->nama_sentra }}">
                                 @endif
                                 <div class="destination-badge"
-                                    style="background: rgba(212, 175, 55, 0.95); color: #3e2723;">
+                                    style="background: rgba(212, 55, 55, 0.95); color: #ffffff;">
                                     <i class="bi bi-cup-hot-fill me-1"></i>Culinary
                                 </div>
                                 <div class="destination-overlay">
@@ -993,17 +1284,6 @@
                     <div id="interactiveMap"></div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Start Your Journey Today</h2>
-            <p>Plan your perfect trip to Kotabaru and create unforgettable memories</p>
-            <a href="#map" class="btn-hero btn-primary-hero" style="background: #d4af37; color: #3e2723;">
-                Plan Your Trip <i class="bi bi-arrow-right ms-2"></i>
-            </a>
         </div>
     </section>
 
@@ -1709,73 +1989,6 @@
                 alert('Geolocation is not supported by your browser.');
             }
         }
-
-        // Quick Search with Debounce
-        let searchTimeout;
-        const quickSearchInput = document.getElementById('quickSearch');
-        const searchResultsDiv = document.getElementById('searchResults');
-
-        quickSearchInput.addEventListener('input', function() {
-            clearTimeout(searchTimeout);
-            const query = this.value.trim();
-
-            if (query.length < 2) {
-                searchResultsDiv.innerHTML = '';
-                return;
-            }
-
-            searchTimeout = setTimeout(() => {
-                fetch(`/search?query=${encodeURIComponent(query)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data.length === 0) {
-                            searchResultsDiv.innerHTML = `
-                            <div class="search-result-item">
-                                <strong>No results found</strong>
-                            </div>
-                        `;
-                            return;
-                        }
-
-                        let html = '';
-                        data.forEach(item => {
-                            html += `
-                            <div class="search-result-item" onclick="searchResultClick(${item.latitude}, ${item.longitude}, '${item.tipe}')">
-                                <strong>${item.nama}</strong>
-                                <br>
-                                <small class="text-muted">${item.tipe}</small>
-                            </div>
-                        `;
-                        });
-                        searchResultsDiv.innerHTML = html;
-                    })
-                    .catch(err => {
-                        console.error('Search error:', err);
-                    });
-            }, 300);
-        });
-
-        // Handle search result click
-        function searchResultClick(lat, lng, type) {
-            searchResultsDiv.innerHTML = '';
-            quickSearchInput.value = '';
-            showOnMap(lat, lng, type);
-        }
-
-        // Perform Search Button
-        function performSearch() {
-            const query = quickSearchInput.value.trim();
-            if (query.length > 0) {
-                quickSearchInput.dispatchEvent(new Event('input'));
-            }
-        }
-
-        // Close search results when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!quickSearchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) {
-                searchResultsDiv.innerHTML = '';
-            }
-        });
 
         // Map Search
         function searchOnMap() {
