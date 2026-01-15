@@ -44,29 +44,54 @@ class TempatWisataController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama_wisata'    => 'required|string|max:255',
-            'alamat_lengkap' => 'required|string',
-            'kategori'       => 'required|array',
-            'kategori.*'     => 'exists:kategori_wisata,id_kategori',
-            'longitude'      => 'required|numeric',
-            'latitude'       => 'required|numeric',
-            'deskripsi'      => 'required|string',
-            'sejarah'        => 'required|string',
-            'narasi'         => 'required|string',
-            'foto'           => 'required|array|min:1',
-            'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
-            'hari'           => 'required|array|size:7',
-            'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'jam_buka'       => 'nullable|array',
-            'jam_tutup'      => 'nullable|array',
-            'libur'          => 'nullable|array',
-        ]);
+        $validated = $request->validate(
+            [
+                'nama_wisata'    => 'required|string|max:255',
+                'alamat_lengkap' => 'required|string',
+                'kategori'       => 'required|array',
+                'kategori.*'     => 'exists:kategori_wisata,id_kategori',
+                'longitude'      => 'required|numeric',
+                'latitude'       => 'required|numeric',
+                'deskripsi'      => 'required|string',
+                'sejarah'        => 'required|string',
+                'narasi'         => 'required|string',
+                'foto'           => 'required|array|min:1',
+                'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
+                'hari'           => 'required|array|size:7',
+                'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+                'jam_buka'       => 'nullable|array',
+                'jam_tutup'      => 'nullable|array',
+                'libur'          => 'nullable|array',
+            ],
+            [
+                'nama_wisata.required' => 'Nama tempat wisata wajib diisi.',
+                'nama_wisata.max' => 'Nama tempat wisata maksimal 255 karakter.',
+                'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
+                'kategori.required' => 'Kategori wisata wajib dipilih minimal 1.',
+                'longitude.required' => 'Longitude wajib diisi.',
+                'longitude.numeric' => 'Longitude harus berupa angka.',
+                'latitude.required' => 'Latitude wajib diisi.',
+                'latitude.numeric' => 'Latitude harus berupa angka.',
+                'deskripsi.required' => 'Deskripsi tempat wisata wajib diisi.',
+                'sejarah.required' => 'Sejarah tempat wisata wajib diisi.',
+                'narasi.required' => 'Narasi tempat wisata wajib diisi.',
+                'foto.required' => 'Foto wisata wajib diunggah minimal 1.',
+                'foto.min' => 'Minimal 1 foto harus diunggah.',
+                'foto.*.image' => 'File harus berupa gambar.',
+                'foto.*.mimes' => 'Format foto harus JPG, JPEG, atau PNG.',
+                'foto.*.max' => 'Ukuran foto maksimal 2MB per file.',
+            ]
+        );
 
         // ✅ VALIDASI LOKASI
         if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
-                ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
+                ->withErrors([
+                    'latitude' => 'Koordinat berada di luar wilayah Kotabaru.',
+                    'longitude' => 'Koordinat berada di luar wilayah Kotabaru.',
+                    'lokasi' => '⚠️ Lokasi yang dimasukkan berada di luar wilayah Kotabaru.'
+                ])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         // ✅ VALIDASI JAM OPERASIONAL
@@ -112,29 +137,54 @@ class TempatWisataController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'nama_wisata'    => 'required|string|max:255',
-            'alamat_lengkap' => 'required|string',
-            'kategori'       => 'required|array',
-            'kategori.*'     => 'exists:kategori_wisata,id_kategori',
-            'longitude'      => 'required|numeric',
-            'latitude'       => 'required|numeric',
-            'deskripsi'      => 'required|string',
-            'sejarah'        => 'required|string',
-            'narasi'         => 'required|string',
-            'foto'           => 'nullable|array',
-            'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
-            'hari'           => 'required|array|size:7',
-            'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
-            'jam_buka'       => 'nullable|array',
-            'jam_tutup'      => 'nullable|array',
-            'libur'          => 'nullable|array',
-        ]);
+        $validated = $request->validate(
+            [
+                'nama_wisata'    => 'required|string|max:255',
+                'alamat_lengkap' => 'required|string',
+                'kategori'       => 'required|array',
+                'kategori.*'     => 'exists:kategori_wisata,id_kategori',
+                'longitude'      => 'required|numeric',
+                'latitude'       => 'required|numeric',
+                'deskripsi'      => 'required|string',
+                'sejarah'        => 'required|string',
+                'narasi'         => 'required|string',
+                'foto'           => 'nullable|array',
+                'foto.*'         => 'image|mimes:jpg,jpeg,png|max:2048',
+                'hari'           => 'required|array|size:7',
+                'hari.*'         => 'in:Senin,Selasa,Rabu,Kamis,Jumat,Sabtu,Minggu',
+                'jam_buka'       => 'nullable|array',
+                'jam_tutup'      => 'nullable|array',
+                'libur'          => 'nullable|array',
+            ],
+            [
+                'nama_wisata.required' => 'Nama tempat wisata wajib diisi.',
+                'nama_wisata.max' => 'Nama tempat wisata maksimal 255 karakter.',
+                'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
+                'kategori.required' => 'Kategori wisata wajib dipilih minimal 1.',
+                'longitude.required' => 'Longitude wajib diisi.',
+                'longitude.numeric' => 'Longitude harus berupa angka.',
+                'latitude.required' => 'Latitude wajib diisi.',
+                'latitude.numeric' => 'Latitude harus berupa angka.',
+                'deskripsi.required' => 'Deskripsi tempat wisata wajib diisi.',
+                'sejarah.required' => 'Sejarah tempat wisata wajib diisi.',
+                'narasi.required' => 'Narasi tempat wisata wajib diisi.',
+                'foto.required' => 'Foto wisata wajib diunggah minimal 1.',
+                'foto.min' => 'Minimal 1 foto harus diunggah.',
+                'foto.*.image' => 'File harus berupa gambar.',
+                'foto.*.mimes' => 'Format foto harus JPG, JPEG, atau PNG.',
+                'foto.*.max' => 'Ukuran foto maksimal 2MB per file.',
+            ]
+        );
 
         // ✅ VALIDASI LOKASI
         if (!$this->wilayahService->dalamBoundingBox($validated['latitude'], $validated['longitude'])) {
             return back()->withInput()
-                ->withErrors(['lokasi' => 'Lokasi yang dimasukkan berada di luar wilayah Kotabaru.']);
+                ->withErrors([
+                    'latitude' => 'Koordinat berada di luar wilayah Kotabaru.',
+                    'longitude' => 'Koordinat berada di luar wilayah Kotabaru.',
+                    'lokasi' => '⚠️ Lokasi yang dimasukkan berada di luar wilayah Kotabaru.'
+                ])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         // ✅ VALIDASI JAM OPERASIONAL
@@ -272,26 +322,28 @@ class TempatWisataController extends Controller
                 continue;
             }
 
-            $buka = $jamBuka[$index] ?? null;
-            $tutup = $jamTutup[$index] ?? null;
+            // ✅ SKIP jika 00:00 (indikasi libur dari JavaScript)
+            if (($jamBuka[$index] ?? null) === '00:00' && ($jamTutup[$index] ?? null) === '00:00') {
+                continue;
+            }
 
             // Validasi jam tidak boleh kosong untuk hari operasional
-            if (empty($buka) || empty($tutup)) {
+            if (empty($jamBuka[$index]) || empty($jamTutup[$index])) {
                 return "Jam buka dan tutup pada hari {$day} harus diisi!";
             }
 
             // Validasi format waktu HH:MM
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $buka)) {
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $jamBuka[$index])) {
                 return "Format jam buka pada hari {$day} tidak valid! Gunakan format HH:MM (contoh: 08:00)";
             }
 
-            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $tutup)) {
+            if (!preg_match('/^([01]?[0-9]|2[0-3]):[0-5][0-9]$/', $jamTutup[$index])) {
                 return "Format jam tutup pada hari {$day} tidak valid! Gunakan format HH:MM (contoh: 17:00)";
             }
 
             // ✅ VALIDASI UTAMA: Jam tutup harus lebih besar dari jam buka
-            if ($tutup <= $buka) {
-                return "Jam tutup pada hari {$day} harus lebih besar dari jam buka! (Buka: {$buka}, Tutup: {$tutup})";
+            if ($jamTutup[$index] <= $jamBuka[$index]) {
+                return "Jam tutup pada hari {$day} harus lebih besar dari jam buka! (Buka: {$jamBuka[$index]}, Tutup: {$jamTutup[$index]})";
             }
         }
 

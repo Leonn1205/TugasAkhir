@@ -219,7 +219,8 @@ class TempatKulinerController extends Controller
                     'latitude' => 'Koordinat berada di luar wilayah Kotabaru.',
                     'longitude' => 'Koordinat berada di luar wilayah Kotabaru.',
                     'lokasi' => '⚠️ Lokasi yang Anda masukkan berada di luar batas wilayah Kabupaten Kotabaru. Silakan periksa kembali koordinat latitude dan longitude yang dimasukkan.'
-                ]);
+                ])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         // ✅ VALIDASI JAM OPERASIONAL (KONSISTEN DENGAN WISATA)
@@ -235,7 +236,8 @@ class TempatKulinerController extends Controller
         if ($validationError) {
             return back()
                 ->withInput()
-                ->withErrors(['jam_operasional' => $validationError]);
+                ->withErrors(['jam_operasional' => $validationError])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         try {
@@ -268,12 +270,11 @@ class TempatKulinerController extends Controller
     public function update(Request $request, $id)
     {
         Log::info('🔵 CONTROLLER UPDATE START', [
-        'id' => $id,
-        'method' => $request->method(),
-        'url' => $request->url()
-    ]);
+            'id' => $id,
+            'method' => $request->method(),
+            'url' => $request->url()
+        ]);
 
-        // VALIDASI LENGKAP - SAMA SEPERTI STORE
         $validated = $request->validate([
             // Identitas Usaha
             'nama_sentra' => 'required|string|max:255',
@@ -369,17 +370,76 @@ class TempatKulinerController extends Controller
             'sumber_air_minum' => 'required|in:PDAM,Sumur,Air Isi Ulang',
 
             // Koordinat Lokasi
-            'latitude' => 'required|numeric|between:-90,90',
-            'longitude' => 'required|numeric|between:-180,180',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
 
             // Foto (nullable untuk update)
             'foto' => 'nullable|array',
             'foto.*' => 'image|mimes:jpg,jpeg,png|max:2048',
         ], [
-            // COPY SEMUA CUSTOM MESSAGES DARI METHOD STORE
+            // Custom error messages - Identitas Usaha
             'nama_sentra.required' => 'Nama sentra/usaha wajib diisi.',
             'tahun_berdiri.required' => 'Tahun berdiri wajib diisi.',
-            // ... dst (copy semua dari method store)
+            'tahun_berdiri.min' => 'Tahun berdiri tidak valid (minimal 1900).',
+            'tahun_berdiri.max' => 'Tahun berdiri tidak boleh melebihi tahun sekarang.',
+            'nama_pemilik.required' => 'Nama pemilik wajib diisi.',
+            'kepemilikan.required' => 'Kepemilikan wajib dipilih.',
+            'alamat_lengkap.required' => 'Alamat lengkap wajib diisi.',
+            'telepon.required' => 'No. telepon wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'no_nib.required' => 'No. NIB wajib diisi.',
+            'no_nib.digits' => 'No. NIB harus terdiri dari 13 digit angka.',
+            'profil_pelanggan.required' => 'Profil pelanggan wajib dipilih minimal 1.',
+            'metode_pembayaran.required' => 'Metode pembayaran wajib dipilih minimal 1.',
+            'pajak_retribusi.required' => 'Status pajak/retribusi wajib dipilih.',
+
+            // Kategori & Menu
+            'kategori.required' => 'Kategori kuliner wajib dipilih minimal 1.',
+            'kategori.min' => 'Pilih minimal 1 kategori kuliner.',
+            'menu_unggulan.required' => 'Menu unggulan wajib diisi.',
+            'bahan_baku_utama.required' => 'Bahan baku utama wajib diisi.',
+            'sumber_bahan_baku.required' => 'Sumber bahan baku wajib dipilih.',
+            'menu_bersifat.required' => 'Sifat menu wajib dipilih minimal 1.',
+
+            // Tempat & Fasilitas
+            'bentuk_fisik.required' => 'Bentuk fisik usaha wajib dipilih.',
+            'status_bangunan.required' => 'Status bangunan wajib dipilih.',
+            'status_bangunan_lain.required_if' => 'Mohon tuliskan status bangunan lainnya.',
+            'fasilitas_pendukung.required' => 'Fasilitas pendukung wajib dipilih minimal 1.',
+
+            // K3 & Sanitasi
+            'pelatihan_k3.required' => 'Status pelatihan K3 wajib dipilih.',
+            'jumlah_penjamah_makanan.required' => 'Jumlah penjamah makanan wajib diisi.',
+            'apd_penjamah_makanan.required' => 'APD penjamah makanan wajib dipilih minimal 1.',
+            'prosedur_sanitasi_alat.required' => 'Prosedur sanitasi alat wajib dipilih.',
+            'frekuensi_sanitasi_alat.required' => 'Frekuensi sanitasi alat wajib diisi.',
+            'prosedur_sanitasi_bahan.required' => 'Prosedur sanitasi bahan wajib dipilih.',
+            'frekuensi_sanitasi_bahan.required' => 'Frekuensi sanitasi bahan wajib diisi.',
+            'penyimpanan_mentah.required' => 'Metode penyimpanan bahan mentah wajib dipilih.',
+            'penyimpanan_matang.required' => 'Metode penyimpanan bahan matang wajib dipilih.',
+            'fifo_fefo.required' => 'Penerapan prinsip FIFO/FEFO wajib dipilih.',
+            'limbah_dapur.required' => 'Pengelolaan limbah dapur wajib dipilih.',
+            'ventilasi_dapur.required' => 'Jenis ventilasi dapur wajib dipilih.',
+            'dapur.required' => 'Kondisi dapur wajib dipilih.',
+            'sumber_air_cuci.required' => 'Sumber air untuk cuci wajib dipilih.',
+            'sumber_air_masak.required' => 'Sumber air untuk masak wajib dipilih.',
+            'sumber_air_minum.required' => 'Sumber air minum wajib dipilih.',
+
+            // Koordinat
+            'latitude.required' => 'Latitude wajib diisi.',
+            'latitude.numeric' => 'Latitude harus berupa angka.',
+            'latitude.between' => 'Latitude harus dalam rentang -90 sampai 90.',
+            'longitude.required' => 'Longitude wajib diisi.',
+            'longitude.numeric' => 'Longitude harus berupa angka.',
+            'longitude.between' => 'Longitude harus dalam rentang -180 sampai 180.',
+
+            // Foto
+            'foto.required' => 'Foto kuliner wajib diunggah minimal 1.',
+            'foto.min' => 'Minimal 1 foto harus diunggah.',
+            'foto.*.image' => 'File harus berupa gambar.',
+            'foto.*.mimes' => 'Format foto harus JPG, JPEG, atau PNG.',
+            'foto.*.max' => 'Ukuran foto maksimal 2MB per file.',
         ]);
 
         Log::info('🟢 VALIDATION PASSED');
@@ -392,7 +452,8 @@ class TempatKulinerController extends Controller
                     'latitude' => 'Koordinat berada di luar wilayah Kotabaru.',
                     'longitude' => 'Koordinat berada di luar wilayah Kotabaru.',
                     'lokasi' => '⚠️ Lokasi yang Anda masukkan berada di luar batas wilayah Kabupaten Kotabaru. Silakan periksa kembali koordinat latitude dan longitude yang dimasukkan.'
-                ]);
+                ])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         // ✅ VALIDASI JAM OPERASIONAL
@@ -409,7 +470,8 @@ class TempatKulinerController extends Controller
             log::warning('⚠️ Validasi jam operasional invalid', ['error' => $validationError]);
             return back()
                 ->withInput()
-                ->withErrors(['jam_operasional' => $validationError]);
+                ->withErrors(['jam_operasional' => $validationError])
+                ->with('previous_files', $this->getFileInfo($request->file('foto')));
         }
 
         try {
@@ -423,10 +485,10 @@ class TempatKulinerController extends Controller
                 ->with('success', 'Data tempat kuliner berhasil diperbarui!');
         } catch (\Throwable $e) {
             Log::error('🔴 CONTROLLER UPDATE ERROR', [
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine()
-        ]);
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine()
+            ]);
 
             return back()
                 ->withInput()
@@ -608,5 +670,24 @@ class TempatKulinerController extends Controller
         }
 
         return null; // Valid
+    }
+
+    private function getFileInfo($files)
+    {
+        if (!$files) {
+            return [];
+        }
+
+        $fileInfo = [];
+        foreach ($files as $file) {
+            $sizeKB = round($file->getSize() / 1024, 2);
+            $fileInfo[] = [
+                'name' => $file->getClientOriginalName(),
+                'size' => $sizeKB > 1024
+                    ? round($sizeKB / 1024, 2) . ' MB'
+                    : $sizeKB . ' KB'
+            ];
+        }
+        return $fileInfo;
     }
 }
