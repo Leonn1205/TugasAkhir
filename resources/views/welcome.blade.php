@@ -745,314 +745,705 @@
             }
         }
 
-        < !-- Tambahkan CSS ini ke dalam <style>tag Anda,
-        SETELAH CSS yang sudah ada --><style>
+        /* === STATS SECTION MOBILE === */
+        @media (max-width: 768px) {
+            .stats-section {
+                padding: 40px 0 !important;
+            }
+
+            .stats-section .container {
+                padding: 0 15px !important;
+            }
+
+            .stats-section .row {
+                margin: 0 !important;
+                display: flex !important;
+                flex-direction: row !important;
+                gap: 0 !important;
+            }
+
+            .stats-section .col-md-6 {
+                width: 50% !important;
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+                padding: 0 !important;
+            }
+
+            .stat-item {
+                padding: 1.5rem 0.5rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+                align-items: center !important;
+                justify-content: center !important;
+            }
+
+            .stat-item i {
+                font-size: 32px !important;
+                margin-bottom: 0.6rem !important;
+                opacity: 0.95 !important;
+            }
+
+            .stat-item h2 {
+                font-size: 36px !important;
+                margin-bottom: 0.3rem !important;
+                font-weight: 700 !important;
+                line-height: 1 !important;
+            }
+
+            .stat-item p {
+                font-size: 12px !important;
+                letter-spacing: 1px !important;
+                opacity: 0.9 !important;
+                margin-bottom: 0 !important;
+                text-transform: uppercase !important;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 375px) {
+            .stat-item {
+                padding: 1.2rem 0.3rem !important;
+            }
+
+            .stat-item i {
+                font-size: 28px !important;
+            }
+
+            .stat-item h2 {
+                font-size: 32px !important;
+            }
+
+            .stat-item p {
+                font-size: 11px !important;
+            }
+        }
+
+        < !-- GANTI SEMUA CSS MOBILE RESPONSIVE yang lama dengan yang ini -->< !-- Letakkan di AKHIR tag <style>Anda,
+        sebelum
+    </style> -->
+
+    <style>
         /* ========================================
-   ENHANCED MOBILE RESPONSIVE FIXES
+   COMPLETE MOBILE RESPONSIVE OVERHAUL
    ======================================== */
 
-        /* Mobile: 320px - 480px (Small Phones) */
-        @media (max-width: 480px) {
+        /* === GLOBAL MOBILE FIXES === */
+        @media (max-width: 768px) {
 
-            /* Navbar */
+            /* Prevent horizontal scroll */
+            body {
+                overflow-x: hidden !important;
+                width: 100%;
+            }
+
+            .container-fluid {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+
+            /* All sections */
+            section {
+                padding: 40px 0 !important;
+            }
+
+            /* Force navbar elements to show */
+            .navbar-toggler,
+            .navbar-toggler-icon {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+        }
+
+        /* === NAVBAR MOBILE === */
+        @media (max-width: 768px) {
+
+            /* Force consistent navbar */
             .navbar-custom {
-                padding: 0.8rem 1rem !important;
+                padding: 0.7rem 15px !important;
+                background: rgba(27, 94, 32, 0.95) !important;
+                position: fixed !important;
+                width: 100% !important;
+                top: 0 !important;
+                z-index: 1000 !important;
             }
 
-            .navbar-custom .navbar-brand {
-                font-size: 18px;
-                gap: 8px;
+            .navbar-custom.scrolled {
+                padding: 0.6rem 15px !important;
+                background: rgba(255, 255, 255, 0.98) !important;
             }
 
-            .navbar-custom .navbar-brand img {
-                height: 30px !important;
+            /* Brand */
+            .navbar-brand {
+                font-size: 15px !important;
+                gap: 8px !important;
+                display: flex !important;
+                align-items: center !important;
             }
 
+            .navbar-brand img {
+                height: 26px !important;
+                display: block !important;
+            }
+
+            /* Navbar toggler - Always visible */
             .navbar-toggler {
-                border: 2px solid white;
-                padding: 0.5rem;
+                border: 2px solid white !important;
+                padding: 0.3rem 0.5rem !important;
+                display: block !important;
+                opacity: 1 !important;
+                visibility: visible !important;
             }
 
             .navbar-custom.scrolled .navbar-toggler {
-                border-color: #1b5e20;
+                border-color: #1b5e20 !important;
+            }
+
+            .navbar-toggler:focus {
+                box-shadow: none !important;
+                outline: none !important;
             }
 
             .navbar-toggler-icon {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+                width: 18px !important;
+                height: 18px !important;
+                display: block !important;
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='white' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
             }
 
             .navbar-custom.scrolled .navbar-toggler-icon {
-                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(27, 94, 32, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+                background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%231b5e20' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
             }
 
+            /* Collapse menu */
             .navbar-collapse {
-                background: rgba(27, 94, 32, 0.95);
-                margin-top: 1rem;
-                padding: 1rem;
-                border-radius: 10px;
+                background: rgba(27, 94, 32, 0.98) !important;
+                margin-top: 0.8rem !important;
+                padding: 0.8rem !important;
+                border-radius: 12px !important;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3) !important;
             }
 
             .navbar-custom.scrolled .navbar-collapse {
-                background: #f8f5f0;
+                background: white !important;
+                border: 2px solid #1b5e20 !important;
             }
 
-            /* Hero Section */
+            .navbar-nav {
+                gap: 0.3rem !important;
+            }
+
+            .nav-link {
+                padding: 0.65rem 1rem !important;
+                border-radius: 8px !important;
+                text-align: center !important;
+                font-size: 14px !important;
+                display: block !important;
+            }
+
+            .nav-link:hover {
+                background: rgba(255, 255, 255, 0.1) !important;
+            }
+
+            .navbar-custom.scrolled .nav-link:hover {
+                background: #e8f5e9 !important;
+            }
+        }
+
+        /* === HERO SECTION MOBILE === */
+        @media (max-width: 768px) {
+            .hero-section {
+                height: 100vh;
+                min-height: 600px;
+            }
+
+            .hero-content {
+                padding: 0 20px;
+            }
+
             .hero-content h1 {
-                font-size: 32px !important;
+                font-size: 36px !important;
+                line-height: 1.2;
                 margin-bottom: 1rem;
             }
 
             .hero-content p {
-                font-size: 15px !important;
-                margin-bottom: 1.5rem;
-            }
-
-            .hero-content {
-                padding: 0 1rem;
-            }
-
-            .btn-hero {
-                padding: 0.8rem 1.8rem;
-                font-size: 14px;
-                width: 100%;
-                text-align: center;
+                font-size: 16px !important;
+                line-height: 1.4;
+                margin-bottom: 2rem;
             }
 
             .hero-buttons {
+                flex-direction: column;
                 gap: 1rem;
                 width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
             }
 
-            /* Section Titles */
+            .btn-hero {
+                width: 100%;
+                padding: 1rem 2rem;
+                font-size: 15px;
+            }
+
+            .scroll-indicator {
+                bottom: 20px;
+            }
+
+            .scroll-indicator i {
+                font-size: 24px;
+            }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 375px) {
+            .hero-content h1 {
+                font-size: 28px !important;
+            }
+
+            .hero-content p {
+                font-size: 14px !important;
+            }
+        }
+
+        /* === SECTION TITLES MOBILE === */
+        @media (max-width: 768px) {
             .section-title {
                 font-size: 28px !important;
-                padding: 0 1rem;
+                padding: 0 15px;
+                margin-bottom: 0.6rem !important;
+                line-height: 1.2;
             }
 
             .section-subtitle {
                 font-size: 14px !important;
-                padding: 0 1rem;
-                margin-bottom: 2rem !important;
+                padding: 0 15px;
+                margin-bottom: 1.5rem !important;
+                line-height: 1.4;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .section-title {
+                font-size: 24px !important;
             }
 
-            /* Search Box */
+            .section-subtitle {
+                font-size: 13px !important;
+            }
+        }
+
+        /* === QUICK SEARCH MOBILE === */
+        @media (max-width: 768px) {
+            .quick-search {
+                padding: 50px 0;
+            }
+
             .search-box {
-                padding: 0.8rem;
-                border-radius: 20px;
-                margin: 0 1rem;
+                flex-direction: column;
+                padding: 1rem;
+                border-radius: 25px;
+                margin: 0 15px;
+                gap: 0.8rem;
             }
 
             .search-box input,
             .search-box select {
-                padding: 0.8rem 1rem;
-                font-size: 14px;
-                border-radius: 10px;
-                margin-bottom: 0.5rem;
+                padding: 0.9rem 1.2rem;
+                font-size: 15px;
+                border-radius: 12px;
+                width: 100%;
+                border: 1px solid #e0e0e0;
             }
 
             .search-box button {
-                padding: 0.8rem 1.5rem;
-                font-size: 14px;
                 width: 100%;
+                padding: 1rem;
+                font-size: 15px;
+            }
+        }
+
+        /* === DESTINATION CARDS MOBILE === */
+        @media (max-width: 768px) {
+            .row.g-4 {
+                --bs-gutter-x: 0.8rem;
+                --bs-gutter-y: 0.8rem;
+                margin: 0 !important;
             }
 
-            /* Destination Cards */
+            /* Cards container */
+            #destinations .row,
+            #culinary .row {
+                padding: 0 15px;
+            }
+
+            /* Main card styling - LEBIH KECIL */
             .destination-card {
-                height: 280px !important;
-                margin-bottom: 1rem;
+                height: 160px !important;
+                border-radius: 12px;
+                margin-bottom: 0.5rem;
             }
 
-            .destination-overlay h3 {
-                font-size: 20px !important;
-            }
-
-            .destination-overlay p {
-                font-size: 12px !important;
+            .destination-card img {
+                object-fit: cover;
+                width: 100%;
+                height: 100%;
             }
 
             .destination-overlay {
-                padding: 1.2rem;
+                padding: 0.7rem 0.8rem !important;
+                background: linear-gradient(to top, rgba(0, 0, 0, 0.88), transparent) !important;
+            }
+
+            .destination-overlay h3 {
+                font-size: 14px !important;
+                margin-bottom: 0.15rem !important;
+                line-height: 1.2 !important;
+                font-weight: 600 !important;
+            }
+
+            .destination-overlay p {
+                font-size: 10px !important;
+                margin-bottom: 0 !important;
+                opacity: 0.95;
             }
 
             .destination-badge {
-                top: 10px;
-                right: 10px;
-                padding: 0.4rem 0.8rem;
-                font-size: 10px;
+                top: 8px !important;
+                right: 8px !important;
+                padding: 0.3rem 0.6rem !important;
+                font-size: 9px !important;
+                border-radius: 10px !important;
+                font-weight: 600;
             }
 
-            /* Map Section */
-            #interactiveMap {
-                height: 400px !important;
+            /* Fix button centering */
+            .text-center .btn-hero {
+                margin: 1rem auto 0 !important;
+                max-width: 260px !important;
+                display: block !important;
+                padding: 0.85rem 1.8rem !important;
+                font-size: 14px !important;
+            }
+        }
+
+        /* Extra small phones - LEBIH KECIL LAGI */
+        @media (max-width: 375px) {
+            .destination-card {
+                height: 140px !important;
+            }
+
+            .destination-overlay {
+                padding: 0.6rem 0.7rem !important;
+            }
+
+            .destination-overlay h3 {
+                font-size: 13px !important;
+            }
+
+            .destination-overlay p {
+                font-size: 9px !important;
+            }
+
+            .destination-badge {
+                padding: 0.25rem 0.5rem !important;
+                font-size: 8px !important;
+            }
+        }
+
+        /* === STATS SECTION MOBILE === */
+        @media (max-width: 768px) {
+            .stats-section {
+                padding: 50px 0 !important;
+            }
+
+            .stat-item {
+                padding: 1.5rem;
+            }
+
+            .stat-item i {
+                font-size: 40px !important;
+                margin-bottom: 0.8rem;
+            }
+
+            .stat-item h2 {
+                font-size: 42px !important;
+                margin-bottom: 0.3rem;
+            }
+
+            .stat-item p {
+                font-size: 15px !important;
+                letter-spacing: 1px;
+            }
+        }
+
+        /* === MAP SECTION MOBILE === */
+        @media (max-width: 768px) {
+            .map-section {
+                padding: 50px 0 !important;
+            }
+
+            /* Map columns - stack vertically */
+            .map-section .row {
+                flex-direction: column-reverse;
+            }
+
+            .map-section .col-lg-3,
+            .map-section .col-lg-9 {
+                width: 100%;
+                padding: 0 15px;
+            }
+
+            /* Map controls */
+            .map-controls {
+                height: auto !important;
+                max-height: none;
+                padding: 1.2rem;
+                margin-top: 1rem;
+                border-radius: 15px;
+            }
+
+            .filter-group {
                 margin-bottom: 1rem;
             }
 
-            .map-controls {
-                height: auto !important;
-                max-height: 500px;
-                padding: 1.2rem;
-            }
-
             .filter-group label {
-                font-size: 14px;
+                font-size: 13px;
+                margin-bottom: 0.4rem;
             }
 
             .filter-group select,
             .filter-group input {
-                padding: 0.6rem;
-                font-size: 13px;
+                padding: 0.7rem;
+                font-size: 14px;
+                border-radius: 8px;
+            }
+
+            .btn-explore {
+                padding: 0.8rem 1.5rem;
+                font-size: 14px;
+                margin-bottom: 1rem !important;
+            }
+
+            /* Place list */
+            .place-list h6 {
+                font-size: 14px;
+                margin-bottom: 0.8rem !important;
             }
 
             .place-item {
-                padding: 0.8rem;
+                padding: 0.9rem;
+                margin-bottom: 0.6rem;
+                border-radius: 8px;
             }
 
             .place-item h6 {
                 font-size: 14px;
+                margin-bottom: 0.2rem;
             }
 
             .place-item small {
-                font-size: 11px;
+                font-size: 12px;
             }
 
-            /* Stats Section */
-            .stat-item {
-                padding: 1.5rem 1rem;
+            /* Map itself */
+            #interactiveMap {
+                height: 350px !important;
+                border-radius: 15px;
+                margin-bottom: 0;
+            }
+        }
+
+        @media (max-width: 375px) {
+            #interactiveMap {
+                height: 300px !important;
             }
 
-            .stat-item i {
-                font-size: 36px !important;
+            .map-controls {
+                padding: 1rem;
             }
+        }
 
-            .stat-item h2 {
-                font-size: 38px !important;
-            }
-
-            .stat-item p {
-                font-size: 14px !important;
-            }
-
-            /* Footer */
+        /* === FOOTER MOBILE === */
+        @media (max-width: 768px) {
             footer {
-                padding: 2rem 0 1rem;
+                padding: 2.5rem 0 1.5rem;
+            }
+
+            footer .row>div {
+                margin-bottom: 2rem;
+                text-align: center;
             }
 
             footer h5 {
-                font-size: 16px;
-                margin-top: 1rem;
+                font-size: 17px;
+                margin-bottom: 1rem;
             }
 
-            footer .col-md-4,
-            footer .col-md-2,
-            footer .col-md-3 {
-                margin-bottom: 1.5rem;
+            footer p,
+            footer a {
+                font-size: 14px;
             }
 
-            /* Modal */
+            footer a:hover {
+                padding-left: 0;
+            }
+
+            .social-links {
+                justify-content: center;
+                display: flex;
+                gap: 1rem;
+            }
+
+            .social-links a {
+                font-size: 22px;
+                margin: 0;
+            }
+        }
+
+        /* === MODAL MOBILE === */
+        @media (max-width: 768px) {
             .place-details-modal {
-                width: 95% !important;
-                max-width: 360px;
+                width: 92% !important;
+                max-width: none !important;
+                border-radius: 20px;
             }
 
             .place-details-header {
-                height: 160px !important;
+                height: 180px !important;
+                border-radius: 20px 20px 0 0;
+            }
+
+            .place-details-close {
+                width: 36px;
+                height: 36px;
+                font-size: 22px;
+            }
+
+            .place-details-content {
+                padding: 1.3rem;
             }
 
             .place-details-title {
-                font-size: 18px !important;
+                font-size: 20px !important;
+                margin-bottom: 0.8rem;
             }
 
             .place-tag {
                 font-size: 11px;
-                padding: 0.3rem 0.6rem;
+                padding: 0.4rem 0.7rem;
             }
 
-            /* Scroll Indicator */
-            .scroll-indicator {
-                display: none;
+            .place-details-description {
+                font-size: 13px;
+                margin-bottom: 1.2rem;
             }
 
-            /* Container Padding */
-            section {
-                padding: 60px 0 !important;
+            .place-details-footer {
+                padding: 0 1.3rem 1.3rem;
             }
 
-            .container-fluid.px-5 {
-                padding-left: 1rem !important;
-                padding-right: 1rem !important;
-            }
-        }
-
-        /* Tablet: 481px - 768px */
-        @media (min-width: 481px) and (max-width: 768px) {
-            .hero-content h1 {
-                font-size: 48px;
-            }
-
-            .hero-content p {
-                font-size: 18px;
-            }
-
-            .destination-card {
-                height: 320px;
-            }
-
-            #interactiveMap {
-                height: 500px;
-            }
-
-            .section-title {
-                font-size: 36px;
-            }
-
-            .btn-hero {
-                padding: 0.9rem 2rem;
+            .btn-view-details {
+                padding: 1rem;
+                font-size: 14px;
+                border-radius: 10px;
             }
         }
 
-        /* Landscape Phones */
+        /* === LANDSCAPE MODE FIXES === */
         @media (max-width: 768px) and (orientation: landscape) {
             .hero-section {
                 height: auto;
                 min-height: 100vh;
-                padding: 100px 0 50px;
+                padding: 120px 0 60px;
             }
 
             .hero-content h1 {
-                font-size: 36px;
+                font-size: 32px !important;
+            }
+
+            .hero-content p {
+                font-size: 14px !important;
+                margin-bottom: 1.5rem;
             }
 
             .scroll-indicator {
                 display: none;
             }
-        }
 
-        /* Fix Row Gaps on Mobile */
-        @media (max-width: 768px) {
-            .row.g-4 {
-                --bs-gutter-x: 1rem;
-                --bs-gutter-y: 1rem;
+            #interactiveMap {
+                height: 300px !important;
             }
         }
 
-        /* Ensure Images Don't Overflow */
-        img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Touch-Friendly Buttons */
+        /* === PREVENT OVERFLOW === */
         @media (max-width: 768px) {
 
-            .btn-explore,
+            .container,
+            .container-fluid {
+                max-width: 100%;
+                overflow-x: hidden;
+            }
+
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            /* Fix Bootstrap container */
+            .container-fluid.px-5 {
+                padding-left: 15px !important;
+                padding-right: 15px !important;
+            }
+        }
+
+        /* === TOUCH IMPROVEMENTS === */
+        @media (max-width: 768px) {
+
+            /* Larger tap targets */
+            .btn,
             .btn-hero,
-            .btn-view-details {
-                min-height: 44px;
-                /* Apple's recommended touch target */
+            .btn-explore,
+            .btn-view-details,
+            .place-item {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
 
-            .place-item {
-                min-height: 60px;
+            /* Smooth scrolling on mobile */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* Remove hover effects on touch devices */
+            .destination-card:hover {
+                transform: none;
+            }
+
+            .destination-card:active {
+                transform: scale(0.98);
+            }
+        }
+
+        /* === FIX SPACING ISSUES === */
+        @media (max-width: 768px) {
+
+            /* Remove extra margins */
+            .mb-4 {
+                margin-bottom: 1.5rem !important;
+            }
+
+            .mb-3 {
+                margin-bottom: 1rem !important;
+            }
+
+            /* Consistent padding */
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
             }
         }
     </style>
@@ -1258,7 +1649,7 @@
                         </button>
 
                         <div class="place-list">
-                            <h6 class="fw-bold mb-3">Popular Places</h6>
+                            <h6 class="fw-bold mb-3">Featured Places</h6>
 
                             <!-- Wisata -->
                             @foreach ($wisata->take(3) as $w)
@@ -1270,7 +1661,7 @@
                             @endforeach
 
                             <!-- Kuliner -->
-                            @foreach ($kulinerFiltered->take(2) as $k)
+                            @foreach ($kulinerFiltered->take(3) as $k)
                                 <div class="place-item"
                                     onclick="showPlaceDetails({{ $k->latitude }}, {{ $k->longitude }}, 'kuliner', '{{ $k->id_kuliner }}')">
                                     <h6><i class="bi bi-cup-hot-fill text-danger me-2"></i>{{ $k->nama_sentra }}</h6>
