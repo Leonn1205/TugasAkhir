@@ -144,6 +144,8 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: flex;
+            min-height: 50px;
         }
 
         .kategori-item:hover {
@@ -159,7 +161,7 @@
         }
 
         .kategori-label {
-            display: block;
+            display: flex;
             padding: 12px 40px 12px 16px;
             font-weight: 500;
             font-size: 14px;
@@ -167,6 +169,8 @@
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
+            width: 100%;
+            height: 100%;
         }
 
         .kategori-item input[type="checkbox"]:checked + .kategori-label {

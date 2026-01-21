@@ -41,9 +41,11 @@ class TempatKulinerService
                 }
 
                 // 3. Handle jam operasional
+                $liburIndexes = $data['libur'] ?? [];
+
                 if (!empty($data['hari'])) {
                     foreach ($data['hari'] as $index => $hari) {
-                        $isLibur = isset($data['libur'][$index]);
+                        $isLibur = in_array($index, $liburIndexes);
 
                         JamOperasionalKuliner::create([
                             'id_kuliner' => $kuliner->id_kuliner,
@@ -104,9 +106,11 @@ class TempatKulinerService
                 }
 
                 // 3. ✅ UPDATE JAM OPERASIONAL (SAFE METHOD - SEPERTI YANG SAYA SARANKAN)
+                $liburIndexes = $data['libur'] ?? [];
+
                 if (!empty($data['hari'])) {
                     foreach ($data['hari'] as $index => $hari) {
-                        $isLibur = isset($data['libur'][$index]);
+                        $isLibur = in_array($index, $liburIndexes);
 
                         // updateOrCreate LEBIH AMAN dari delete + create
                         JamOperasionalKuliner::updateOrCreate(

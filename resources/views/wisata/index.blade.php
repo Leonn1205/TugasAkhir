@@ -660,13 +660,6 @@
 </head>
 
 <body>
-    <!-- Loading Overlay -->
-    <div class="loading-overlay" id="loadingOverlay">
-        <div class="loading-content">
-            <div class="spinner"></div>
-            <div style="color: #1b5e20; font-weight: 600;">Memuat data...</div>
-        </div>
-    </div>
 
     <!-- Header Section -->
     <div class="header-section">

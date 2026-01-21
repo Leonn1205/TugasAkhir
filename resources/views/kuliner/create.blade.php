@@ -164,12 +164,15 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: flex;
+            min-height: 50px;
         }
 
         .kategori-item:hover {
             background: #e8f5e9;
             border-color: #66bb6a;
             transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
         }
 
         .kategori-item input[type="checkbox"] {
@@ -179,30 +182,44 @@
         }
 
         .kategori-label {
-            display: block;
-            padding: 12px 40px 12px 16px;
+            display: flex;
+            padding: 14px 45px 14px 18px;
             font-weight: 500;
             font-size: 14px;
             color: #333;
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
+            border-radius: 10px;
+            margin: 0;
+            width: 100%;
+            height: 100%;
         }
 
+        .kategori-item input[type="checkbox"]:checked~.kategori-label,
         .kategori-item input[type="checkbox"]:checked+.kategori-label {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
+            border-radius: 10px;
         }
 
+        .kategori-item input[type="checkbox"]:checked~.kategori-label::after,
         .kategori-item input[type="checkbox"]:checked+.kategori-label::after {
             content: '\F26E';
             font-family: 'bootstrap-icons';
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 18px;
             color: white;
+            font-weight: bold;
+        }
+
+        /* Pastikan border tidak terlihat saat checked */
+        .kategori-item:has(input[type="checkbox"]:checked) {
+            border-color: transparent;
+            background: transparent;
         }
 
         /* ✅ EMPTY STATE jika tidak ada kategori aktif */
@@ -239,6 +256,7 @@
             font-weight: 600;
             margin-left: 10px;
         }
+        
 
         .form-control,
         .form-select {
@@ -440,6 +458,39 @@
 </head>
 
 <body>
+    {{-- <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="spinner"></div>
+            <div class="loading-text">Menyimpan data kuliner...</div>
+        </div>
+    </div> --}}
+
+    @if (session('success'))
+        <div class="alert-notification">
+            <div class="alert alert-success-custom alert-custom alert-dismissible fade show">
+                <i class="bi bi-check-circle-fill"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Berhasil!</div>
+                    <div class="alert-message">{{ session('success') }}</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="alert-notification">
+            <div class="alert alert-danger-custom alert-custom alert-dismissible fade show">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <div class="alert-content">
+                    <div class="alert-title">Terjadi Kesalahan!</div>
+                    <div class="alert-message">{{ $errors->count() }} kesalahan ditemukan.</div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        </div>
+    @endif
+
     <div class="header-section">
         <div class="container">
             <h1><i class="bi bi-plus-circle-fill me-2"></i>Tambah Data Tempat Kuliner</h1>
@@ -465,21 +516,6 @@
                 </div>
             @endif
 
-            {{-- Error Summary Umum --}}
-            @if ($errors->any() && !$errors->has('lokasi'))
-                <div class="error-summary alert-sticky">
-                    <h5>
-                        <i class="bi bi-x-circle-fill"></i>
-                        Terdapat {{ $errors->count() }} Kesalahan dalam Pengisian Form
-                    </h5>
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <form method="POST" action="{{ route('kuliner.store') }}" enctype="multipart/form-data" id="kulinerForm">
                 @csrf
 
@@ -498,19 +534,28 @@
                         </label>
                         <input type="text" name="nama_sentra"
                             class="form-control @error('nama_sentra') is-invalid @enderror"
-                            placeholder="Contoh: Warung Sari Laut Kotabaru" value="{{ old('nama_sentra') }}" required>
+                            value="{{ old('nama_sentra') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Contoh: Warung Sari Laut Kotabaru
+                        </small>
                         @error('nama_sentra')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
-                    <div class="col-md-3 mb-3">
+
+                    <div class="col-md-4 mb-3">
                         <label class="form-label">
                             <i class="bi bi-calendar-event"></i>
                             Tahun Berdiri <span class="required">*</span>
                         </label>
                         <input type="number" name="tahun_berdiri"
                             class="form-control @error('tahun_berdiri') is-invalid @enderror" min="1900"
-                            max="{{ date('Y') }}" placeholder="2020" value="{{ old('tahun_berdiri') }}" required>
+                            max="{{ date('Y') }}" value="{{ old('tahun_berdiri') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Rentang Tahun : 1900 - {{ date('Y') }}
+                        </small>
                         @error('tahun_berdiri')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -525,7 +570,11 @@
                         </label>
                         <input type="text" name="nama_pemilik"
                             class="form-control @error('nama_pemilik') is-invalid @enderror"
-                            placeholder="Contoh: Budi Santoso" value="{{ old('nama_pemilik') }}" required>
+                            value="{{ old('nama_pemilik') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Contoh: Ananda Leon
+                        </small>
                         @error('nama_pemilik')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -559,7 +608,11 @@
                         Alamat Lengkap <span class="required">*</span>
                     </label>
                     <textarea name="alamat_lengkap" class="form-control @error('alamat_lengkap') is-invalid @enderror" rows="2"
-                        placeholder="Jl. Veteran No.12, Kotabaru, Kalimantan Selatan" required>{{ old('alamat_lengkap') }}</textarea>
+                        required>{{ old('alamat_lengkap') }}</textarea>
+                    <small class="form-text text-muted">
+                        <i class="bi bi-info-circle me-1"></i>
+                        Contoh: Jl. Veteran No.12, Kotabaru
+                    </small>
                     @error('alamat_lengkap')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
@@ -572,8 +625,12 @@
                             No. Telepon <span class="required">*</span>
                         </label>
                         <input type="text" name="telepon"
-                            class="form-control @error('telepon') is-invalid @enderror" placeholder="081234567890"
-                            value="{{ old('telepon') }}" required>
+                            class="form-control @error('telepon') is-invalid @enderror" value="{{ old('telepon') }}"
+                            maxlength="15" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Contoh: 081234567890 (Maksimal 12 digit)
+                        </small>
                         @error('telepon')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -584,8 +641,12 @@
                             Email <span class="required">*</span>
                         </label>
                         <input type="email" name="email"
-                            class="form-control @error('email') is-invalid @enderror" placeholder="contoh@email.com"
-                            value="{{ old('email') }}" required>
+                            class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                            required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Contoh: contoh@email.com
+                        </small>
                         @error('email')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -596,8 +657,12 @@
                             No. NIB <span class="required">*</span>
                         </label>
                         <input type="text" name="no_nib"
-                            class="form-control @error('no_nib') is-invalid @enderror" placeholder="9120001380361"
-                            value="{{ old('no_nib') }}" maxlength="13" required>
+                            class="form-control @error('no_nib') is-invalid @enderror" value="{{ old('no_nib') }}"
+                            maxlength="13" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Harus 13 digit angka. Contoh: 9120001380361
+                        </small>
                         @error('no_nib')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -636,7 +701,11 @@
                         </label>
                         <input type="number" name="jumlah_pegawai"
                             class="form-control @error('jumlah_pegawai') is-invalid @enderror" min="0"
-                            placeholder="25" value="{{ old('jumlah_pegawai') }}" required>
+                            value="{{ old('jumlah_pegawai') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : 25
+                        </small>
                         @error('jumlah_pegawai')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -648,7 +717,11 @@
                         </label>
                         <input type="number" name="jumlah_kursi"
                             class="form-control @error('jumlah_kursi') is-invalid @enderror" min="0"
-                            placeholder="25" value="{{ old('jumlah_kursi') }}" required>
+                            value="{{ old('jumlah_kursi') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : 25
+                        </small>
                         @error('jumlah_kursi')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -660,7 +733,11 @@
                         </label>
                         <input type="number" name="jumlah_gerai"
                             class="form-control @error('jumlah_gerai') is-invalid @enderror" min="0"
-                            placeholder="1" value="{{ old('jumlah_gerai') }}" required>
+                            value="{{ old('jumlah_gerai') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : 1
+                        </small>
                         @error('jumlah_gerai')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -672,7 +749,11 @@
                         </label>
                         <input type="number" name="jumlah_pelanggan_per_hari"
                             class="form-control @error('jumlah_pelanggan_per_hari') is-invalid @enderror"
-                            min="0" placeholder="50" value="{{ old('jumlah_pelanggan_per_hari') }}" required>
+                            min="0" value="{{ old('jumlah_pelanggan_per_hari') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : 50
+                        </small>
                         @error('jumlah_pelanggan_per_hari')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -690,7 +771,7 @@
                 <div class="alert-info-custom">
                     <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk Pengisian:</strong>
                     <ul>
-                        <li>Isi jam buka dan jam tutup untuk setiap hari</li>
+                        <li>Sesuaikan jam buka dan tutup sesuai operasional tempat</li>
                         <li>Jam sibuk bersifat opsional</li>
                         <li>Centang "Libur" bila tempat tidak beroperasi hari itu</li>
                     </ul>
@@ -872,7 +953,11 @@
                         </label>
                         <input type="text" name="menu_unggulan"
                             class="form-control @error('menu_unggulan') is-invalid @enderror"
-                            placeholder="Soto Banjar Spesial" value="{{ old('menu_unggulan') }}" required>
+                            value="{{ old('menu_unggulan') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : Soto Banjar Spesial
+                        </small>
                         @error('menu_unggulan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -885,7 +970,11 @@
                         </label>
                         <input type="text" name="bahan_baku_utama"
                             class="form-control @error('bahan_baku_utama') is-invalid @enderror"
-                            placeholder="Daging ayam, rempah lokal" value="{{ old('bahan_baku_utama') }}" required>
+                            value="{{ old('bahan_baku_utama') }}" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : Daging Ayam, Rempah Lokal
+                        </small>
                         @error('bahan_baku_utama')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -1066,7 +1155,11 @@
                         </label>
                         <input type="number" name="jumlah_penjamah_makanan"
                             class="form-control @error('jumlah_penjamah_makanan') is-invalid @enderror"
-                            placeholder="3" value="{{ old('jumlah_penjamah_makanan') }}" min="0" required>
+                            value="{{ old('jumlah_penjamah_makanan') }}" min="0" required>
+                        <small class="form-text text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            contoh : 3
+                        </small>
                         @error('jumlah_penjamah_makanan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -1123,8 +1216,15 @@
                         </label>
                         <input type="text" name="frekuensi_sanitasi_alat"
                             class="form-control @error('frekuensi_sanitasi_alat') is-invalid @enderror"
-                            placeholder="2 kali sehari atau -" value="{{ old('frekuensi_sanitasi_alat') }}"
-                            maxlength="14" required>
+                            value="{{ old('frekuensi_sanitasi_alat') }}" maxlength="14" required>
+                        <small class="form-text text-muted d-block mt-1">
+                            <i class="bi bi-check-circle me-1 text-success"></i>
+                            <strong>Melakukan:</strong> Tulis frekuensi (contoh: 2x sehari, 1x seminggu)
+                        </small>
+                        <small class="form-text text-muted d-block">
+                            <i class="bi bi-x-circle me-1 text-danger"></i>
+                            <strong>Tidak Melakukan:</strong> Tulis tanda <strong>-</strong> (strip)
+                        </small>
                         @error('frekuensi_sanitasi_alat')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -1164,6 +1264,14 @@
                             class="form-control @error('frekuensi_sanitasi_bahan') is-invalid @enderror"
                             placeholder="2 kali sehari atau -" value="{{ old('frekuensi_sanitasi_bahan') }}"
                             maxlength="14" required>
+                        <small class="form-text text-muted d-block mt-1">
+                            <i class="bi bi-check-circle me-1 text-success"></i>
+                            <strong>Melakukan:</strong> Tulis frekuensi (contoh: 2x sehari, 1x seminggu)
+                        </small>
+                        <small class="form-text text-muted d-block">
+                            <i class="bi bi-x-circle me-1 text-danger"></i>
+                            <strong>Tidak Melakukan:</strong> Tulis tanda <strong>-</strong> (strip)
+                        </small>
                         @error('frekuensi_sanitasi_bahan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -1384,7 +1492,7 @@
                                 Longitude <span class="required">*</span>
                             </label>
                             <input type="text" name="longitude"
-                                class="form-control @error('longitude') is-invalid @enderror" placeholder="116.8225"
+                                class="form-control @error('longitude') is-invalid @enderror"
                                 value="{{ old('longitude') }}" step="any" required>
                             <small class="form-text note">Format: 116.8225 (gunakan titik sebagai pemisah
                                 desimal)</small>
@@ -1398,7 +1506,7 @@
                                 Latitude <span class="required">*</span>
                             </label>
                             <input type="text" name="latitude"
-                                class="form-control @error('latitude') is-invalid @enderror" placeholder="-3.3211"
+                                class="form-control @error('latitude') is-invalid @enderror"
                                 value="{{ old('latitude') }}" step="any" required>
                             <small class="form-text note">Format: -3.3211 (gunakan titik sebagai pemisah
                                 desimal)</small>
@@ -1581,11 +1689,11 @@
 
                             // Restore default atau set default values
                             if (idx === 0) input.value = defaultValues[idx] ||
-                            '08:00'; // jam_buka
+                                '08:00'; // jam_buka
                             else if (idx === 1) input.value = defaultValues[idx] ||
-                            '21:00'; // jam_tutup
+                                '21:00'; // jam_tutup
                             else input.value = defaultValues[idx] ||
-                            ''; // jam sibuk (opsional)
+                                ''; // jam sibuk (opsional)
                         });
                         row.style.opacity = '1';
                     }
@@ -1596,11 +1704,12 @@
             // 4. VALIDASI SEBELUM SUBMIT FORM
             // ============================================================================
             const form = document.getElementById('kulinerForm');
+            const loadingOverlay = document.getElementById('loadingOverlay');
 
             if (form) {
                 form.addEventListener('submit', function(e) {
                     const tableRows = document.querySelectorAll(
-                    '.table-operasional tbody tr'); // ← GANTI NAMA
+                        '.table-operasional tbody tr'); // ← GANTI NAMA
                     let hasInvalidTime = false;
                     let errorMessage = '';
 
@@ -1639,7 +1748,7 @@
 
                         // Validasi jam sibuk mulai (harus antara jam buka dan tutup)
                         if (jamSibukMulai && (jamSibukMulai < jamBuka || jamSibukMulai >=
-                            jamTutup)) {
+                                jamTutup)) {
                             hasInvalidTime = true;
                             errorMessage =
                                 `Jam sibuk mulai pada hari ${hari} harus antara jam buka (${jamBuka}) dan tutup (${jamTutup})!`;
@@ -1670,6 +1779,10 @@
                             errorMessage =
                                 `Jam sibuk mulai dan selesai pada hari ${hari} harus diisi keduanya atau kosong keduanya!`;
                             return;
+                        }
+
+                        if (!hasInvalidTime) {
+                            loadingOverlay.classlist.add('active');
                         }
                     });
 

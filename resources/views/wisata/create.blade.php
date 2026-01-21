@@ -242,12 +242,16 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            user-select: none;
+            display: flex;
+            min-height: 50px;
         }
 
         .kategori-item:hover {
             background: #e8f5e9;
             border-color: #66bb6a;
             transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
         }
 
         .kategori-item input[type="checkbox"] {
@@ -257,30 +261,44 @@
         }
 
         .kategori-label {
-            display: block;
-            padding: 12px 40px 12px 16px;
+            display: flex;
+            padding: 14px 45px 14px 18px;
             font-weight: 500;
             font-size: 14px;
             color: #333;
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
+            border-radius: 10px;
+            margin: 0;
+            width: 100%;
+            height: 100%;
         }
 
+        .kategori-item input[type="checkbox"]:checked~.kategori-label,
         .kategori-item input[type="checkbox"]:checked+.kategori-label {
             background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
             color: white;
+            border-radius: 10px;
         }
 
+        .kategori-item input[type="checkbox"]:checked~.kategori-label::after,
         .kategori-item input[type="checkbox"]:checked+.kategori-label::after {
             content: '\F26E';
             font-family: 'bootstrap-icons';
             position: absolute;
-            right: 12px;
+            right: 14px;
             top: 50%;
             transform: translateY(-50%);
             font-size: 18px;
             color: white;
+            font-weight: bold;
+        }
+
+        /* Pastikan border tidak terlihat saat checked */
+        .kategori-item:has(input[type="checkbox"]:checked) {
+            border-color: transparent;
+            background: transparent;
         }
 
         /* ✅ EMPTY STATE jika tidak ada kategori aktif */
@@ -744,6 +762,66 @@
                 width: 100%;
             }
         }
+
+        .error-summary {
+            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+            border: none;
+            border-left: 5px solid #d32f2f;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 2rem;
+        }
+
+        .error-summary h5 {
+            color: #d32f2f;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .error-summary ul {
+            margin: 0;
+            padding-left: 25px;
+        }
+
+        .error-summary li {
+            color: #b71c1c;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .alert-sticky {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            margin-bottom: 2rem;
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-5px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(5px);
+            }
+        }
     </style>
 </head>
 
@@ -790,6 +868,22 @@
 
     <div class="container">
         <div class="form-container">
+            {{-- Error Summary untuk Koordinat di Luar Batas --}}
+            @if ($errors->has('lokasi'))
+                <div class="error-summary alert-sticky">
+                    <h5>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Peringatan Lokasi
+                    </h5>
+                    <p><strong>{{ $errors->first('lokasi') }}</strong></p>
+                    <p class="mb-0 mt-2">
+                        <i class="bi bi-info-circle"></i>
+                        Pastikan koordinat yang Anda masukkan berada dalam wilayah Kabupaten Kotabaru, Kalimantan
+                        Selatan.
+                    </p>
+                </div>
+            @endif
+
             <form method="POST" action="{{ route('wisata.store') }}" enctype="multipart/form-data" id="wisataForm">
                 @csrf
 
@@ -979,7 +1073,6 @@
                 <div class="alert-info-custom">
                     <strong><i class="bi bi-info-circle-fill me-2"></i>Petunjuk Pengisian:</strong>
                     <ul>
-                        <li>Jam default: <strong>08:00 – 17:00</strong></li>
                         <li>Sesuaikan jam buka dan tutup sesuai operasional tempat</li>
                         <li>Centang <strong>"Libur"</strong> jika tempat tidak buka pada hari tersebut</li>
                     </ul>
@@ -1156,36 +1249,127 @@
 
         // File upload preview
         const fileInput = document.getElementById('fileInput');
-        const selectedFilesDiv = document.getElementById('selectedFiles');
+        const selectedFilesContainer = document.getElementById('selectedFiles');
+        const uploadWrapper = document.querySelector('.file-upload-wrapper');
+        let selectedFiles = [];
 
-        fileInput.addEventListener('change', function(e) {
-            const files = Array.from(e.target.files);
-            selectedFilesDiv.innerHTML = '';
-
-            if (files.length > 0) {
-                files.forEach(file => {
-                    const fileSize = (file.size / 1024).toFixed(2);
-                    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-                    const isOversized = file.size > 2 * 1024 * 1024;
-
-                    const fileItem = document.createElement('div');
-                    fileItem.className = 'file-item';
-                    fileItem.innerHTML = `
-                    <div class="file-item-name">
-                        <i class="bi bi-file-image"></i>
-                        <span>${file.name}</span>
-                        ${isOversized ? '<span style="color: #d32f2f; font-size: 11px; margin-left: 8px;">(Terlalu besar!)</span>' : ''}
-                    </div>
-                    <div class="file-item-size">${fileSize > 1024 ? fileSizeMB + ' MB' : fileSize + ' KB'}</div>
-                `;
-                    if (isOversized) {
-                        fileItem.style.borderColor = '#d32f2f';
-                        fileItem.style.background = '#ffebee';
-                    }
-                    selectedFilesDiv.appendChild(fileItem);
-                });
+        uploadWrapper.addEventListener('click', function() {
+            if (e.target !== fileInput) {
+                fileInput.click();
             }
         });
+
+        fileInput.addEventListener('change', function(e) {
+            handleFiles(e.target.files);
+        });
+
+        uploadWrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#1b5e20';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%)';
+        });
+
+        uploadWrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#2e7d32';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
+        });
+
+        uploadWrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadWrapper.style.borderColor = '#2e7d32';
+            uploadWrapper.style.background = 'linear-gradient(135deg, #f1f8f4 0%, #e8f5e9 100%)';
+            handleFiles(e.dataTransfer.files);
+        });
+
+        function handleFiles(files) {
+            const filesArray = Array.from(files);
+            let hasError = false;
+
+            filesArray.forEach(file => {
+                if (!file.type.match('image.*')) {
+                    alert('❌ ' + file.name + ' bukan file gambar!');
+                    hasError = true;
+                    return;
+                }
+
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('❌ ' + file.name + ' terlalu besar! Maksimal 2MB per file.');
+                    hasError = true;
+                    return;
+                }
+
+                selectedFiles.push(file);
+            });
+
+            if (!hasError) {
+                displayFiles();
+                updateFileInput();
+            }
+        }
+
+        function displayFiles() {
+            selectedFilesContainer.innerHTML = '';
+            selectedFilesContainer.style.display = selectedFiles.length > 0 ? 'grid' : 'none';
+            selectedFilesContainer.style.gridTemplateColumns = 'repeat(auto-fill, minmax(150px, 1fr))';
+            selectedFilesContainer.style.gap = '15px';
+            selectedFilesContainer.style.marginTop = '1.5rem';
+
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.style.cssText = `
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background: white;
+            transition: all 0.3s ease;
+        `;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    fileItem.innerHTML = `
+                <img src="${e.target.result}" alt="${file.name}" style="width:100%; height:150px; object-fit:cover; display:block;">
+                <div style="position:absolute; bottom:40px; left:8px; background:rgba(46,125,50,0.9); color:white; padding:4px 8px; border-radius:8px; font-size:11px; font-weight:600;">
+                    ${formatFileSize(file.size)}
+                </div>
+                <button type="button" onclick="removeFile(${index})" style="position:absolute; top:8px; right:8px; background:rgba(211,47,47,0.95); color:white; border:none; border-radius:50%; width:28px; height:28px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px; transition:all 0.3s ease; z-index:3;">
+                    <i class="bi bi-x"></i>
+                </button>
+                <div style="padding:10px; font-size:12px; color:#333; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; background:#f8f9fa;" title="${file.name}">
+                    ${file.name}
+                </div>
+            `;
+                };
+                reader.readAsDataURL(file);
+                selectedFilesContainer.appendChild(fileItem);
+            });
+        }
+
+        function updateFileInput() {
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            fileInput.files = dataTransfer.files;
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        window.removeFile = function(index) {
+            selectedFiles.splice(index, 1);
+            displayFiles();
+            updateFileInput();
+        };
 
         // Kategori counter
         const kategoriCheckboxes = document.querySelectorAll('.kategori-checkbox');
@@ -1193,7 +1377,9 @@
 
         function updateKategoriCount() {
             const checkedCount = document.querySelectorAll('.kategori-checkbox:checked').length;
-            selectedCountBadge.textContent = `${checkedCount} dipilih`;
+            if (selectedCountBadge) {
+                selectedCountBadge.textContent = `${checkedCount} dipilih`;
+            }
         }
 
         // Initial count
@@ -1312,6 +1498,14 @@
                     row.style.opacity = '0.5';
                 }
             });
+            // Scroll to first error on page load
+            const firstError = document.querySelector('.is-invalid, .error-summary');
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
         });
     </script>
 </body>

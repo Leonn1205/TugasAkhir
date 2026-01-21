@@ -242,6 +242,8 @@
             cursor: pointer;
             position: relative;
             overflow: hidden;
+            display: flex;
+            min-height: 50px;
         }
 
         .kategori-item:hover {
@@ -257,7 +259,7 @@
         }
 
         .kategori-label {
-            display: block;
+            display: flex;
             padding: 12px 40px 12px 16px;
             font-weight: 500;
             font-size: 14px;
@@ -265,6 +267,8 @@
             cursor: pointer;
             position: relative;
             transition: all 0.3s ease;
+            width: 100%;
+            height: 100%;
         }
 
         .kategori-item input[type="checkbox"]:checked+.kategori-label {
@@ -576,6 +580,22 @@
 
     <div class="container">
         <div class="form-container">
+            {{-- Error Summary untuk Koordinat di Luar Batas --}}
+            @if ($errors->has('lokasi'))
+                <div class="error-summary alert-sticky">
+                    <h5>
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        Peringatan Lokasi
+                    </h5>
+                    <p><strong>{{ $errors->first('lokasi') }}</strong></p>
+                    <p class="mb-0 mt-2">
+                        <i class="bi bi-info-circle"></i>
+                        Pastikan koordinat yang Anda masukkan berada dalam wilayah Kabupaten Kotabaru, Kalimantan
+                        Selatan.
+                    </p>
+                </div>
+            @endif
+            
             <form method="POST" action="{{ route('wisata.update', $wisata->id_wisata) }}" enctype="multipart/form-data"
                 id="wisataForm">
                 @csrf

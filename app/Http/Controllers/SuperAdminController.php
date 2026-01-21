@@ -19,7 +19,11 @@ class SuperAdminController extends Controller
 
     public function indexAdmin()
     {
-        $admins = User::where('role', 'Admin')->get();
+        $admins = User::whereIn('role', ['Admin', 'Super Admin'])
+            ->orderBy('role', 'asc') 
+            ->orderBy('username', 'asc')
+            ->get();
+
         return view('superadmin.admin.index', compact('admins'));
     }
 
